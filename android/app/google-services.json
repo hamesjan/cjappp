@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "329282486588",
+    "firebase_url": "https://hackybday.firebaseio.com",
+    "project_id": "hackybday",
+    "storage_bucket": "hackybday.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:329282486588:android:aea7d903355205f42d9e39",
+        "android_client_info": {
+          "package_name": "com.hackybirthday"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "329282486588-rt5kn78dvpmd39prr2tdk1aul9bibp11.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcXpGXOOAWmx914jzza7-ADRdU7kj_apU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "329282486588-rt5kn78dvpmd39prr2tdk1aul9bibp11.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "329282486588-utdvh31i6bq9k2u6nqn86opcbkl6moo8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.hackybirthday"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
