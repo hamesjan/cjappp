@@ -28,6 +28,7 @@ dependencies:
   firebase_core:
   cloud_firestore:
   firebase_auth:
+  google_maps_flutter:
   intl:
 
 

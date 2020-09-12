@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cjapp/pages/login.dart';
 import 'package:flutter/cupertino.dart';
@@ -57,6 +58,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
       ),
       body: SafeArea(
         child: TabBarView(
+          physics: NeverScrollableScrollPhysics(),
           controller: _tabController,
           children: <Widget>[
             Feed(),

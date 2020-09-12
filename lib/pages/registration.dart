@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cjapp/pages/home.dart';
 import 'package:cjapp/widgets/custom_button.dart';
-import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -24,7 +23,7 @@ class _RegistrationState extends State<Registration> {
 
 
   Future<void> registerUser() async{
-    auth.UserCredential user = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+    await _auth.createUserWithEmailAndPassword(email: email, password: password);
     auth.User _user =  _auth.currentUser;
     await _firestore.collection('users').doc(username).setData({
       'username': username,

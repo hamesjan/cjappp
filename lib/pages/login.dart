@@ -21,7 +21,7 @@ class _LoginState extends State<Login> {
   }
 
   signInUser() async{
-    auth.UserCredential user = await _auth.signInWithEmailAndPassword(email: email, password: password);
+    await _auth.signInWithEmailAndPassword(email: email, password: password);
     auth.User temp = await getUser();
     Navigator.pop(context);
     Navigator.push(context,
@@ -82,7 +82,7 @@ class _LoginState extends State<Login> {
               height: 15,
             ),
             CustomButton(
-              text: 'Register',
+              text: 'Sign Up',
               callback: (){
                 Navigator.pop(context);
                 Navigator.push(

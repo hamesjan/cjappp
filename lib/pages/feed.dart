@@ -10,7 +10,6 @@ class Feed extends StatefulWidget {
 }
 
 class _FeedState extends State<Feed> {
-
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -35,25 +34,41 @@ class _FeedState extends State<Feed> {
               ),
             ),
           ),
-
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                PreferenceCategoryButton(text: 'Ratings', callback: (){},),
-                PreferenceCategoryButton(text: 'Location',callback: (){}),
-                PreferenceCategoryButton(text: 'Price',callback: (){}),
-              ],
-            ),
-          SizedBox(height: 15,),
-          Divider(thickness: 3,color: Colors.pinkAccent,),
-          SizedBox(height: 15,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              PreferenceCategoryButton(
+                text: 'Ratings',
+                title: 'Sort By',
+                callback: () {},
+              ),
+              PreferenceCategoryButton(
+                  text: 'Radius', title: 'Location', callback: () {}),
+              PreferenceCategoryButton(
+                  text: 'Moderate', title: 'Price', callback: () {}),
+            ],
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          Divider(
+            thickness: 3,
+            color: Colors.pinkAccent,
+          ),
+          SizedBox(
+            height: 15,
+          ),
           Container(
             child: Column(
               children: <Widget>[
                 HotSpot(),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 HotSpot(),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 HotSpot(),
               ],
             ),
