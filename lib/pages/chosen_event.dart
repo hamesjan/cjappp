@@ -66,7 +66,21 @@ class ChosenEvent extends StatelessWidget {
                           '23 Ratings',
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 15),
+                        ),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Ink(
+                          decoration: BoxDecoration(
+                            color: Colors.lightBlueAccent,
+                            borderRadius: BorderRadius.all(Radius.circular(100))
+                          ),
+                          child:  IconButton(
+                            icon: Icon(Icons.add, color: Colors.black,),
+                            onPressed: (){},
+                          ),
                         )
+
                       ],
                     ),
                     SizedBox(
@@ -78,7 +92,7 @@ class ChosenEvent extends StatelessWidget {
                         print('Hello');
                       },
                       child: Ink(
-                        padding: EdgeInsets.all(16),
+                        padding: EdgeInsets.all(5),
                         child: Row(
                           children: <Widget>[
                             Icon(

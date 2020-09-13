@@ -5,18 +5,24 @@ import 'package:flutter/cupertino.dart';
 import 'package:cjapp/pages/feed.dart';
 import 'package:cjapp/pages/search_page.dart';
 import 'package:cjapp/pages/map_page.dart';
+import 'package:cjapp/pages/settings.dart';
+import 'package:cjapp/pages/profile.dart';
 import 'package:cjapp/pages/new_place.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:location/location.dart';
+
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   TabController _tabController;
-  final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
-
-
+  bool _serviceEnabled;
+  PermissionStatus _permissionGranted;
+  LocationData _locationData;
+  Location location = new Location();
+//  final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
 
   @override
   void dispose() {
@@ -24,34 +30,60 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(vsync: this, length: 3);
+  checkPermissions() async{
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
   }
 
 
+  setlocation() async{
+    _locationData = await location.getLocation();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(vsync: this, length: 4);
+    setlocation();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: Text('Welcome', style: TextStyle(
-            color: Colors.white,
-            fontSize: 22
-        ),),
+        title: Text(
+          'Welcome',
+          style: TextStyle(color: Colors.white, fontSize: 22),
+        ),
         backgroundColor: Colors.pinkAccent,
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.settings, color: Colors.white,),
-            onPressed: (){
-              _auth.signOut();
+            icon: Icon(
+              Icons.settings,
+              color: Colors.white,
+            ),
+            onPressed: () {
               Navigator.pop(context);
-              Navigator.push(context,
+              Navigator.push(
+                  context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) => Login()
-                  ));
+                      builder: (BuildContext context) => SettingsPage()
+                  )
+              );
             },
           )
         ],
@@ -63,7 +95,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
           children: <Widget>[
             Feed(),
             SearchPage(),
-            MapPage(),
+            MapPage(locationData: _locationData,),
+            ProfilePage(),
           ],
         ),
       ),
@@ -85,13 +118,28 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
           unselectedLabelColor: Colors.black38,
           tabs: <Widget>[
             Tab(
-              icon: Icon(Icons.home, color: Colors.black,),
+              icon: Icon(
+                Icons.home,
+                color: Colors.black,
+              ),
             ),
             Tab(
-              icon: Icon(Icons.search, color:  Colors.black,),
+              icon: Icon(
+                Icons.search,
+                color: Colors.black,
+              ),
             ),
             Tab(
-              icon: Icon(Icons.map, color: Colors.black,),
+              icon: Icon(
+                Icons.map,
+                color: Colors.black,
+              ),
+            ),
+            Tab(
+              icon: Icon(
+                Icons.person,
+                color: Colors.black,
+              ),
             ),
           ],
         ),

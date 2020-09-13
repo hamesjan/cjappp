@@ -2,20 +2,26 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cjapp/pages/home.dart';
+import 'package:location/location.dart';
 
 class MapPage extends StatefulWidget {
+  final LocationData locationData;
+
+  const MapPage({Key key, this.locationData}) : super(key: key);
   @override
   MapPageState createState() => MapPageState();
 }
 
 class MapPageState extends State<MapPage> {
   Completer<GoogleMapController> _controller = Completer();
+  double zoomVal=5.0;
 
   @override
   void initState() {
     super.initState();
   }
-  double zoomVal=5.0;
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,7 +122,6 @@ class MapPageState extends State<MapPage> {
                       child: myDetailsContainer1(restaurantName, EWT),
                     ),
                   ),
-
                 ],)
           ),
         ),
@@ -223,9 +228,10 @@ class MapPageState extends State<MapPage> {
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
       child: GoogleMap(
+        myLocationEnabled: true,
         myLocationButtonEnabled: false,
         mapType: MapType.normal,
-        initialCameraPosition:  CameraPosition(target: LatLng(33.8358, -118.3406), zoom: 12),
+        initialCameraPosition:  CameraPosition(target: LatLng(widget.locationData.latitude, widget.locationData.longitude), zoom: 12),
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
         },

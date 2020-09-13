@@ -12,7 +12,7 @@ class RatingStars extends StatelessWidget {
         padding: EdgeInsets.all(4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(15)),
-          color: Colors.grey
+//          color: Colors.grey
         ),
         child: Row(children: <Widget>[
           Icon(Icons.star, color: Colors.yellow,),
@@ -27,7 +27,6 @@ class RatingStars extends StatelessWidget {
         padding: EdgeInsets.all(4),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),
-            color: Colors.grey
         ),
         child: Row(children: <Widget>[
           Icon(Icons.star, color: Colors.yellow,),
@@ -43,7 +42,6 @@ class RatingStars extends StatelessWidget {
         padding: EdgeInsets.all(2),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),
-            color: Colors.grey
         ),
         child: Row(children: <Widget>[
           Icon(Icons.star, color: Colors.yellow,),
@@ -58,7 +56,6 @@ class RatingStars extends StatelessWidget {
         padding: EdgeInsets.all(2),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),
-            color: Colors.grey
         ),
         child: Row(children: <Widget>[
           Icon(Icons.star, color: Colors.yellow,),
@@ -74,7 +71,6 @@ class RatingStars extends StatelessWidget {
         padding: EdgeInsets.all(2),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),
-            color: Colors.grey
         ),
         child: Row(children: <Widget>[
           Icon(Icons.star, color: Colors.yellow,),
@@ -89,7 +85,6 @@ class RatingStars extends StatelessWidget {
         padding: EdgeInsets.all(2),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),
-            color: Colors.grey
         ),
         child: Row(children: <Widget>[
           Icon(Icons.star, color: Colors.yellow,),
@@ -105,7 +100,6 @@ class RatingStars extends StatelessWidget {
         padding: EdgeInsets.all(2),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),
-            color: Colors.grey
         ),
         child: Row(children: <Widget>[
           Icon(Icons.star, color: Colors.yellow,),
@@ -120,7 +114,6 @@ class RatingStars extends StatelessWidget {
         padding: EdgeInsets.all(2),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),
-            color: Colors.grey
         ),
         child: Row(children: <Widget>[
           Icon(Icons.star, color: Colors.yellow,),
@@ -135,7 +128,6 @@ class RatingStars extends StatelessWidget {
         padding: EdgeInsets.all(2),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),
-            color: Colors.grey
         ),
         child: Row(children: <Widget>[
           Icon(Icons.star, color: Colors.yellow,),
@@ -151,7 +143,6 @@ class RatingStars extends StatelessWidget {
         padding: EdgeInsets.all(2),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),
-            color: Colors.grey
         ),
         child: Row(children: <Widget>[
           Icon(Icons.star_half, color: Colors.yellow,),
@@ -166,7 +157,6 @@ class RatingStars extends StatelessWidget {
         padding: EdgeInsets.all(2),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),
-            color: Colors.grey
         ),
         child: Row(children: <Widget>[
           Icon(Icons.star_border, color: Colors.yellow,),

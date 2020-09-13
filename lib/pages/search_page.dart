@@ -10,25 +10,96 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-          child: FlatButton(
-            child: Container(
-              padding: EdgeInsets.all(50),
-              decoration: BoxDecoration(
-                color: Colors.blue,
-                borderRadius: BorderRadius.all(Radius.circular(100))
-              ),
-              child: Icon(Icons.search, size: 50,)
-            ),
-            onPressed: (){
+        body: SingleChildScrollView(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          InkWell(
+            onTap: () {
               showSearch(context: context, delegate: SearchEntertainment());
             },
-          )
+            child: Ink(
+              height: 50,
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                  color: Colors.white70,
+                  border: Border.all(color: Colors.black),
+                  borderRadius: BorderRadius.all(Radius.circular(15))),
+              width: MediaQuery.of(context).size.width,
+              child: Row(
+                children: <Widget>[
+                  Align(
+                    child: Icon(Icons.search),
+                    alignment: Alignment.centerLeft,
+                  ),
+                  Align(
+                    child: Text(
+                      "What's Plots?",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 15),
+                    ),
+                    alignment: Alignment.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          Text(
+            'Trending',
+            style: TextStyle(fontSize: 30),
+          ),
+          Divider(
+            thickness: 3,
+          ),
+          Text(
+            'Show Trending Searches Here',
+            style: TextStyle(fontSize: 18),
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          Text(
+            'Show Trending Searches Here',
+            style: TextStyle(fontSize: 18),
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          Text(
+            'Show Trending Searches Here',
+            style: TextStyle(fontSize: 18),
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          Text(
+            'Show Trending Searches Here',
+            style: TextStyle(fontSize: 18),
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          Text(
+            'Show Trending Searches Here',
+            style: TextStyle(fontSize: 18),
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          Text(
+            'Show Trending Searches Here',
+            style: TextStyle(fontSize: 18),
+          ),
+
+        ],
       ),
-    );
+    ));
   }
 }
-
 
 class SearchEntertainment extends SearchDelegate<String> {
   final tricks = [
@@ -48,9 +119,14 @@ class SearchEntertainment extends SearchDelegate<String> {
   @override
   List<Widget> buildActions(BuildContext context) {
     // Actions for Appbar
-    return [IconButton(icon: Icon(Icons.clear), onPressed: (){
-      query = "";
-    },)];
+    return [
+//      IconButton(
+//        icon: Icon(Icons.clear),
+//        onPressed: () {
+//          query = "";
+//        },
+//      )
+    ];
   }
 
   @override
@@ -58,7 +134,7 @@ class SearchEntertainment extends SearchDelegate<String> {
     // leading
     return IconButton(
         icon: Icon(Icons.arrow_back),
-        onPressed: (){
+        onPressed: () {
           close(context, null);
         });
   }
@@ -70,7 +146,7 @@ class SearchEntertainment extends SearchDelegate<String> {
         : tricks.where((p) => p.startsWith(query)).toList();
 
     return Container(
-      color:Colors.red,
+      color: Colors.red,
       height: 100,
       width: 100,
       child: Text(query),
@@ -81,35 +157,30 @@ class SearchEntertainment extends SearchDelegate<String> {
   Widget buildSuggestions(BuildContext context) {
     final suggestionList = query.isEmpty
         ? recentSearches
-        : tricks.where((p) => p.toUpperCase().contains(query.toUpperCase())).toList();
+        : tricks
+            .where((p) => p.toUpperCase().contains(query.toUpperCase()))
+            .toList();
 
     return ListView.builder(
         itemCount: suggestionList.length,
         itemBuilder: (context, index) => ListTile(
-          onTap: (){
-            query = '${suggestionList[index]}';
-            recentSearches.add(query);
-            showResults(context);
-          },
-          title: RichText(
-            text: TextSpan(
-                text: suggestionList[index].substring(0, query.length),
-                style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold
-                ),
-                children: [
-                  TextSpan(
+              onTap: () {
+                query = '${suggestionList[index]}';
+                recentSearches.add(query);
+                showResults(context);
+              },
+              title: RichText(
+                text: TextSpan(
+                    text: suggestionList[index].substring(0, query.length),
                     style: TextStyle(
-                        color: Colors.black
-                    ),
-                    text: suggestionList[index].substring(query.length),
-                  )
-                ]
-            ),
-          ),
-        )
-    );
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                    children: [
+                      TextSpan(
+                        style: TextStyle(color: Colors.black),
+                        text: suggestionList[index].substring(query.length),
+                      )
+                    ]),
+              ),
+            ));
   }
-
 }
