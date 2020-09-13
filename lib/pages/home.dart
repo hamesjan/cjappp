@@ -17,11 +17,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   TabController _tabController;
-  bool _serviceEnabled;
-  PermissionStatus _permissionGranted;
-  LocationData _locationData;
-  Location location = new Location();
+
 //  final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
 
   @override
@@ -30,39 +28,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
-  checkPermissions() async{
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        return;
-      }
-    }
-
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return;
-      }
-    }
-  }
-
-
-  setlocation() async{
-    _locationData = await location.getLocation();
-  }
-
   @override
   void initState() {
     super.initState();
     _tabController = TabController(vsync: this, length: 4);
-    setlocation();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         elevation: 0,
         title: Text(
@@ -81,9 +56,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) => SettingsPage()
-                  )
-              );
+                      builder: (BuildContext context) => SettingsPage()));
             },
           )
         ],
@@ -95,8 +68,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           children: <Widget>[
             Feed(),
             SearchPage(),
-            MapPage(locationData: _locationData,),
             ProfilePage(),
+            MapPage(),
           ],
         ),
       ),
@@ -131,13 +104,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             ),
             Tab(
               icon: Icon(
-                Icons.map,
+                Icons.person,
                 color: Colors.black,
               ),
             ),
             Tab(
               icon: Icon(
-                Icons.person,
+                Icons.map,
                 color: Colors.black,
               ),
             ),

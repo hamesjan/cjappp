@@ -2,12 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cjapp/pages/home.dart';
+import 'dart:async';
 import 'package:location/location.dart';
 
 class MapPage extends StatefulWidget {
-  final LocationData locationData;
-
-  const MapPage({Key key, this.locationData}) : super(key: key);
   @override
   MapPageState createState() => MapPageState();
 }
@@ -15,11 +13,29 @@ class MapPage extends StatefulWidget {
 class MapPageState extends State<MapPage> {
   Completer<GoogleMapController> _controller = Completer();
   double zoomVal=5.0;
+  bool _serviceEnabled;
+  PermissionStatus _permissionGranted;
+  Location location = new Location();
 
-  @override
-  void initState() {
-    super.initState();
+
+  checkPermissions() async {
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
   }
+
 
 
   @override
@@ -27,7 +43,18 @@ class MapPageState extends State<MapPage> {
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          buildMap(context),
+          FutureBuilder<Widget>(
+            future: buildMap(context),
+
+            builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+              if(snapshot.hasData){
+                return snapshot.data;
+          }
+              else {
+                return Center(child: CircularProgressIndicator());
+              }
+          },
+          ),
           _buildContainer(),
         ],
       ),
@@ -223,7 +250,10 @@ class MapPageState extends State<MapPage> {
     );
   }
 
-  Widget buildMap(BuildContext context) {
+  Future<Widget> buildMap(BuildContext context) async{
+    Location location = new Location();
+    LocationData _locationData = await location.getLocation();
+
     return Container(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
@@ -231,12 +261,12 @@ class MapPageState extends State<MapPage> {
         myLocationEnabled: true,
         myLocationButtonEnabled: false,
         mapType: MapType.normal,
-        initialCameraPosition:  CameraPosition(target: LatLng(widget.locationData.latitude, widget.locationData.longitude), zoom: 12),
+        initialCameraPosition:  CameraPosition(target: LatLng(_locationData.latitude, _locationData.longitude), zoom: 12),
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
         },
         markers: {
-          walmart,smart,traderJoes,costco,cvs
+          walmart,smart,traderJoes,costco,cvs, myMarker(_locationData.latitude, _locationData.longitude)
         },
       ),
     );
@@ -244,7 +274,7 @@ class MapPageState extends State<MapPage> {
 
   Future<void> GoLocation(double lat,double long) async {
     final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(lat, long), zoom: 15,tilt: 50.0,
+    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(lat, long), zoom: 30,tilt: 50.0,
       bearing: 45.0,)));
   }
 }
@@ -295,3 +325,15 @@ Marker smart = Marker(
     BitmapDescriptor.hueBlue,
   ),
 );
+
+
+Marker myMarker (lat, long) {
+  return Marker(
+    markerId: MarkerId('myMarker'),
+    position: LatLng(lat, long),
+    infoWindow: InfoWindow(title: 'You are Here'),
+    icon: BitmapDescriptor.defaultMarkerWithHue(
+      BitmapDescriptor.hueRed,
+    ),
+  );
+}
