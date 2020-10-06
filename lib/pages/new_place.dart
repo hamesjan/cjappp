@@ -109,7 +109,7 @@ class _NewPlaceState extends State<NewPlace> {
           },
         ),
       ),
-      body: SingleChildScrollView(
+      body: Builder( builder: (context) => SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Form(
           key: _submitApplicationForm,
@@ -117,6 +117,8 @@ class _NewPlaceState extends State<NewPlace> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             displaySelectedFile(_image),
+            FlatButton(child: Text('Get Image'), onPressed: (){getImage();}, ),
+            FlatButton(child: Text('Upload Image'), onPressed: (){uploadImage(context);}, ),
             TextFormField(
                 onChanged: (value) => name = value,
                 autocorrect: false,
@@ -269,6 +271,7 @@ class _NewPlaceState extends State<NewPlace> {
         ),
         ),
       ),
+      )
     );
   }
 }
