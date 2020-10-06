@@ -1,8 +1,7 @@
-import 'package:cjapp/widgets/preference_category_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cjapp/widgets/hotspot.dart';
-import 'package:cjapp/widgets/entertainment_category_button.dart';
+import  'package:cloud_firestore/cloud_firestore.dart';
 
 class Feed extends StatefulWidget {
   @override
@@ -11,10 +10,13 @@ class Feed extends StatefulWidget {
 
 class _FeedState extends State<Feed> {
   final ScrollController _scrollController = ScrollController();
-  String chosen = 'none';
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String sortBy = 'Popular';
   String price = 'Moderate';
+  String category = 'No Preference';
   String radius = '10 miles';
+  List plots = [];
+  List receivedPlots = [];
 
 
   @override
@@ -23,118 +25,167 @@ class _FeedState extends State<Feed> {
       padding: EdgeInsets.all(16),
       child: Column(
         children: <Widget>[
-          Scrollbar(
-            controller: _scrollController,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: <Widget>[
-                  EntertainmentCategoryButton(callback: (){
-                    setState(() {
-                      chosen = 'Outdoors';
-                    });
-                  }, text: 'Outdoors', chosen: chosen, icon: Icon(Icons.nature_people,),),
-                  EntertainmentCategoryButton(callback: (){
-                    setState(() {
-                      chosen = 'Indoors';
-                    });
-                  }, text: 'Indoors',chosen: chosen, icon: Icon(Icons.weekend),),
-                  EntertainmentCategoryButton(callback: (){
-                    setState(() {
-                      chosen = 'Action';
-                    });
-                  }, text: 'Action',chosen: chosen, icon: Icon(Icons.directions_bike),),
-                  EntertainmentCategoryButton(callback: (){
-                    setState(() {
-                      chosen = 'Urban';
-                    });
-                  }, text: 'Urban',chosen: chosen, icon: Icon(Icons.location_city),),
-                  EntertainmentCategoryButton(callback: (){
-                    setState(() {
-                      chosen = 'View';
-                    });
-                  }, text: 'View',chosen: chosen, icon: Icon(Icons.landscape),),
-
-                ],
-              ),
+          Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(16)),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.pinkAccent,
+                  Colors.white10
+                ]
+              )
             ),
-          ),
-
+            child:
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              DropdownButton<String>(
-                value: sortBy,
-                icon: Icon(Icons.arrow_drop_down),
-                iconSize: 24,
-                elevation: 16,
-                style: TextStyle(color: Colors.pink),
-                underline: Container(
-                  height: 2,
-                  color: Colors.pinkAccent,
-                ),
-                onChanged: (String newValue) {
-                  setState(() {
-                    sortBy = newValue;
-                  });
-                },
-                items: <String>['Popular', 'Best Rated', 'Newest', 'Rising']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              DropdownButton<String>(
-                value: price,
-                icon: Icon(Icons.arrow_drop_down),
-                iconSize: 24,
-                elevation: 16,
-                style: TextStyle(color: Colors.pink),
-                underline: Container(
-                  height: 2,
-                  color: Colors.pinkAccent,
-                ),
-                onChanged: (String newValue) {
-                  setState(() {
-                    price = newValue;
-                  });
-                },
-                items: <String>['Free', 'Cheapest', 'Moderate', 'Expensive']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              DropdownButton<String>(
-                value: radius,
-                icon: Icon(Icons.arrow_drop_down),
-                iconSize: 24,
-                elevation: 16,
-                style: TextStyle(color: Colors.pink),
-                underline: Container(
-                  height: 2,
-                  color: Colors.pinkAccent,
-                ),
-                onChanged: (String newValue) {
-                  setState(() {
-                    radius = newValue;
-                  });
-                },
-                items: <String>['5 miles', '10 miles', '50 miles', '100 miles']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text('Sort By', style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15
+                      ),),
+                      SizedBox(width: 10,),
+                      DropdownButton<String>(
+                        value: sortBy,
+                        icon: Icon(Icons.arrow_drop_down, color: Colors.black),
+                        iconSize: 24,
+                        elevation: 16,
+                        style: TextStyle(color: Colors.black,
+                        fontSize: 15,
+                        ),
+                        underline: Container(
+                          height: 2,
+                          color: Colors.pinkAccent,
+                        ),
+                        onChanged: (String newValue) {
+                          setState(() {
+                            sortBy = newValue;
+                          });
+                        },
+                        items: <String>['Popular', 'Best Rated', 'Newest', 'Rising']
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
 
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text('Category', style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        fontSize: 15
+                      ),),
+                      SizedBox(width: 10,),
+                      DropdownButton<String> (
+                        value: category,
+                    icon: Icon(Icons.arrow_drop_down, color: Colors.black),
+                    iconSize: 24,
+                    elevation: 16,
+                    style: TextStyle(color: Colors.black,
+                    ),
+                    underline: Container(
+                      height: 2,
+                      color: Colors.pinkAccent,
+                    ),
+                    onChanged: (String newValue) {
+                      setState(() {
+                        category = newValue;
+                      });
+                    },
+                    items: <String>['No Preference', 'Outdoors', 'Indoors', 'Action', 'Urban', 'View']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                    ],
+                  )
+
+                ],
+              ),
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      Text('Price', style: TextStyle(
+                          fontWeight: FontWeight.bold
+                      ),),
+                      SizedBox(width: 10,),
+                      DropdownButton<String>(
+                        value: price,
+                        icon: Icon(Icons.arrow_drop_down, color: Colors.black),
+                        iconSize: 24,
+                        elevation: 16,
+                        style: TextStyle(color: Colors.black),
+                        underline: Container(
+                          height: 2,
+                          color: Colors.pinkAccent,
+                        ),
+                        onChanged: (String newValue) {
+                          setState(() {
+                            price = newValue;
+                          });
+                        },
+                        items: <String>['Free', 'Cheapest', 'Moderate', 'Expensive']
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      )
+                    ],
+                  ),
+                  Row(
+                      children: [
+                        Text('Radius', style: TextStyle(
+                            fontWeight: FontWeight.bold
+                        )
+                          ,),
+                        SizedBox(width: 10,),
+                        DropdownButton<String>(
+                          value: radius,
+                          icon: Icon(Icons.arrow_drop_down, color: Colors.black,),
+                          iconSize: 24,
+                          elevation: 16,
+                          style: TextStyle(color: Colors.black),
+                          underline: Container(
+                            height: 2,
+                            color: Colors.pinkAccent,
+                          ),
+                          onChanged: (String newValue) {
+                            setState(() {
+                              radius = newValue;
+                            });
+                          },
+                          items: <String>['5 miles', '10 miles', '50 miles', '100 miles']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                ],
+              )
             ],
           ),
+    ),
           SizedBox(
             height: 15,
           ),
@@ -146,19 +197,50 @@ class _FeedState extends State<Feed> {
             height: 15,
           ),
           Container(
-            child: Column(
-              children: <Widget>[
-                HotSpot(),
-                SizedBox(
-                  height: 10,
-                ),
-                HotSpot(),
-                SizedBox(
-                  height: 10,
-                ),
-                HotSpot(),
-              ],
-            ),
+            child: FutureBuilder(
+                future: _firestore.collection('plots').get(),
+                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.hasData) {
+                    plots.clear();
+                    receivedPlots.clear();
+                    snapshot.data.docs.forEach((element) => receivedPlots.add(element.data()));
+                    // print(receivedPlots);
+                    receivedPlots.forEach((element) {
+                      if (element['approved']){
+                        plots.add(HotSpot(
+                          name: element['name'],
+                          radius: element['radius'],
+                          location: element['location'],
+                          category: element['category'],
+                          ratings: element['ratings'],
+                          price: element['price'],
+                          ratingsNumbers: element['ratingsNumbers'],
+                          website: element['website'],
+                          zipCode: element['zipCode'],
+                        ));
+                      }
+                    });
+                    return new ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: plots.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                            child: plots[index],
+                            padding: EdgeInsets.only(
+                              top: 10,
+                              bottom: 10
+                            ),
+                          );
+                        });
+                  }
+                  if( snapshot.connectionState == ConnectionState.waiting){
+                    return CircularProgressIndicator();
+                  }
+                  else {
+                    return Container(width: 10, height: 10, color: Colors.red,);
+                  }
+                }
+            )
           ),
         ],
       ),

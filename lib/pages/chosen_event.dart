@@ -4,6 +4,11 @@ import 'package:cjapp/pages/home.dart';
 import 'package:cjapp/widgets/rating_stars.dart';
 
 class ChosenEvent extends StatelessWidget {
+  final VoidCallback callback;
+  final String text;
+
+  const ChosenEvent({Key key, this.callback, this.text}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,7 +94,6 @@ class ChosenEvent extends StatelessWidget {
                     InkWell(
                       borderRadius: BorderRadius.all(Radius.circular(25)),
                       onTap: () {
-                        print('Hello');
                       },
                       child: Ink(
                         padding: EdgeInsets.all(5),

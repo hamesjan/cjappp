@@ -4,6 +4,19 @@ import 'package:cjapp/widgets/rating_stars.dart';
 import 'package:cjapp/pages/chosen_event.dart';
 
 class HotSpot extends StatelessWidget {
+  final String name;
+  final String zipCode;
+  final String location;
+  final int radius;
+  final double ratingsNumbers;
+  final List ratings;
+  final String website;
+  final String category;
+  final String price;
+
+
+  const HotSpot({Key key, this.name, this.zipCode, this.location, this.radius, this.ratingsNumbers, this.ratings, this.website, this.category, this.price}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -49,7 +62,7 @@ class HotSpot extends StatelessWidget {
                         Row(
                           children: <Widget>[
                             Text(
-                              'Sky Zone',
+                              name,
                               style: TextStyle(
                                   fontSize: 22, fontWeight: FontWeight.bold),
                             ),
@@ -58,9 +71,14 @@ class HotSpot extends StatelessWidget {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 15),
                             ),
-                            RatingStars(rating: 4.5),
+                            RatingStars(rating: ratingsNumbers),
                             Text(
-                              ' 4.6/5',
+                              ' • ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15),
+                            ),
+                            Text(
+                              '$ratingsNumbers / 5.0',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 15),
                             ),
@@ -72,7 +90,7 @@ class HotSpot extends StatelessWidget {
                         Row(
                           children: <Widget>[
                             Text(
-                              'Action, Moderate Price, 10 miles',
+                              category,
                               style: TextStyle(
                                   fontSize: 15,
                                   color: Colors.blue,

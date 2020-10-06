@@ -15,11 +15,11 @@ class RatingStars extends StatelessWidget {
 //          color: Colors.grey
         ),
         child: Row(children: <Widget>[
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star, color: Colors.yellow,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star, color: Colors.pink,),
         ],),
       );
     } else if (rating >= 4.5) {
@@ -29,11 +29,11 @@ class RatingStars extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
         child: Row(children: <Widget>[
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star_half, color: Colors.yellow,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star_half, color: Colors.pink,),
         ],),
       );
     }
@@ -44,11 +44,11 @@ class RatingStars extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
         child: Row(children: <Widget>[
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
         ],),
       );
     }else if (rating >= 3.5) {
@@ -58,11 +58,11 @@ class RatingStars extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
         child: Row(children: <Widget>[
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star_half, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star_half, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
         ],),
       );
     }
@@ -73,11 +73,11 @@ class RatingStars extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
         child: Row(children: <Widget>[
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
         ],),
       );
     }else if (rating >= 2.5) {
@@ -87,11 +87,11 @@ class RatingStars extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
         child: Row(children: <Widget>[
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star_half, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star_half, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
         ],),
       );
     }
@@ -102,11 +102,11 @@ class RatingStars extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
         child: Row(children: <Widget>[
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
         ],),
       );
     }else if (rating >= 1.5) {
@@ -116,11 +116,11 @@ class RatingStars extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
         child: Row(children: <Widget>[
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star_half, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star_half, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
         ],),
       );
     }else if (rating >= 1.0) {
@@ -130,11 +130,11 @@ class RatingStars extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
         child: Row(children: <Widget>[
-          Icon(Icons.star, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
+          Icon(Icons.star, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
         ],),
       );
     }
@@ -145,11 +145,11 @@ class RatingStars extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
         child: Row(children: <Widget>[
-          Icon(Icons.star_half, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
+          Icon(Icons.star_half, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
         ],),
       );
     } else {
@@ -159,11 +159,11 @@ class RatingStars extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
         child: Row(children: <Widget>[
-          Icon(Icons.star_border, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
-          Icon(Icons.star_border, color: Colors.yellow,),
+          Icon(Icons.star_border, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
+          Icon(Icons.star_border, color: Colors.pink,),
         ],),
       );
     }

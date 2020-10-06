@@ -1,15 +1,11 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:cjapp/pages/login.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cjapp/pages/feed.dart';
 import 'package:cjapp/pages/search_page.dart';
 import 'package:cjapp/pages/map_page.dart';
 import 'package:cjapp/pages/settings.dart';
 import 'package:cjapp/pages/profile.dart';
-import 'package:cjapp/pages/new_place.dart';
-import 'package:firebase_auth/firebase_auth.dart' as auth;
-import 'package:location/location.dart';
+import 'package:cjapp/pages/testing.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -69,21 +65,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             Feed(),
             SearchPage(),
             ProfilePage(),
+            // Testing(),
             MapPage(),
           ],
         ),
       ),
-//      floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
-//      floatingActionButton: FloatingActionButton(
-//        onPressed: () {
-//          Navigator.pop(context);
-//          Navigator.push(context,
-//              MaterialPageRoute(
-//                  builder: (BuildContext context) => NewPlace()
-//              ));        },
-//        child: Icon(Icons.add),
-//        backgroundColor: Colors.pink,
-//      ),
       bottomNavigationBar: SafeArea(
         child: TabBar(
           controller: _tabController,
@@ -108,6 +94,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 color: Colors.black,
               ),
             ),
+            // Tab(
+            //   icon: Icon(
+            //     Icons.error,
+            //     color: Colors.red,
+            //   ),
+            // ),
             Tab(
               icon: Icon(
                 Icons.map,

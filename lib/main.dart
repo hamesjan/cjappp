@@ -22,9 +22,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
+        fontFamily: 'OpenSans',
         primarySwatch: Colors.pink,
       ),
-      home: _auth.currentUser == null ? Login() : Home(),
+      // home: Home(),
+      home:_auth.currentUser == null ? Login() : Home(),
     );
   }
 }

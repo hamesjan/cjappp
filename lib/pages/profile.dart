@@ -1,3 +1,4 @@
+import 'package:cjapp/pages/new_place.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cjapp/widgets/display_review.dart';
@@ -81,11 +82,19 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             Divider(thickness: 2,),
-            CustomButton(text: 'Add a new Plot!', callback: (){},),
+            CustomButton(text: 'View Favorites', callback: (){},),
             SizedBox(height: 10,),
             CustomButton(text: 'View All Reviews', callback: (){},),
             SizedBox(height: 10,),
-            CustomButton(text: 'View Favorites', callback: (){},),
+            CustomButton(text: 'Add a new Plot!', callback: (){
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => NewPlace()
+                )
+              );
+            },),
 
           ],
         ),
