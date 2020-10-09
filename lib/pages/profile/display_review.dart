@@ -1,7 +1,7 @@
 import 'package:cjapp/widgets/rating_stars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:cjapp/widgets/display_review.dart';
+import 'package:cjapp/pages/profile/display_review.dart';
 
 class DisplayReview extends StatelessWidget {
   final double rating;
@@ -18,7 +18,7 @@ class DisplayReview extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
-              color: Colors.grey,
+              color: Colors.white54,
               borderRadius: BorderRadius.all(Radius.circular(25))),
           child: Column(
             children: [

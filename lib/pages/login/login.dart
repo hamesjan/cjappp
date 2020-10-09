@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:cjapp/pages/registration.dart';
+import 'package:cjapp/pages/login/registration.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/services.dart';
 import 'package:cjapp/pages/home.dart';

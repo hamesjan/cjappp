@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cjapp/widgets/rating_stars.dart';
-import 'package:cjapp/pages/chosen_event.dart';
+import 'package:cjapp/pages/feed/chosen_event.dart';
 
 class HotSpot extends StatelessWidget {
   final String name;
@@ -58,32 +58,28 @@ class HotSpot extends StatelessWidget {
                 Container(
                     padding: EdgeInsets.all(16),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            Text(
-                              name,
-                              style: TextStyle(
-                                  fontSize: 22, fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              ' • ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 15),
-                            ),
-                            RatingStars(rating: ratingsNumbers),
-                            Text(
-                              ' • ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 15),
-                            ),
-                            Text(
-                              '$ratingsNumbers / 5.0',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 15),
-                            ),
-                          ],
+                        Text(
+                          name,
+                          style: TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.bold),
                         ),
+                       Row(
+                            children: <Widget>[
+                              RatingStars(rating: ratingsNumbers),
+                              Text(
+                                ' • ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
+                              Text(
+                                '$ratingsNumbers / 5.0',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
+                            ],
+                          ),
                         SizedBox(
                           height: 5,
                         ),

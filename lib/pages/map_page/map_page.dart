@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cjapp/pages/home.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 import 'package:location/location.dart';
 
@@ -12,10 +13,14 @@ class MapPage extends StatefulWidget {
 
 class MapPageState extends State<MapPage> {
   Completer<GoogleMapController> _controller = Completer();
-  double zoomVal=5.0;
+  double zoomVal = 5.0;
   bool _serviceEnabled;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   PermissionStatus _permissionGranted;
   Location location = new Location();
+  List<Marker> markerList = [];
+  List receivedPlots = [];
+
 
 
   checkPermissions() async {
@@ -45,7 +50,6 @@ class MapPageState extends State<MapPage> {
         children: <Widget>[
           FutureBuilder<Widget>(
             future: buildMap(context),
-
             builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
               if(snapshot.hasData){
                 return snapshot.data;
@@ -55,45 +59,13 @@ class MapPageState extends State<MapPage> {
               }
           },
           ),
+          // ZoomOut(),
+          // ZoomIn(),
           _buildContainer(),
         ],
       ),
     );
   }
-
-
-  Widget ZoomIn() {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: IconButton(
-          icon: Icon(Icons.zoom_out,color:Color(0xff6200ee)),
-          onPressed: () {
-            zoomVal--;
-            _minus( zoomVal);
-          }),
-    );
-  }
-  Widget ZoomOut() {
-    return Align(
-      alignment: Alignment.topRight,
-      child: IconButton(
-          icon: Icon(Icons.zoom_in,color:Color(0xff6200ee)),
-          onPressed: () {
-            zoomVal++;
-            _plus(zoomVal);
-          }),
-    );
-  }
-
-  Future<void> _minus(double zoomVal) async {
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(33.8358, -118.3406), zoom: zoomVal)));
-  }
-  Future<void> _plus(double zoomVal) async {
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(33.8358, -118.3406), zoom: zoomVal)));
-  }
-
 
   Widget _buildContainer() {
     return Align(
@@ -154,6 +126,37 @@ class MapPageState extends State<MapPage> {
         ),
       ),
     );
+  }
+
+  Widget ZoomIn() {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: IconButton(
+          icon: Icon(Icons.zoom_out,color:Color(0xff6200ee)),
+          onPressed: () {
+            zoomVal--;
+            _minus( zoomVal);
+          }),
+    );
+  }
+  Widget ZoomOut() {
+    return Align(
+      alignment: Alignment.topRight,
+      child: IconButton(
+          icon: Icon(Icons.zoom_in,color:Color(0xff6200ee)),
+          onPressed: () {
+            zoomVal++;
+            _plus(zoomVal);
+          }),
+    );
+  }
+  Future<void> _minus(double zoomVal) async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(33.8358, -118.3406), zoom: zoomVal)));
+  }
+  Future<void> _plus(double zoomVal) async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(33.8358, -118.3406), zoom: zoomVal)));
   }
 
   Widget myDetailsContainer1(String restaurantName, String EWT) {
@@ -253,11 +256,33 @@ class MapPageState extends State<MapPage> {
   Future<Widget> buildMap(BuildContext context) async{
     Location location = new Location();
     LocationData _locationData = await location.getLocation();
+    var firestoredata = await  _firestore.collection('plots').get();
+    markerList.clear();
+    receivedPlots.clear();
+    firestoredata.docs.forEach((element) => receivedPlots.add(element.data()));
+    receivedPlots.forEach((element) {
+      if (element['approved']){
+        markerList.add(Marker(
+          onTap: (){
+            GoLocation(element['lat'], element['long']);
+          },
+        markerId: MarkerId(element['name']),
+      position: LatLng(element['lat'],element['long']),
+      infoWindow: InfoWindow(title: element['name']),
+      icon: BitmapDescriptor.defaultMarkerWithHue(
+      BitmapDescriptor.hueBlue,
+      ),
+      ));
+      }
+    });
+
+    markerList.add(myMarker(_locationData.latitude, _locationData.longitude));
 
     return Container(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
       child: GoogleMap(
+        zoomGesturesEnabled: true,
         myLocationEnabled: true,
         myLocationButtonEnabled: false,
         mapType: MapType.normal,
@@ -265,75 +290,31 @@ class MapPageState extends State<MapPage> {
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
         },
-        markers: {
-          walmart,smart,traderJoes,costco,cvs, myMarker(_locationData.latitude, _locationData.longitude)
-        },
+        markers: markerList.toSet(),
       ),
     );
   }
 
   Future<void> GoLocation(double lat,double long) async {
     final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(lat, long), zoom: 30,tilt: 50.0,
+    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(lat, long), zoom: 18,tilt: 50.0,
       bearing: 45.0,)));
   }
+
+  Marker myMarker (lat, long) {
+    return Marker(
+      onTap: (){
+        GoLocation(lat, long);
+      },
+      markerId: MarkerId('myMarker'),
+      position: LatLng(lat, long),
+      infoWindow: InfoWindow(title: 'You are Here'),
+      icon: BitmapDescriptor.defaultMarkerWithHue(
+        BitmapDescriptor.hueRed,
+      ),
+    );
+  }
+
 }
 
-Marker traderJoes = Marker(
-  markerId: MarkerId('TraderJoes'),
-  position: LatLng(33.85226, -118.353),
-  infoWindow: InfoWindow(title: 'Trader Joes'),
-  icon: BitmapDescriptor.defaultMarkerWithHue(
-    BitmapDescriptor.hueBlue,
-  ),
-);
 
-Marker costco = Marker(
-  markerId: MarkerId('Costco'),
-  position: LatLng(33.8065, -118.33337),
-  infoWindow: InfoWindow(title: 'Costco'),
-  icon: BitmapDescriptor.defaultMarkerWithHue(
-    BitmapDescriptor.hueBlue,
-  ),
-);
-
-Marker cvs = Marker(
-  markerId: MarkerId('CVS'),
-  position: LatLng(33.8393, -118.3627),
-  infoWindow: InfoWindow(title: 'CVS Pharmacy'),
-  icon: BitmapDescriptor.defaultMarkerWithHue(
-    BitmapDescriptor.hueBlue,
-  ),
-);
-
-//New York Marker
-
-Marker walmart = Marker(
-  markerId: MarkerId('walmart'),
-  position: LatLng(33.827957, -118.35346),
-  infoWindow: InfoWindow(title: 'Walmart'),
-  icon: BitmapDescriptor.defaultMarkerWithHue(
-    BitmapDescriptor.hueBlue,
-  ),
-);
-
-Marker smart = Marker(
-  markerId: MarkerId('smart'),
-  position: LatLng(33.83722, -118.329367),
-  infoWindow: InfoWindow(title: 'S-Mart'),
-  icon: BitmapDescriptor.defaultMarkerWithHue(
-    BitmapDescriptor.hueBlue,
-  ),
-);
-
-
-Marker myMarker (lat, long) {
-  return Marker(
-    markerId: MarkerId('myMarker'),
-    position: LatLng(lat, long),
-    infoWindow: InfoWindow(title: 'You are Here'),
-    icon: BitmapDescriptor.defaultMarkerWithHue(
-      BitmapDescriptor.hueRed,
-    ),
-  );
-}

@@ -33,7 +33,7 @@ dependencies:
   google_maps_flutter:
   intl:
   image_picker:
-
+  webview_flutter:
 
 
 dev_dependencies:

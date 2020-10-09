@@ -9,7 +9,6 @@ class RatingStars extends StatelessWidget {
   Widget build(BuildContext context) {
     if (rating == 5) {
       return Container(
-        padding: EdgeInsets.all(4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(15)),
 //          color: Colors.grey
@@ -24,7 +23,6 @@ class RatingStars extends StatelessWidget {
       );
     } else if (rating >= 4.5) {
       return Container(
-        padding: EdgeInsets.all(4),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
@@ -39,7 +37,6 @@ class RatingStars extends StatelessWidget {
     }
     else if (rating >= 4.0) {
       return Container(
-        padding: EdgeInsets.all(2),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
@@ -53,7 +50,6 @@ class RatingStars extends StatelessWidget {
       );
     }else if (rating >= 3.5) {
       return Container(
-        padding: EdgeInsets.all(2),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
@@ -68,7 +64,6 @@ class RatingStars extends StatelessWidget {
     }
     else if (rating >= 3.0) {
       return Container(
-        padding: EdgeInsets.all(2),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
@@ -82,7 +77,6 @@ class RatingStars extends StatelessWidget {
       );
     }else if (rating >= 2.5) {
       return Container(
-        padding: EdgeInsets.all(2),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
@@ -97,7 +91,6 @@ class RatingStars extends StatelessWidget {
     }
     else if (rating >= 2.0) {
       return Container(
-        padding: EdgeInsets.all(2),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
@@ -111,7 +104,6 @@ class RatingStars extends StatelessWidget {
       );
     }else if (rating >= 1.5) {
       return Container(
-        padding: EdgeInsets.all(2),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
@@ -125,7 +117,6 @@ class RatingStars extends StatelessWidget {
       );
     }else if (rating >= 1.0) {
       return Container(
-        padding: EdgeInsets.all(2),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
@@ -140,9 +131,8 @@ class RatingStars extends StatelessWidget {
     }
     else if (rating >= 0.5) {
       return Container(
-        padding: EdgeInsets.all(2),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(15)),
+            borderRadius: BorderRadius.all(Radius.circular(10)),
         ),
         child: Row(children: <Widget>[
           Icon(Icons.star_half, color: Colors.pink,),
@@ -154,9 +144,8 @@ class RatingStars extends StatelessWidget {
       );
     } else {
       return Container(
-        padding: EdgeInsets.all(2),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(15)),
+            borderRadius: BorderRadius.all(Radius.circular(10)),
         ),
         child: Row(children: <Widget>[
           Icon(Icons.star_border, color: Colors.pink,),

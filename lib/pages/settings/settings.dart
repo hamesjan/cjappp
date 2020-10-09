@@ -1,10 +1,10 @@
-import 'package:cjapp/widgets/select_setting.dart';
+import 'package:cjapp/pages/settings/select_setting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cjapp/pages/home.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
-import 'package:cjapp/pages/login.dart';
-import 'package:cjapp/pages/settings.dart';
+import 'package:cjapp/pages/login/login.dart';
+import 'package:cjapp/pages/settings/settings.dart';
 
 class SettingsPage extends StatelessWidget {
     final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;

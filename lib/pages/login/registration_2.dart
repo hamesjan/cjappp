@@ -9,9 +9,8 @@ import 'package:cjapp/services/BaseAuth.dart';
 
 class RegistrationTwo extends StatefulWidget {
   final String email;
-  final String password;
 
-  const RegistrationTwo({Key key, this.email, this.password}) : super(key: key);
+  const RegistrationTwo({Key key, this.email}) : super(key: key);
 
   @override
   _RegistrationTwoState createState() => _RegistrationTwoState();

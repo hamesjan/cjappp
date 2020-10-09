@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:cjapp/pages/feed.dart';
-import 'package:cjapp/pages/search_page.dart';
-import 'package:cjapp/pages/map_page.dart';
-import 'package:cjapp/pages/settings.dart';
-import 'package:cjapp/pages/profile.dart';
+import 'package:cjapp/pages/feed/feed.dart';
+import 'package:cjapp/pages/search/search_page.dart';
+import 'package:cjapp/pages/map_page/map_page.dart';
+import 'package:cjapp/pages/settings/settings.dart';
+import 'package:cjapp/pages/profile/profile.dart';
 import 'package:cjapp/pages/testing.dart';
 
 class Home extends StatefulWidget {

@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
 
+
 class NewPlace extends StatefulWidget {
   @override
   _NewPlaceState createState() => _NewPlaceState();
@@ -36,23 +37,32 @@ class _NewPlaceState extends State<NewPlace> {
     });
   }
 
-  Future<void> uploadPlot() async {
+  Future<void> uploadPlot(givenContext) async {
     try {
       auth.User _user = await _auth.getCurrentUser();
       await _firestore.collection('plots').doc(name).set({
         'name': name,
         'zipCode': zipCode,
         'location' : location,
-        'radius' : null,
         'ratings': [],
+        'likes': 0,
         'ratingsNumbers': 0.0,
         'website': website,
         'category': category,
         'approved': false,
-        'coords': null,
+        'lat': null,
+        'long': null,
         'price': price,
         'by': _user.uid,
       }).catchError((onError) => {print(onError.toString())});
+      String filename = '$name.jpg';
+      StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child(filename);
+      StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
+      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+      // setState(() {
+      //   print('uploaded successfully');
+      //   Scaffold.of(givenContext).showSnackBar(SnackBar(content: Text('Uploaded'),));
+      // });
 
       Navigator.pop(context);
       Navigator.push(context,
@@ -68,17 +78,6 @@ class _NewPlaceState extends State<NewPlace> {
     }
   }
 
-  Future uploadImage(BuildContext context) async{
-    String filename = '$name.jpg';
-    StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child(filename);
-    StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-    setState(() {
-      print('uplaoded Succesfully');
-      Scaffold.of(context).showSnackBar(SnackBar(content: Text('Uploaded'),));
-    });
-  }
-
   Widget displaySelectedFile(File file) {
     return new ClipRRect(
       borderRadius: BorderRadius.only(
@@ -89,9 +88,32 @@ class _NewPlaceState extends State<NewPlace> {
           ? new Image(image: AssetImage(
           'assets/images/no-image-available.png.jpeg'
       ),)
-          : new Image.file(file, width: 300, height: 300, fit: BoxFit.fill,),
+          : new Image.file(file, width: 200, height: 200, fit: BoxFit.fill,),
     );
   }
+
+  String validateName(String value) {
+    if (value == null || value.isEmpty) {
+      return "Missing Name";
+    }
+    return null;
+  }
+
+  String validateLocation(String value) {
+    if (value == null || value.isEmpty) {
+      return "Missing Location";
+    }
+    return null;
+  }
+
+
+  String validateZip(String value) {
+    if (value == null || value.isEmpty) {
+      return "Missing Zip";
+    }
+    return null;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -117,9 +139,10 @@ class _NewPlaceState extends State<NewPlace> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             displaySelectedFile(_image),
-            FlatButton(child: Text('Get Image'), onPressed: (){getImage();}, ),
-            FlatButton(child: Text('Upload Image'), onPressed: (){uploadImage(context);}, ),
+            RaisedButton(child: Text('Get Image'), onPressed:(){getImage();},elevation: 15, padding: EdgeInsets.all(5),),
+            SizedBox(height: 5,),
             TextFormField(
+                validator: (text) => validateName(text),
                 onChanged: (value) => name = value,
                 autocorrect: false,
                 maxLines: null,
@@ -133,6 +156,7 @@ class _NewPlaceState extends State<NewPlace> {
             ),
             SizedBox(height: 10,),
             TextFormField(
+                validator: (text) => validateLocation(text),
                 onChanged: (value) => location = value,
                 autocorrect: false,
                 maxLines: null,
@@ -158,6 +182,7 @@ class _NewPlaceState extends State<NewPlace> {
             ),
             SizedBox(height: 10,),
             TextFormField(
+                validator: (text) => validateZip(text),
                 onChanged: (value) => zipCode = value,
                 autocorrect: false,
                 decoration: InputDecoration(
@@ -258,13 +283,26 @@ class _NewPlaceState extends State<NewPlace> {
               ),
             ),
             SizedBox(
-              height: 15,
+              height: 10,
+            ),
+            errorMessage != null
+                ? Text(
+              errorMessage,
+              style: TextStyle(color: Colors.red),
+              textAlign: TextAlign.center,
+            )
+                : Container(),
+            SizedBox(
+              height: 10,
             ),
             CustomButton(
               text: 'Submit',
               callback: () {
-                uploadPlot();
-
+                if (_submitApplicationForm.currentState.validate()) {
+                  uploadPlot(context);
+                } else {
+                  print(errorMessage);
+                }
               },
             )
           ],

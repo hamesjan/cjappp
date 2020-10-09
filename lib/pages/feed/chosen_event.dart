@@ -1,3 +1,5 @@
+import 'package:cjapp/pages/feed/plots_web_view.dart';
+import 'package:cjapp/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cjapp/pages/home.dart';
@@ -110,7 +112,11 @@ class ChosenEvent extends StatelessWidget {
                           ],
                         ),
                       ),
-                    )
+                    ),
+                    CustomButton(text: 'Buy Ticket', callback: (){
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (BuildContext context) => PlotsWebView()));
+                    },)
                   ],
                 ))
           ],

@@ -1,7 +1,7 @@
-import 'package:cjapp/pages/new_place.dart';
+import 'package:cjapp/pages/profile/new_place.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:cjapp/widgets/display_review.dart';
+import 'package:cjapp/pages/profile/display_review.dart';
 import 'package:cjapp/widgets/custom_button.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -58,6 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             Divider(thickness: 2,),
             Container(
+              color: Colors.blueGrey,
               padding: EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
