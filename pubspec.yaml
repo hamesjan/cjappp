@@ -34,7 +34,7 @@ dependencies:
   intl:
   image_picker:
   webview_flutter:
-
+  flutter_rating_bar:
 
 dev_dependencies:
   flutter_test:

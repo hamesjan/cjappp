@@ -33,8 +33,7 @@ class _RegistrationTwoState extends State<RegistrationTwo> {
         'email': widget.email,
         'zipCode': zipCode,
         'favorites': [],
-        'ratings': [],
-        'ratings_numbers': [],
+        'reviews': [],
         'uid': _user.uid,
       }).catchError((onError) => {loading = false});
 

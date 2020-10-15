@@ -92,9 +92,7 @@ class MapPageState extends State<MapPage> {
 
   Widget _boxes(String _image, double lat,double long,String restaurantName, String EWT) {
     return  GestureDetector(
-      onTap: () {
-        GoLocation(lat,long);
-      },
+      onTap: () {GoLocation(lat,long);},
       child:Container(
         child: new FittedBox(
           child: Material(
@@ -127,7 +125,6 @@ class MapPageState extends State<MapPage> {
       ),
     );
   }
-
   Widget ZoomIn() {
     return Align(
       alignment: Alignment.topLeft,
@@ -139,6 +136,7 @@ class MapPageState extends State<MapPage> {
           }),
     );
   }
+
   Widget ZoomOut() {
     return Align(
       alignment: Alignment.topRight,
@@ -150,6 +148,7 @@ class MapPageState extends State<MapPage> {
           }),
     );
   }
+
   Future<void> _minus(double zoomVal) async {
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(33.8358, -118.3406), zoom: zoomVal)));

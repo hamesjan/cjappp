@@ -57,38 +57,11 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             Divider(thickness: 2,),
-            Container(
-              color: Colors.blueGrey,
-              padding: EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Top Reviews:', style: TextStyle(
-                    fontSize: 22
-                  ),),
-                  SizedBox(height: 10,),
-                  DisplayReview(
-                    title: 'Skyzone',
-                    rating: 3.5,
-                    likes: 20,
-                    text: 'Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah ',
-                  ),
-                  DisplayReview(
-                    title: 'Cheese',
-                    rating: 3.5,
-                    likes: 10,
-                    text: 'Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah ',
-                  ),
-                ],
-              ),
-            ),
-            Divider(thickness: 2,),
             CustomButton(text: 'View Favorites', callback: (){},),
             SizedBox(height: 10,),
             CustomButton(text: 'View All Reviews', callback: (){},),
             SizedBox(height: 10,),
             CustomButton(text: 'Add a new Plot!', callback: (){
-              Navigator.pop(context);
               Navigator.push(
                 context,
                 MaterialPageRoute(

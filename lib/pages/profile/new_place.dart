@@ -45,7 +45,6 @@ class _NewPlaceState extends State<NewPlace> {
         'zipCode': zipCode,
         'location' : location,
         'ratings': [],
-        'likes': 0,
         'ratingsNumbers': 0.0,
         'website': website,
         'category': category,
@@ -124,14 +123,10 @@ class _NewPlaceState extends State<NewPlace> {
           icon: Icon(Icons.arrow_back_ios_rounded),
           onPressed: (){
             Navigator.pop(context);
-            Navigator.push(context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => Home()
-            ));
           },
         ),
       ),
-      body: Builder( builder: (context) => SingleChildScrollView(
+      body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Form(
           key: _submitApplicationForm,
@@ -309,7 +304,6 @@ class _NewPlaceState extends State<NewPlace> {
         ),
         ),
       ),
-      )
     );
   }
 }

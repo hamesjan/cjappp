@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cjapp/pages/feed/hotspot.dart';
 import  'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:cjapp/services/BaseAuth.dart';
 
 class Feed extends StatefulWidget {
   @override
@@ -9,7 +11,6 @@ class Feed extends StatefulWidget {
 }
 
 class _FeedState extends State<Feed> {
-  final ScrollController _scrollController = ScrollController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String sortBy = 'Popular';
   String price = 'Moderate';
@@ -18,12 +19,30 @@ class _FeedState extends State<Feed> {
   List plots = [];
   List receivedPlots = [];
 
+  Future getInformation () async {
+    List info = [];
+    var _auth = Auth();
+    String username;
+    auth.User _user = await _auth.getCurrentUser();
+    var allUsers = await _firestore.collection('users').get();
+    allUsers.docs.forEach((element) {
+      if (element.data()['uid'] == _user.uid) {
+        username = element.data()['username'];
+      }
+    });
+
+    info.add(await _firestore.collection('plots').get());
+    var resUsers = await _firestore.collection('users').doc(username).get();
+    List currFavorites = resUsers.data()['favorites'];
+    info.add(currFavorites);
+    return info;
+  }
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: EdgeInsets.all(16),
-      child: Column(
+      child: Container(child: Column(
         children: <Widget>[
           Container(
             padding: EdgeInsets.all(16),
@@ -198,52 +217,49 @@ class _FeedState extends State<Feed> {
           ),
           Container(
             child: FutureBuilder(
-                future: _firestore.collection('plots').get(),
-                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                future: getInformation(),
+                builder: (context, AsyncSnapshot snapshot) {
                   if (snapshot.hasData) {
                     plots.clear();
                     receivedPlots.clear();
-                    snapshot.data.docs.forEach((element) => receivedPlots.add(element.data()));
-                    // print(receivedPlots);
+                    snapshot.data[0].docs.forEach((element) => receivedPlots.add(element.data()));
                     receivedPlots.forEach((element) {
+                      // if name in fav,
+                      bool fav = false;
+                      if(snapshot.data[1].contains(element['name'])){
+                        fav = true;
+                      }
                       if (element['approved']){
                         plots.add(HotSpot(
                           name: element['name'],
-                          radius: element['radius'],
                           location: element['location'],
                           category: element['category'],
+                          by: element['by'],
+                          fav: fav,
                           ratings: element['ratings'],
                           price: element['price'],
-                          ratingsNumbers: element['ratingsNumbers'],
+                          ratingsNumbers: element['ratingsNumbers'].toDouble(),
                           website: element['website'],
                           zipCode: element['zipCode'],
                         ));
                       }
                     });
-                    return new ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: plots.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                            child: plots[index],
-                            padding: EdgeInsets.only(
-                              top: 10,
-                              bottom: 10
-                            ),
-                          );
-                        });
+                    plots.sort((a, b) => a.category.compareTo(category));
+
+                    return new Column(children: plots.map((item) => new Container(margin: EdgeInsets.only(bottom: 20),child: item)).toList());
                   }
                   if( snapshot.connectionState == ConnectionState.waiting){
-                    return CircularProgressIndicator();
+                    return Container(child: CircularProgressIndicator());
                   }
                   else {
-                    return Container(width: 10, height: 10, color: Colors.red,);
+                    return Container(width: 10, height: 200, color: Colors.red,);
                   }
                 }
             )
           ),
         ],
       ),
+      )
     );
   }
 }

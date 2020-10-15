@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cjapp/pages/home.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cjapp/pages/login/login.dart';
-import 'package:cjapp/pages/settings/settings.dart';
+import 'package:cjapp/pages/settings/your_account.dart';
 
 class SettingsPage extends StatelessWidget {
     final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
@@ -35,9 +35,12 @@ class SettingsPage extends StatelessWidget {
               callback: (){},
             ),
             SelectIconSetting(
-              icon: Icon(Icons.notifications),
-              text: 'Notifications',
-              callback: (){},
+              icon: Icon(Icons.person),
+              text: 'Your Account',
+              callback: (){
+                Navigator.push(context,
+                MaterialPageRoute(builder: (BuildContext context) => YourAccount()));
+              },
             ),
             SelectIconSetting(
               icon: Icon(Icons.payment),
@@ -53,12 +56,33 @@ class SettingsPage extends StatelessWidget {
             SelectTextSetting(
               text: 'Log Out',
               callback: (){
-                _auth.signOut();
-                Navigator.pop(context);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => Login()));
+                showDialog(context: context,
+                    barrierDismissible: true,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Are you sure you want to log out?'),
+                        actions: <Widget>[
+                          IconButton(
+                            onPressed: (){
+                        _auth.signOut();
+                        Navigator.pop(context);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) => Login()));
+                      },
+                            icon: Icon(Icons.logout),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.close),
+                            onPressed: (){
+                              Navigator.pop(context);
+                            },
+                          )
+                        ],
+                      );
+                    }
+                );
               },
             ),
           ],
