@@ -25,7 +25,6 @@ class _LoginState extends State<Login> {
   signInUser() async {
     try {
       String userId = await _auth.signIn(email, password);
-      print(userId);
 
       Navigator.pop(context);
       Navigator.push(context,

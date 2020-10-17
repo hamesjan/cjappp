@@ -53,6 +53,7 @@ class _NewPlaceState extends State<NewPlace> {
         'long': null,
         'price': price,
         'by': _user.uid,
+        'clicks': 0
       }).catchError((onError) => {print(onError.toString())});
       String filename = '$name.jpg';
       StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child(filename);

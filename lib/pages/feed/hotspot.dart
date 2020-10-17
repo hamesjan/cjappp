@@ -33,14 +33,12 @@ class HotSpot extends StatelessWidget {
         fit: BoxFit.scaleDown,
       );
     });
-
     return m;
   }
 
   Future<void> addFavorite(context) async {
     FirebaseFirestore _firestore = FirebaseFirestore.instance;
     var _auth = Auth();
-
     try {
       // setting username variable
       auth.User _user = await _auth.getCurrentUser();
@@ -93,11 +91,30 @@ class HotSpot extends StatelessWidget {
     }
   }
 
+  Future<void> registerClick() async {
+    FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    try {
+      // Adding Data to Plots collection
+      var resPlots = await _firestore.collection('plots').doc(name).get();
+      var currNum = resPlots.data()['clicks'];
+      await _firestore.collection('plots').doc(name).update({
+        'clicks': currNum + 1,
+      }).catchError((onError) => {print(onError.toString())});
+
+
+    } on PlatformException catch (e) {
+      print(e);
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
         borderRadius: BorderRadius.all(Radius.circular(25)),
         onTap: () {
+          registerClick();
           Navigator.pop(context);
           Navigator.push(
               context,
@@ -136,7 +153,8 @@ class HotSpot extends StatelessWidget {
                     if (snapshot.connectionState == ConnectionState.done)
                       return Container(
                         constraints: BoxConstraints(
-                          maxHeight: 200
+                          maxHeight: 200,
+                          minHeight: 200,
                         ),
                         child: ClipRRect(
                           borderRadius: new BorderRadius.circular(25.0),
@@ -154,6 +172,7 @@ class HotSpot extends StatelessWidget {
                       return Container(
                         padding: EdgeInsets.all(16),
                         height: 200,
+                        width: 200,
                         child: Text(
                             'The picture could not be found...\nCheck again later!'),
                       );

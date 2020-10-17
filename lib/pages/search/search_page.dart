@@ -12,8 +12,8 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   List receivedPlots = [];
   List plotsNames = [];
+  List trending = [];
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
 
   @override
   Widget build(BuildContext context) {
@@ -24,17 +24,31 @@ class _SearchPageState extends State<SearchPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           FutureBuilder(
-                  future: _firestore.collection('plots').get(),
-                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (snapshot.hasData) {
-                      receivedPlots.clear();
-                      plotsNames.clear();
-                      snapshot.data.docs.forEach((element) => receivedPlots.add(element.data()));
-                      receivedPlots.forEach((element) { plotsNames.add(element['name']);});
-                      return new
+              future: _firestore.collection('plots').orderBy('clicks').get(),
+              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasData) {
+                  receivedPlots.clear();
+                  plotsNames.clear();
+                  snapshot.data.docs
+                      .forEach((element) => receivedPlots.add(element.data()));
+                  receivedPlots.forEach((element) {
+                    plotsNames.add(element['name']);
+                  });
+                  if (plotsNames.length > 10) {
+                    trending.add(plotsNames.sublist(0, 10));
+                  } else {
+                    trending = plotsNames;
+                  }
+
+                  return new Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       InkWell(
                         onTap: () {
-                          showSearch(context: context, delegate: SearchEntertainment(plotsNames, receivedPlots));
+                          showSearch(
+                              context: context,
+                              delegate: SearchEntertainment(
+                                  plotsNames, receivedPlots));
                         },
                         child: Ink(
                           height: 50,
@@ -42,7 +56,8 @@ class _SearchPageState extends State<SearchPage> {
                           decoration: BoxDecoration(
                               color: Colors.white70,
                               border: Border.all(color: Colors.black),
-                              borderRadius: BorderRadius.all(Radius.circular(15))),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15))),
                           width: MediaQuery.of(context).size.width,
                           child: Row(
                             children: <Widget>[
@@ -61,66 +76,41 @@ class _SearchPageState extends State<SearchPage> {
                             ],
                           ),
                         ),
-                      );
-                    }
-                    if( snapshot.connectionState == ConnectionState.waiting){
-                      return Container(child: CircularProgressIndicator());
-                    }
-                    else {
-                      return Container(child: Text('An Error Occurred.'), color: Colors.red,);
-                    }
-                  }
-              ),
-          SizedBox(
-            height: 15,
-          ),
-          Text(
-            'Trending',
-            style: TextStyle(fontSize: 30),
-          ),
-          Divider(
-            thickness: 3,
-          ),
-          Text(
-            'Show Trending Searches Here',
-            style: TextStyle(fontSize: 18),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Text(
-            'Show Trending Searches Here',
-            style: TextStyle(fontSize: 18),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Text(
-            'Show Trending Searches Here',
-            style: TextStyle(fontSize: 18),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Text(
-            'Show Trending Searches Here',
-            style: TextStyle(fontSize: 18),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Text(
-            'Show Trending Searches Here',
-            style: TextStyle(fontSize: 18),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Text(
-            'Show Trending Searches Here',
-            style: TextStyle(fontSize: 18),
-          ),
+                      ),
+                      SizedBox(height: 5,),
+                      Row(children: [
+                        Icon(Icons.local_fire_department, color: Colors.red,),
+                        Text(
+                          'Trending',
+                          style: TextStyle(fontSize: 30,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],),
+                      Divider(
+                        thickness: 3,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                          children: trending.map((item) => new Text('- $item',
+                      style: TextStyle(
+                        fontSize: 22,
+                      ),)).toList()),
+                      SizedBox(
+                        height: 15,
+                      ),
 
+                    ],
+                  );
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Container(child: CircularProgressIndicator());
+                } else {
+                  return Container(
+                    child: Text('An Error Occurred.'),
+                    color: Colors.red,
+                  );
+                }
+              }),
         ],
       ),
     ));
@@ -130,7 +120,6 @@ class _SearchPageState extends State<SearchPage> {
 class SearchEntertainment extends SearchDelegate<String> {
   final List plotsNames;
   final List receivedPlots;
-
 
   List<dynamic> recentSearches = [];
 
@@ -191,16 +180,16 @@ class SearchEntertainment extends SearchDelegate<String> {
                     context,
                     MaterialPageRoute(
                         builder: (BuildContext context) => ChosenEvent(
-                          name: obj['name'],
-                          zipCode: obj['zipCode'],
-                          location: obj['location'],
-                          ratingsNumbers: obj['ratingsNumbers'],
-                          ratings: obj['ratings'],
-                          website: obj['website'],
-                          category: obj['category'],
-                          by: obj['by'],
-                          price: obj['price'],
-                        )));
+                              name: obj['name'],
+                              zipCode: obj['zipCode'],
+                              location: obj['location'],
+                              ratingsNumbers: obj['ratingsNumbers'],
+                              ratings: obj['ratings'],
+                              website: obj['website'],
+                              category: obj['category'],
+                              by: obj['by'],
+                              price: obj['price'],
+                            )));
                 // recentSearches.add(query);
                 // showResults(context);
               },

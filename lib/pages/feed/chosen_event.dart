@@ -67,11 +67,11 @@ class ChosenEvent extends StatelessWidget {
                 if (snapshot.connectionState == ConnectionState.done)
                   return Container(
                       child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.elliptical(50, 30),
-                        bottomRight: Radius.elliptical(50, 30)),
-                    child: snapshot.data,
-                  ));
+                        borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.elliptical(50, 30),
+                            bottomRight: Radius.elliptical(50, 30)),
+                        child: snapshot.data,
+                      ));
                 else if (snapshot.connectionState == ConnectionState.waiting)
                   return Container(
                     padding: EdgeInsets.all(16),
@@ -80,6 +80,7 @@ class ChosenEvent extends StatelessWidget {
                 else
                   return Container(
                     padding: EdgeInsets.all(16),
+
                     child: Text(
                         'The picture could not be found...\nCheck again later!'),
                   );

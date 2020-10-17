@@ -4,6 +4,7 @@ import 'package:cjapp/pages/feed/hotspot.dart';
 import  'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cjapp/services/BaseAuth.dart';
+import 'package:cjapp/widgets/plotserror.dart';
 
 class Feed extends StatefulWidget {
   @override
@@ -21,6 +22,7 @@ class _FeedState extends State<Feed> {
 
   Future getInformation () async {
     List info = [];
+    info.clear();
     var _auth = Auth();
     String username;
     auth.User _user = await _auth.getCurrentUser();
@@ -30,8 +32,15 @@ class _FeedState extends State<Feed> {
         username = element.data()['username'];
       }
     });
-
-    info.add(await _firestore.collection('plots').get());
+    if (sortBy == 'Popular'){
+      info.add(await _firestore.collection('plots').orderBy('clicks', descending: true).get());
+    } else if (sortBy == 'Best Rated') {
+      info.add(await _firestore.collection('plots').orderBy('ratingsNumbers', descending: true).get());
+    } else if (sortBy == 'Newest'){
+      info.add(await _firestore.collection('plots').get());
+    } else if (sortBy == 'Rising'){
+      info.add(await _firestore.collection('plots').get());
+    }
     var resUsers = await _firestore.collection('users').doc(username).get();
     List currFavorites = resUsers.data()['favorites'];
     info.add(currFavorites);
@@ -40,188 +49,16 @@ class _FeedState extends State<Feed> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return
+    Container(
       padding: EdgeInsets.all(16),
-      child: Container(child: Column(
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(16)),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.pinkAccent,
-                  Colors.white10
-                ]
-              )
-            ),
-            child:
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text('Sort By', style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15
-                      ),),
-                      SizedBox(width: 10,),
-                      DropdownButton<String>(
-                        value: sortBy,
-                        icon: Icon(Icons.arrow_drop_down, color: Colors.black),
-                        iconSize: 24,
-                        elevation: 16,
-                        style: TextStyle(color: Colors.black,
-                        fontSize: 15,
-                        ),
-                        underline: Container(
-                          height: 2,
-                          color: Colors.pinkAccent,
-                        ),
-                        onChanged: (String newValue) {
-                          setState(() {
-                            sortBy = newValue;
-                          });
-                        },
-                        items: <String>['Popular', 'Best Rated', 'Newest', 'Rising']
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                      ),
-
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Text('Category', style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        fontSize: 15
-                      ),),
-                      SizedBox(width: 10,),
-                      DropdownButton<String> (
-                        value: category,
-                    icon: Icon(Icons.arrow_drop_down, color: Colors.black),
-                    iconSize: 24,
-                    elevation: 16,
-                    style: TextStyle(color: Colors.black,
-                    ),
-                    underline: Container(
-                      height: 2,
-                      color: Colors.pinkAccent,
-                    ),
-                    onChanged: (String newValue) {
-                      setState(() {
-                        category = newValue;
-                      });
-                    },
-                    items: <String>['No Preference', 'Outdoors', 'Indoors', 'Action', 'Urban', 'View']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                    ],
-                  )
-
-                ],
-              ),
-              Column(
-                children: [
-                  Row(
-                    children: [
-                      Text('Price', style: TextStyle(
-                          fontWeight: FontWeight.bold
-                      ),),
-                      SizedBox(width: 10,),
-                      DropdownButton<String>(
-                        value: price,
-                        icon: Icon(Icons.arrow_drop_down, color: Colors.black),
-                        iconSize: 24,
-                        elevation: 16,
-                        style: TextStyle(color: Colors.black),
-                        underline: Container(
-                          height: 2,
-                          color: Colors.pinkAccent,
-                        ),
-                        onChanged: (String newValue) {
-                          setState(() {
-                            price = newValue;
-                          });
-                        },
-                        items: <String>['Free', 'Cheapest', 'Moderate', 'Expensive']
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                      )
-                    ],
-                  ),
-                  Row(
-                      children: [
-                        Text('Radius', style: TextStyle(
-                            fontWeight: FontWeight.bold
-                        )
-                          ,),
-                        SizedBox(width: 10,),
-                        DropdownButton<String>(
-                          value: radius,
-                          icon: Icon(Icons.arrow_drop_down, color: Colors.black,),
-                          iconSize: 24,
-                          elevation: 16,
-                          style: TextStyle(color: Colors.black),
-                          underline: Container(
-                            height: 2,
-                            color: Colors.pinkAccent,
-                          ),
-                          onChanged: (String newValue) {
-                            setState(() {
-                              radius = newValue;
-                            });
-                          },
-                          items: <String>['5 miles', '10 miles', '50 miles', '100 miles']
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                    ),
-                ],
-              )
-            ],
-          ),
-    ),
-          SizedBox(
-            height: 15,
-          ),
-          Divider(
-            thickness: 3,
-            color: Colors.pinkAccent,
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Container(
             child: FutureBuilder(
                 future: getInformation(),
                 builder: (context, AsyncSnapshot snapshot) {
                   if (snapshot.hasData) {
                     plots.clear();
                     receivedPlots.clear();
+
                     snapshot.data[0].docs.forEach((element) => receivedPlots.add(element.data()));
                     receivedPlots.forEach((element) {
                       // if name in fav,
@@ -244,22 +81,207 @@ class _FeedState extends State<Feed> {
                         ));
                       }
                     });
+                    plots.sort((a, b) => a.price.compareTo(price));
                     plots.sort((a, b) => a.category.compareTo(category));
 
-                    return new Column(children: plots.map((item) => new Container(margin: EdgeInsets.only(bottom: 20),child: item)).toList());
+                    plots.insert(0,
+                        Column(children: [
+                          Container(
+                            padding: EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(16)),
+                                gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Colors.pinkAccent,
+                                      Colors.white10
+                                    ]
+                                )
+                            ),
+                            child:
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Text('Sort By', style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15
+                                        ),),
+                                        SizedBox(width: 10,),
+                                        DropdownButton<String>(
+                                          value: sortBy,
+                                          icon: Icon(Icons.arrow_drop_down, color: Colors.black),
+                                          iconSize: 24,
+                                          elevation: 16,
+                                          style: TextStyle(color: Colors.black,
+                                            fontSize: 15,
+                                          ),
+                                          underline: Container(
+                                            height: 2,
+                                            color: Colors.pinkAccent,
+                                          ),
+                                          onChanged: (String newValue) {
+                                            setState(() {
+                                              sortBy = newValue;
+                                            });
+                                          },
+                                          items: <String>['Popular', 'Best Rated', 'Newest', 'Rising']
+                                              .map<DropdownMenuItem<String>>((String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                        ),
+
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text('Category', style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15
+                                        ),),
+                                        SizedBox(width: 10,),
+                                        DropdownButton<String> (
+                                          value: category,
+                                          icon: Icon(Icons.arrow_drop_down, color: Colors.black),
+                                          iconSize: 24,
+                                          elevation: 16,
+                                          style: TextStyle(color: Colors.black,
+                                          ),
+                                          underline: Container(
+                                            height: 2,
+                                            color: Colors.pinkAccent,
+                                          ),
+                                          onChanged: (String newValue) {
+                                            setState(() {
+                                              category = newValue;
+                                            });
+                                          },
+                                          items: <String>['No Preference', 'Outdoors', 'Indoors', 'Action', 'Urban', 'View']
+                                              .map<DropdownMenuItem<String>>((String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ],
+                                    )
+
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text('Price', style: TextStyle(
+                                            fontWeight: FontWeight.bold
+                                        ),),
+                                        SizedBox(width: 10,),
+                                        DropdownButton<String>(
+                                          value: price,
+                                          icon: Icon(Icons.arrow_drop_down, color: Colors.black),
+                                          iconSize: 24,
+                                          elevation: 16,
+                                          style: TextStyle(color: Colors.black),
+                                          underline: Container(
+                                            height: 2,
+                                            color: Colors.pinkAccent,
+                                          ),
+                                          onChanged: (String newValue) {
+                                            setState(() {
+                                              price = newValue;
+                                            });
+                                          },
+                                          items: <String>['Free', 'Cheapest', 'Moderate', 'Expensive']
+                                              .map<DropdownMenuItem<String>>((String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                        )
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text('Radius', style: TextStyle(
+                                            fontWeight: FontWeight.bold
+                                        )
+                                          ,),
+                                        SizedBox(width: 10,),
+                                        DropdownButton<String>(
+                                          value: radius,
+                                          icon: Icon(Icons.arrow_drop_down, color: Colors.black,),
+                                          iconSize: 24,
+                                          elevation: 16,
+                                          style: TextStyle(color: Colors.black),
+                                          underline: Container(
+                                            height: 2,
+                                            color: Colors.pinkAccent,
+                                          ),
+                                          onChanged: (String newValue) {
+                                            setState(() {
+                                              radius = newValue;
+                                            });
+                                          },
+                                          items: <String>['5 miles', '10 miles', '50 miles', '100 miles']
+                                              .map<DropdownMenuItem<String>>((String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Divider(
+                            thickness: 3,
+                            color: Colors.pinkAccent,
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                        ],)
+                    );
+                    return new
+                        ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: plots.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                            child: plots[index],
+                            padding: EdgeInsets.only(
+                                top: 10,
+                                bottom: 10
+                            ),
+                          );
+                        });
+                    // Column(children: plots.map((item) => new Container(margin: EdgeInsets.only(bottom: 20),child: item)).toList());
                   }
                   if( snapshot.connectionState == ConnectionState.waiting){
-                    return Container(child: CircularProgressIndicator());
+                    return Center(child: Container(width: 200, height:200,child: CircularProgressIndicator()));
                   }
                   else {
-                    return Container(width: 10, height: 200, color: Colors.red,);
+                    return PlotsError();
                   }
                 }
             )
-          ),
-        ],
-      ),
-      )
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:cjapp/widgets/custom_button.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:cjapp/services/BaseAuth.dart';
 
 class RegistrationTwo extends StatefulWidget {
@@ -27,10 +28,15 @@ class _RegistrationTwoState extends State<RegistrationTwo> {
 
   Future<void> registerUser() async {
     try {
+      DateTime today = new DateTime.now();
+      var _today = DateTime.parse(today.toString());
+      var _formatToday = DateFormat.yMMMd().format(_today);
+
       auth.User _user = await _auth.getCurrentUser();
       await _firestore.collection('users').doc(username).set({
         'username': username,
         'email': widget.email,
+        'joined': _formatToday,
         'zipCode': zipCode,
         'favorites': [],
         'reviews': [],

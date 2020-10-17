@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:cjapp/pages/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:async';
+import 'package:cjapp/widgets/rating_stars.dart';
 import 'package:location/location.dart';
+import 'package:cjapp/pages/feed/chosen_event.dart';
 
 class MapPage extends StatefulWidget {
   @override
@@ -20,8 +20,17 @@ class MapPageState extends State<MapPage> {
   Location location = new Location();
   List<Marker> markerList = [];
   List receivedPlots = [];
-
-
+  String name;
+  String zipCode;
+  double lat;
+  double long;
+  List ratings;
+  String website;
+  String by;
+  String plotLocation;
+  double ratingsNumbers;
+  String category;
+  String price;
 
   checkPermissions() async {
     _serviceEnabled = await location.serviceEnabled();
@@ -42,6 +51,16 @@ class MapPageState extends State<MapPage> {
   }
 
 
+  Future<Widget> _getImage(BuildContext context, String image) async {
+    Image m;
+    await GetFirebaseImage.loadFromStorage(context, image).then((downloadUrl) {
+      m = Image.network(
+        downloadUrl.toString(),
+        fit: BoxFit.scaleDown,
+      );
+    });
+    return m;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,8 +78,6 @@ class MapPageState extends State<MapPage> {
               }
           },
           ),
-          // ZoomOut(),
-          // ZoomIn(),
           _buildContainer(),
         ],
       ),
@@ -70,7 +87,7 @@ class MapPageState extends State<MapPage> {
   Widget _buildContainer() {
     return Align(
       alignment: Alignment.bottomLeft,
-      child: Container(
+      child: name == null ? beforeSelect() : Container(
         margin: EdgeInsets.symmetric(vertical: 20.0),
         height: 150.0,
         child:
@@ -80,8 +97,15 @@ class MapPageState extends State<MapPage> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: _boxes(
-                  "https://www.traderjoes.com/Brandify/images/121-Torrance-Hawthorne-Blvd-storefront.jpg",
-                  33.85226, -118.353,"Trader Joes", "Estimated Wait: 0 minutes"),
+                  name,
+                  zipCode,
+                  plotLocation,
+                  ratingsNumbers,
+                  ratings,
+                  website,
+                  category,
+                  by,
+                  price),
             ),
           ],
         ),
@@ -90,9 +114,66 @@ class MapPageState extends State<MapPage> {
     );
   }
 
-  Widget _boxes(String _image, double lat,double long,String restaurantName, String EWT) {
+
+
+  Widget beforeSelect(){
+    return Container(
+        padding: EdgeInsets.all(25),
+        child: Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(15)),
+        color: Colors.white
+      ),
+      padding: EdgeInsets.all(16),
+      child:  Text('Select a marker!', style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 21
+      ),)
+    )
+    );
+  }
+
+
+  Widget _boxes( name, zipCode, plotLocation, ratingsNumbers, ratings, website, category, by, price) {
     return  GestureDetector(
-      onTap: () {GoLocation(lat,long);},
+      onTap: () {
+        showDialog(context: context,
+            barrierDismissible: true,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Are you sure you want to leave map view?'),
+                actions: <Widget>[
+                  IconButton(
+                    onPressed: (){
+                      Navigator.pop(context);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) => ChosenEvent(
+                                name: name,
+                                zipCode: zipCode,
+                                location: plotLocation,
+                                ratingsNumbers: ratingsNumbers,
+                                ratings: ratings,
+                                website: website,
+                                category: category,
+                                by: by,
+                                price: price,
+                              )));
+                    },
+                    icon: Icon(Icons.check, color: Colors.green, ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.close, color: Colors.red,),
+                    onPressed: (){
+                      Navigator.pop(context);
+                    },
+                  )
+                ],
+              );
+            }
+        );
+        },
       child:Container(
         child: new FittedBox(
           child: Material(
@@ -103,152 +184,87 @@ class MapPageState extends State<MapPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
+                  FutureBuilder(
+                    future: _getImage(context, '$name.jpg'),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done)
+                        return Container(
+                          constraints: BoxConstraints(
+                            maxHeight: 200,
+                            minHeight: 200,
+                          ),
+                          child: ClipRRect(
+                            borderRadius: new BorderRadius.circular(25.0),
+                            child: snapshot.data,
+                          ),
+                        );
+                      else if (snapshot.connectionState == ConnectionState.waiting)
+                        return Container(
+                          padding: EdgeInsets.all(16),
+                          height: 200,
+                          width: 200,
+                          child: CircularProgressIndicator(),
+                        );
+                      else
+                        return Container(
+                          padding: EdgeInsets.all(16),
+                          height: 200,
+                          width: 200,
+                          child: Text(
+                              'The picture could not be found...\nCheck again later!'),
+                        );
+                    },
+                  ),
                   Container(
-                    width: 180,
-                    height: 200,
-                    child: ClipRRect(
-                      borderRadius: new BorderRadius.circular(24.0),
-                      child: Image(
-                        fit: BoxFit.fill,
-                        image: NetworkImage(_image),
-                      ),
-                    ),),
-                  Container(
+                    constraints: BoxConstraints(
+                      minHeight: 200,
+                      minWidth: 200,
+                      maxWidth: 200,
+                      maxHeight: 200
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: myDetailsContainer1(restaurantName, EWT),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(left: 8.0),
+                            child: Container(
+                                child: Text(name,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 24.0,
+                                      fontWeight: FontWeight.bold),
+                                )),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Text(
+                              category,textAlign: TextAlign.center, style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                                fontSize: 22,
+                                color: Colors.blue
+                            ),
+                            ),
+                          ),
+                          SizedBox(height:5.0),
+                          Row(children: [
+                            Expanded(child: Container(),),
+                            RatingStars(rating: ratingsNumbers,),
+                            Expanded(child: Container(),),
+                          ],),
+                          SizedBox(height:5.0),
+                          Text('${ratingsNumbers.toString()} / 5.0', textAlign: TextAlign.center,)
+
+                        ],
+                      )
                     ),
                   ),
                 ],)
           ),
         ),
       ),
-    );
-  }
-  Widget ZoomIn() {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: IconButton(
-          icon: Icon(Icons.zoom_out,color:Color(0xff6200ee)),
-          onPressed: () {
-            zoomVal--;
-            _minus( zoomVal);
-          }),
-    );
-  }
-
-  Widget ZoomOut() {
-    return Align(
-      alignment: Alignment.topRight,
-      child: IconButton(
-          icon: Icon(Icons.zoom_in,color:Color(0xff6200ee)),
-          onPressed: () {
-            zoomVal++;
-            _plus(zoomVal);
-          }),
-    );
-  }
-
-  Future<void> _minus(double zoomVal) async {
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(33.8358, -118.3406), zoom: zoomVal)));
-  }
-  Future<void> _plus(double zoomVal) async {
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(33.8358, -118.3406), zoom: zoomVal)));
-  }
-
-  Widget myDetailsContainer1(String restaurantName, String EWT) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(left: 8.0),
-          child: Container(
-              child: Text(restaurantName,
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold),
-              )),
-        ),
-        Padding(
-          padding: EdgeInsets.all(8),
-          child: Text(
-            EWT, style: TextStyle(
-              fontSize: 22,
-              color: Colors.black
-          ),
-          ),
-        ),
-        SizedBox(height:5.0),
-        Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Container(
-                    child: Text(
-                      "3.7",
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 18.0,
-                      ),
-                    )),
-                Container(
-                  child: Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                    size: 15.0,
-                  ),
-                ),
-                Container(
-                  child: Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                    size: 15.0,
-                  ),
-                ),
-                Container(
-                  child: Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                    size: 15.0,
-                  ),
-                ),
-                Container(
-                  child: Icon(
-                    Icons.star_half,
-                    color: Colors.amber,
-                    size: 15.0,
-                  ),
-                ),
-                Container(
-                  child: Icon(
-                    Icons.star_border,
-                    color: Colors.amber,
-                    size: 15.0,
-                  ),
-                ),
-                Container(
-                    child: Text(
-                      "(359)",
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 18.0,
-                      ),
-                    )),
-              ],
-            )),
-        SizedBox(height:5.0),
-        Container(
-            child: Text(
-              "Open \u00B7 8:00 A.M. - 9:00 P.M.",
-              style: TextStyle(
-                  color: Colors.black54,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold),
-            )),
-      ],
     );
   }
 
@@ -264,8 +280,20 @@ class MapPageState extends State<MapPage> {
         markerList.add(Marker(
           onTap: (){
             GoLocation(element['lat'], element['long']);
+            setState(() {
+              name = element['name'];
+              zipCode = element['zipCode'];
+              lat = element['lat'];
+              long = element['long'];
+              plotLocation = element['location'];
+              ratingsNumbers = element['ratingsNumbers'];
+              category = element['category'];
+              price = element['price'];
+              ratings = element['ratings'];
+              by = element['by'];
+            });
           },
-        markerId: MarkerId(element['name']),
+          markerId: MarkerId(element['name']),
       position: LatLng(element['lat'],element['long']),
       infoWindow: InfoWindow(title: element['name']),
       icon: BitmapDescriptor.defaultMarkerWithHue(
@@ -274,7 +302,6 @@ class MapPageState extends State<MapPage> {
       ));
       }
     });
-
     markerList.add(myMarker(_locationData.latitude, _locationData.longitude));
 
     return Container(

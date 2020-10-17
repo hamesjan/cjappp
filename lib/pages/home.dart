@@ -64,7 +64,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             Feed(),
             SearchPage(),
             ProfilePage(),
-            // Testing(),
             MapPage(),
           ],
         ),
