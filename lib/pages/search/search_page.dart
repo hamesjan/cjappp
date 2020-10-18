@@ -42,7 +42,7 @@ class _SearchPageState extends State<SearchPage> {
 
                   return new Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                     children: [
                       InkWell(
                         onTap: () {
                           showSearch(
@@ -185,6 +185,8 @@ class SearchEntertainment extends SearchDelegate<String> {
                               location: obj['location'],
                               ratingsNumbers: obj['ratingsNumbers'],
                               ratings: obj['ratings'],
+                              lat: obj['lat'],
+                              long: obj['long'],
                               website: obj['website'],
                               category: obj['category'],
                               by: obj['by'],

@@ -2,8 +2,10 @@ import 'package:cjapp/pages/feed/plots_web_view.dart';
 import 'package:cjapp/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:cjapp/widgets/price_icon_widget.dart';
 import 'package:cjapp/pages/home.dart';
 import 'package:cjapp/pages/feed/new_review.dart';
+import 'package:cjapp/services/launch_google_map.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cjapp/widgets/rating_stars.dart';
 
@@ -12,6 +14,8 @@ class ChosenEvent extends StatelessWidget {
   final String zipCode;
   final String location;
   final double ratingsNumbers;
+  final double lat;
+  final double long;
   final List ratings;
   final String website;
   final String category;
@@ -25,6 +29,8 @@ class ChosenEvent extends StatelessWidget {
       this.location,
       this.by,
       this.ratingsNumbers,
+        this.lat,
+        this.long,
       this.ratings,
       this.website,
       this.category,
@@ -101,13 +107,22 @@ class ChosenEvent extends StatelessWidget {
                             style:
                             TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                           ),
-                          Text(
-                            category,
-                            style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold),
-                          ),
+                          Row(children: [
+                            Text(
+                              category,
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              ' • ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15),
+                            ),
+                            PriceIconWidget(price: price,)
+
+                          ],)
                         ],),
                         Expanded(child: Container(),),
                         Icon(Icons.bookmark_border, size: 30,)
@@ -203,9 +218,12 @@ class ChosenEvent extends StatelessWidget {
                     SizedBox(
                       height: 5,
                     ),
+                    Divider(thickness: 2,),
                     InkWell(
                       borderRadius: BorderRadius.all(Radius.circular(25)),
-                      onTap: () {},
+                      onTap: () {
+                        MapUtils.openMap(lat,long);
+                      },
                       child: Ink(
                         padding: EdgeInsets.all(5),
                         child: Row(
@@ -217,10 +235,17 @@ class ChosenEvent extends StatelessWidget {
                             SizedBox(
                               width: 5,
                             ),
-                            Text(
-                              location,
-                              style: TextStyle(fontSize: 16),
-                            )
+                            Container(
+                              width: MediaQuery.of(context).size.width / 1.5,
+                              child: Text(
+                                location,
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+
                           ],
                         ),
                       ),
@@ -228,16 +253,24 @@ class ChosenEvent extends StatelessWidget {
                     SizedBox(
                       height: 10,
                     ),
-                    Divider(thickness: 2,),
-                    Text('Reviews', style: TextStyle(
+                    ratings.length == 0 ? Container() : Divider(thickness: 2,),
+                    ratings.length == 0 ? Container() : Text('Reviews', style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 18
+                      fontSize: 20
                     ),),
-                    ratings.length > 0 ? Text('"${ratings[0]['review']}"\n- ${ratings[0]['by']}') : Container(),
+                    ratings.length > 0 ? Text('"${ratings[0]['review']}"\n- ${ratings[0]['by']}', style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15
+                    ),) : Container(),
+                    ratings.length > 1 ? Divider(thickness: 2,) : Container(),
                     ratings.length > 1 ? SizedBox(height: 10,) : Container(),
-                    ratings.length > 1 ? Text('"${ratings[1]['review']}"\n- ${ratings[1]['by']}') : Container(),
+                    ratings.length > 1 ? Text('"${ratings[1]['review']}"\n- ${ratings[1]['by']}', style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15
+                    ),) : Container(),
                     Divider(thickness: 2,),
                     SizedBox(height: 10,),
+                    website == '' ?
                     CustomButton(
                       text: 'Buy Ticket',
                       callback: () {
@@ -247,7 +280,7 @@ class ChosenEvent extends StatelessWidget {
                                 builder: (BuildContext context) =>
                                     PlotsWebView()));
                       },
-                    )
+                    ) : Container()
                   ],
                 ))
           ],

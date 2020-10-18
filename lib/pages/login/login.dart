@@ -68,9 +68,18 @@ class _LoginState extends State<Login> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              SizedBox(
-                height: 15,
-              ),
+          Container(
+          constraints: BoxConstraints(
+            maxHeight: 200,
+            minHeight: 200,
+          ),
+          child: ClipRRect(
+            borderRadius: new BorderRadius.circular(25.0),
+            child: Image(image: AssetImage('assets/images/loginlogo.png'),),
+          ),
+        ),
+
+
               TextFormField(
                   onChanged: (value) => email = value,
                   validator: (text) => validateEmail(text),

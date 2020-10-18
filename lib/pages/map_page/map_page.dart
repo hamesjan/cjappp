@@ -151,6 +151,8 @@ class MapPageState extends State<MapPage> {
                           MaterialPageRoute(
                               builder: (BuildContext context) => ChosenEvent(
                                 name: name,
+                                lat: lat,
+                                long: long,
                                 zipCode: zipCode,
                                 location: plotLocation,
                                 ratingsNumbers: ratingsNumbers,
@@ -234,7 +236,7 @@ class MapPageState extends State<MapPage> {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: Colors.black,
-                                      fontSize: 24.0,
+                                      fontSize: 20.0,
                                       fontWeight: FontWeight.bold),
                                 )),
                           ),

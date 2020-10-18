@@ -7,12 +7,15 @@ import 'package:cjapp/pages/home.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/services.dart';
 import 'package:cjapp/services/BaseAuth.dart';
+import 'package:cjapp/widgets/price_icon_widget.dart';
 
 class HotSpot extends StatelessWidget {
   final String name;
   final String zipCode;
   final String location;
   final double ratingsNumbers;
+  final double lat;
+  final double long;
   final List ratings;
   final String website;
   final String category;
@@ -21,7 +24,7 @@ class HotSpot extends StatelessWidget {
   final String price;
 
 
-  const HotSpot({Key key, this.name, this.zipCode, this.location, this.by, this.ratingsNumbers, this.ratings, this.website, this.category, this.price, this.fav}) : super(key: key);
+  const HotSpot({Key key, this.name, this.zipCode, this.location, this.by, this.ratingsNumbers, this.lat, this.long, this.ratings, this.website, this.category, this.price, this.fav}) : super(key: key);
 
 
 
@@ -126,6 +129,8 @@ class HotSpot extends StatelessWidget {
                     ratingsNumbers: ratingsNumbers,
                     ratings: ratings,
                     website: website,
+                    long: long,
+                    lat: lat,
                     category: category,
                     by: by,
                     price: price,
@@ -276,7 +281,14 @@ class HotSpot extends StatelessWidget {
                                   fontSize: 15,
                                   color: Colors.blue,
                                   fontWeight: FontWeight.bold),
-                            )
+                            ),
+                            Text(
+                              ' • ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15),
+                            ),
+                          PriceIconWidget(price: price,)
+
                           ],
                         )
                       ],

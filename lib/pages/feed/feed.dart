@@ -73,6 +73,8 @@ class _FeedState extends State<Feed> {
                           category: element['category'],
                           by: element['by'],
                           fav: fav,
+                          lat: element['lat'],
+                          long: element['long'],
                           ratings: element['ratings'],
                           price: element['price'],
                           ratingsNumbers: element['ratingsNumbers'].toDouble(),
@@ -81,9 +83,11 @@ class _FeedState extends State<Feed> {
                         ));
                       }
                     });
-                    plots.sort((a, b) => a.price.compareTo(price));
-                    plots.sort((a, b) => a.category.compareTo(category));
+                    plots.sort((a, b) => price.contains(a.price) ? 0 : 1);
+                    if (category != 'No Preference') {
+                      plots.sort((a, b) => category.contains(a.category) ? 0 : 1);
 
+                    }
                     plots.insert(0,
                         Column(children: [
                           Container(

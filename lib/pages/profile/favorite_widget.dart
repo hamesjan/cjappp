@@ -28,6 +28,8 @@ class FavoriteWidget extends StatelessWidget {
           builder: (BuildContext context) => ChosenEvent(
             name: info['name'],
             zipCode: info['zipCode'],
+            lat: info['lat'],
+            long: info['long'],
             location: info['location'],
             ratingsNumbers: info['ratingsNumbers'],
             ratings: info['ratings'],
