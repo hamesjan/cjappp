@@ -185,11 +185,17 @@ class HotSpot extends StatelessWidget {
                       children: <Widget>[
                         Row(
                           children: [
-                            Text(
-                              name,
-                              style: TextStyle(
-                                  fontSize: 22, fontWeight: FontWeight.bold),
+                            Container(
+                              width: MediaQuery.of(context).size.width / 1.5,
+                              child: Text(
+                                name,
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontSize: 22, fontWeight: FontWeight.bold),
+                              ),
                             ),
+
                             Expanded(child: Container(),),
                            fav ? IconButton(icon: Icon(Icons.bookmark), onPressed: (){
                              showDialog(context: context,

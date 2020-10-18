@@ -1,3 +1,4 @@
+import 'package:cjapp/pages/settings/about_plots.dart';
 import 'package:cjapp/pages/settings/select_setting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +51,10 @@ class SettingsPage extends StatelessWidget {
             SelectIconSetting(
               icon: Icon(Icons.info),
               text: 'About',
-              callback: (){},
+              callback: (){
+                Navigator.push(context,
+                MaterialPageRoute(builder: (BuildContext context) => AboutPlots()));
+              },
             ),
             Divider(thickness: 2,),
             SelectTextSetting(

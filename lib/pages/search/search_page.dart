@@ -24,7 +24,7 @@ class _SearchPageState extends State<SearchPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           FutureBuilder(
-              future: _firestore.collection('plots').orderBy('clicks').get(),
+              future: _firestore.collection('plots').orderBy('clicks', descending: true).get(),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasData) {
                   receivedPlots.clear();

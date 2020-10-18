@@ -93,7 +93,9 @@ class ChosenEvent extends StatelessWidget {
                   children: <Widget>[
                     Row(
                       children: [
-                        Column(children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                           Text(
                             name,
                             style:

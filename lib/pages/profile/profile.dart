@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cjapp/pages/profile/display_reviews.dart';
 import 'package:cjapp/pages/profile/display_favorites.dart';
+import 'package:cjapp/pages/settings/select_setting.dart';
 import  'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cjapp/widgets/custom_button.dart';
@@ -83,32 +84,42 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                             Divider(thickness: 2,),
-                            CustomButton(text: 'View Bookmarks', callback: (){
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) => DisplayFavorites(favorites: snapshot.data['favorites'],)
-                                  )
-                              );
-                            },),
+                            SelectIconSetting(
+                              text: 'Bookmarks',
+                              icon: Icon(Icons.bookmarks_outlined),
+                              callback: (){
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) => DisplayFavorites(favorites: snapshot.data['favorites'],)
+                                    )
+                                );
+                              },
+                            ),
                             SizedBox(height: 10,),
-                            CustomButton(text: 'View All Reviews', callback: (){
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) => DisplayReviews(reviews: snapshot.data['reviews'],)
-                                  )
-                              );
-                            },),
+                            SelectIconSetting(
+                              text: 'Reviews',
+                              icon: Icon(Icons.rate_review_outlined),
+                              callback: (){
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) => DisplayReviews(reviews: snapshot.data['reviews'],)
+                                    )
+                                );
+                              },
+                            ),
                             SizedBox(height: 10,),
-                            CustomButton(text: 'Add a new Plot!', callback: (){
-                              Navigator.push(
+                            SelectIconSetting(
+                              text: 'Submit a Plot!',
+                              icon: Icon(Icons.maps_ugc_sharp),
+                              callback: (){
+                                Navigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) => NewPlace()
-                                  )
-                              );
-                            },),
+                                  MaterialPageRoute(builder: (BuildContext context) => NewPlace())
+                                );
+                              },
+                            )
                           ]
                       )
               );

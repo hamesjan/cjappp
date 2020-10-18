@@ -295,7 +295,7 @@ class MapPageState extends State<MapPage> {
           },
           markerId: MarkerId(element['name']),
       position: LatLng(element['lat'],element['long']),
-      infoWindow: InfoWindow(title: element['name']),
+      // infoWindow: InfoWindow(title: element['name']),
       icon: BitmapDescriptor.defaultMarkerWithHue(
       BitmapDescriptor.hueBlue,
       ),
@@ -334,7 +334,7 @@ class MapPageState extends State<MapPage> {
       },
       markerId: MarkerId('myMarker'),
       position: LatLng(lat, long),
-      infoWindow: InfoWindow(title: 'You are Here'),
+      // infoWindow: InfoWindow(title: 'You are Here'),
       icon: BitmapDescriptor.defaultMarkerWithHue(
         BitmapDescriptor.hueRed,
       ),
