@@ -85,6 +85,7 @@ class _FeedState extends State<Feed> {
                     });
                     plots.sort((a, b) => price.contains(a.price) ? 0 : 1);
                     if (category != 'No Preference') {
+
                       plots.sort((a, b) => category.contains(a.category) ? 0 : 1);
 
                     }

@@ -87,8 +87,7 @@ class _LoginState extends State<Login> {
                       icon: Icon(Icons.mail),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(3))),
-                      hintText: 'Email',
-                      fillColor: Colors.deepPurpleAccent)),
+                      hintText: 'Email',)),
               SizedBox(
                 height: 15,
               ),
