@@ -12,6 +12,9 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="plots"
         android:icon="@mipmap/ic_launcher">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-1671319682516251~7637527304"/>
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBmbfZJivSgxmcza8psIGaP0j8zmG0B15k"/>
         <activity

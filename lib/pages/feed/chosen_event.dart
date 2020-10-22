@@ -274,6 +274,7 @@ class ChosenEvent extends StatelessWidget {
                     CustomButton(
                       text: 'Buy Ticket',
                       callback: () {
+                        Navigator.pop(context);
                         Navigator.push(
                             context,
                             MaterialPageRoute(

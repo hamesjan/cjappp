@@ -32,6 +32,7 @@ dependencies:
   location:
   google_maps_flutter:
   intl:
+  firebase_admob:
   image_picker:
   webview_flutter:
   flutter_launcher_icons:

@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:cjapp/pages/login/registration.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/services.dart';
-import 'package:cjapp/pages/home.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:cjapp/services/BaseAuth.dart';
 import 'package:flutter/services.dart';
 import 'package:cjapp/widgets/custom_button.dart';
+
+const String testDevice = '2B7E2D7F-D8D3-4E19-8F3D-CE88B38CE908';
+
 
 class Login extends StatefulWidget {
   @override
@@ -22,13 +25,48 @@ class _LoginState extends State<Login> {
 
   var _auth = Auth();
 
+  static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
+      testDevices: testDevice != null ? <String>[testDevice] : null,
+      nonPersonalizedAds: true,
+      keywords: <String>['Entertainment', 'Convenience', 'Fun']
+  );
+
+  BannerAd bannerAd;
+
+  BannerAd createBannerAd(){
+    return BannerAd(
+        adUnitId: BannerAd.testAdUnitId,
+        size: AdSize.banner,
+        targetingInfo: targetingInfo,
+        listener: (MobileAdEvent event){
+          print('BannerAd $event');
+        }
+    );
+  }
+
+
+  @override
+  void initState() {
+    FirebaseAdMob.instance.initialize(appId: BannerAd.testAdUnitId);
+    bannerAd = createBannerAd()..load()..show();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    bannerAd.dispose();
+    super.dispose();
+  }
+
+
   signInUser() async {
     try {
       String userId = await _auth.signIn(email, password);
-
-      Navigator.pop(context);
-      Navigator.push(context,
-          MaterialPageRoute(builder: (BuildContext context) => Home()));
+      print(userId);
+      // Navigator.pop(context);
+      // Navigator.push(context,
+      //     MaterialPageRoute(builder: (BuildContext context) => Home()));
     } on PlatformException catch (e) {
       print(e);
     } catch (e) {
