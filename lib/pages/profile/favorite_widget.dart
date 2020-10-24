@@ -2,6 +2,8 @@ import 'package:cjapp/pages/feed/chosen_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:cjapp/services/BaseAuth.dart';
 
 class FavoriteWidget extends StatelessWidget {
   final String name;
@@ -14,7 +16,25 @@ class FavoriteWidget extends StatelessWidget {
     var fav = await _firestore.collection('plots').where('name', isEqualTo: name).get();
     List test = [];
     fav.docs.forEach((element) {test.add(element.data()); });
-    return test[0];
+
+    // Getting Favorites
+    var _auth = Auth();
+    String username;
+    auth.User _user = await _auth.getCurrentUser();
+    var allUsers = await _firestore.collection('users').get();
+    allUsers.docs.forEach((element) {
+      if (element.data()['uid'] == _user.uid) {
+        username = element.data()['username'];
+      }
+    });
+    var resUsers = await _firestore.collection('users').doc(username).get();
+    List currFavorites = resUsers.data()['favorites'];
+    bool favorite = false;
+    if(currFavorites.contains(test[0]['name'])){
+      favorite = true;
+    }
+
+    return [favorite, test[0]];
   }
 
   @override
@@ -26,17 +46,19 @@ class FavoriteWidget extends StatelessWidget {
         Navigator.push(context,
             MaterialPageRoute(
           builder: (BuildContext context) => ChosenEvent(
-            name: info['name'],
-            zipCode: info['zipCode'],
-            lat: info['lat'],
-            long: info['long'],
-            location: info['location'],
-            ratingsNumbers: info['ratingsNumbers'],
-            ratings: info['ratings'],
-            website: info['website'],
-            category: info['category'],
-            by: info['by'],
-            price: info['price'],
+            name: info[1]['name'],
+            zipCode: info[1]['zipCode'],
+            lat: info[1]['lat'],
+            fav: info[0],
+            long: info[1]['long'],
+            location: info[1]['location'],
+            imgLink: info[1]['imgLink'],
+            ratingsNumbers: info[1]['ratingsNumbers'],
+            ratings: info[1]['ratings'],
+            website: info[1]['website'],
+            category: info[1]['category'],
+            by: info[1]['by'],
+            price: info[1]['price'],
           )
         ));
       },

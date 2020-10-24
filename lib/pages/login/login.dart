@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:cjapp/pages/login/registration.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/services.dart';
+import 'package:cjapp/pages/home.dart';
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:cjapp/services/BaseAuth.dart';
-import 'package:flutter/services.dart';
 import 'package:cjapp/widgets/custom_button.dart';
 
 const String testDevice = '2B7E2D7F-D8D3-4E19-8F3D-CE88B38CE908';
@@ -64,9 +64,9 @@ class _LoginState extends State<Login> {
     try {
       String userId = await _auth.signIn(email, password);
       print(userId);
-      // Navigator.pop(context);
-      // Navigator.push(context,
-      //     MaterialPageRoute(builder: (BuildContext context) => Home()));
+      Navigator.pop(context);
+      Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext context) => Home()));
     } on PlatformException catch (e) {
       print(e);
     } catch (e) {

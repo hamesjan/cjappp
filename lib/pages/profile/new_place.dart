@@ -49,8 +49,9 @@ class _NewPlaceState extends State<NewPlace> {
         'website': website,
         'category': category,
         'approved': false,
-        'lat': null,
-        'long': null,
+        'imgLink': '',
+        'lat': 0.0,
+        'long': 0.0,
         'price': price,
         'by': _user.uid,
         'clicks': 0
@@ -135,8 +136,8 @@ class _NewPlaceState extends State<NewPlace> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             displaySelectedFile(_image),
-            RaisedButton(child: Text('Get Image'), onPressed:(){getImage();},elevation: 15, padding: EdgeInsets.all(5),),
-            SizedBox(height: 5,),
+            RaisedButton(child: Text('Get Image'), onPressed:(){getImage();},elevation: 10, padding: EdgeInsets.all(5),),
+            SizedBox(height: 10,),
             TextFormField(
                 validator: (text) => validateName(text),
                 onChanged: (value) => name = value,

@@ -4,7 +4,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cjapp/widgets/rating_stars.dart';
 import 'package:location/location.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:cjapp/services/BaseAuth.dart';
 import 'package:cjapp/pages/feed/chosen_event.dart';
+import 'package:optimized_cached_image/optimized_cached_image.dart';
 
 class MapPage extends StatefulWidget {
   @override
@@ -22,7 +25,9 @@ class MapPageState extends State<MapPage> {
   List receivedPlots = [];
   String name;
   String zipCode;
+  String imgLink;
   double lat;
+  bool fav;
   double long;
   List ratings;
   String website;
@@ -48,18 +53,6 @@ class MapPageState extends State<MapPage> {
         return;
       }
     }
-  }
-
-
-  Future<Widget> _getImage(BuildContext context, String image) async {
-    Image m;
-    await GetFirebaseImage.loadFromStorage(context, image).then((downloadUrl) {
-      m = Image.network(
-        downloadUrl.toString(),
-        fit: BoxFit.scaleDown,
-      );
-    });
-    return m;
   }
 
   @override
@@ -105,7 +98,8 @@ class MapPageState extends State<MapPage> {
                   website,
                   category,
                   by,
-                  price),
+                  price,
+              imgLink),
             ),
           ],
         ),
@@ -134,7 +128,7 @@ class MapPageState extends State<MapPage> {
   }
 
 
-  Widget _boxes( name, zipCode, plotLocation, ratingsNumbers, ratings, website, category, by, price) {
+  Widget _boxes( name, zipCode, plotLocation, ratingsNumbers, ratings, website, category, by, price, imgLink) {
     return  GestureDetector(
       onTap: () {
         showDialog(context: context,
@@ -152,12 +146,14 @@ class MapPageState extends State<MapPage> {
                               builder: (BuildContext context) => ChosenEvent(
                                 name: name,
                                 lat: lat,
+                                fav: fav,
                                 long: long,
                                 zipCode: zipCode,
                                 location: plotLocation,
                                 ratingsNumbers: ratingsNumbers,
                                 ratings: ratings,
                                 website: website,
+                                imgLink: imgLink,
                                 category: category,
                                 by: by,
                                 price: price,
@@ -186,37 +182,19 @@ class MapPageState extends State<MapPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  FutureBuilder(
-                    future: _getImage(context, '$name.jpg'),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done)
-                        return Container(
+                 Container(
                           constraints: BoxConstraints(
                             maxHeight: 200,
                             minHeight: 200,
                           ),
                           child: ClipRRect(
                             borderRadius: new BorderRadius.circular(25.0),
-                            child: snapshot.data,
+                            child: Image(
+                              image: NetworkImage(imgLink),
+                            ),
                           ),
-                        );
-                      else if (snapshot.connectionState == ConnectionState.waiting)
-                        return Container(
-                          padding: EdgeInsets.all(16),
-                          height: 200,
-                          width: 200,
-                          child: CircularProgressIndicator(),
-                        );
-                      else
-                        return Container(
-                          padding: EdgeInsets.all(16),
-                          height: 200,
-                          width: 200,
-                          child: Text(
-                              'The picture could not be found...\nCheck again later!'),
-                        );
-                    },
-                  ),
+                        ),
+
                   Container(
                     constraints: BoxConstraints(
                       minHeight: 200,
@@ -236,7 +214,7 @@ class MapPageState extends State<MapPage> {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: Colors.black,
-                                      fontSize: 20.0,
+                                      fontSize: 22.0,
                                       fontWeight: FontWeight.bold),
                                 )),
                           ),
@@ -245,20 +223,27 @@ class MapPageState extends State<MapPage> {
                             child: Text(
                               category,textAlign: TextAlign.center, style: TextStyle(
                               fontWeight: FontWeight.bold,
-                                fontSize: 22,
+                                fontSize: 20,
                                 color: Colors.blue
                             ),
                             ),
                           ),
-                          SizedBox(height:5.0),
-                          Row(children: [
-                            Expanded(child: Container(),),
-                            RatingStars(rating: ratingsNumbers,),
-                            Expanded(child: Container(),),
-                          ],),
-                          SizedBox(height:5.0),
-                          Text('${ratingsNumbers.toString()} / 5.0', textAlign: TextAlign.center,)
-
+                          ratings.length == 0 ? Container(
+                            child: Text('No ratings available.', style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red
+                            ),),
+                          ) :
+                          Column(children: [
+                            SizedBox(height:5.0),
+                            Row(children: [
+                              Expanded(child: Container(),),
+                              RatingStars(rating: ratingsNumbers,),
+                              Expanded(child: Container(),),
+                            ],),
+                            SizedBox(height:5.0),
+                            Text('${ratingsNumbers.toString()} / 5.0', textAlign: TextAlign.center,)
+                          ],)
                         ],
                       )
                     ),
@@ -277,8 +262,28 @@ class MapPageState extends State<MapPage> {
     markerList.clear();
     receivedPlots.clear();
     firestoredata.docs.forEach((element) => receivedPlots.add(element.data()));
+
+
+    // Getting Favorites
+    var _auth = Auth();
+    String username;
+    auth.User _user = await _auth.getCurrentUser();
+    var allUsers = await _firestore.collection('users').get();
+    allUsers.docs.forEach((element) {
+      if (element.data()['uid'] == _user.uid) {
+        username = element.data()['username'];
+      }
+    });
+    var resUsers = await _firestore.collection('users').doc(username).get();
+    List currFavorites = resUsers.data()['favorites'];
+    bool favorite = false;
+
+
     receivedPlots.forEach((element) {
       if (element['approved']){
+        if(currFavorites.contains(element['name'])){
+          favorite = true;
+        }
         markerList.add(Marker(
           onTap: (){
             GoLocation(element['lat'], element['long']);
@@ -286,9 +291,11 @@ class MapPageState extends State<MapPage> {
               name = element['name'];
               zipCode = element['zipCode'];
               lat = element['lat'];
-              long = element['long'];
-              plotLocation = element['location'];
+              imgLink = element['imgLink'];
               ratingsNumbers = element['ratingsNumbers'];
+              long = element['long'];
+              fav = favorite;
+              plotLocation = element['location'];
               category = element['category'];
               price = element['price'];
               ratings = element['ratings'];

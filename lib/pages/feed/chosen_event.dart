@@ -6,7 +6,12 @@ import 'package:cjapp/widgets/price_icon_widget.dart';
 import 'package:cjapp/pages/home.dart';
 import 'package:cjapp/pages/feed/new_review.dart';
 import 'package:cjapp/services/launch_google_map.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cjapp/services/BaseAuth.dart';
+import 'package:optimized_cached_image/optimized_cached_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/services.dart';
 import 'package:cjapp/widgets/rating_stars.dart';
 
 class ChosenEvent extends StatelessWidget {
@@ -16,7 +21,9 @@ class ChosenEvent extends StatelessWidget {
   final double ratingsNumbers;
   final double lat;
   final double long;
+  final String imgLink;
   final List ratings;
+  final bool fav;
   final String website;
   final String category;
   final String by;
@@ -26,8 +33,10 @@ class ChosenEvent extends StatelessWidget {
       {Key key,
       this.name,
       this.zipCode,
+        this.imgLink,
       this.location,
       this.by,
+        this.fav,
       this.ratingsNumbers,
         this.lat,
         this.long,
@@ -37,18 +46,91 @@ class ChosenEvent extends StatelessWidget {
       this.price})
       : super(key: key);
 
+  Future<void> addFavorite(context) async {
+    FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    var _auth = Auth();
+    try {
+      // setting username variable
+      auth.User _user = await _auth.getCurrentUser();
+      var allUsers = await _firestore.collection('users').get();
+      allUsers.docs.forEach((element) async{
+        if (element.data()['uid'] == _user.uid) {
+          var resUsers = await _firestore.collection('users').doc(element.data()['username']).get();
+          List currFavorites = resUsers.data()['favorites'];
+          currFavorites.add(name);
+          await _firestore.collection('users').doc(element.data()['username']).update({
+            'favorites': currFavorites,
+          }).catchError((onError) => {print(onError.toString())});
+        }
+      });
 
-  Future<Widget> _getImage(BuildContext context, String image) async {
-    Image m;
-    await GetFirebaseImage.loadFromStorage(context, image).then((downloadUrl) {
-      m = Image.network(
-        downloadUrl.toString(),
-        fit: BoxFit.scaleDown,
-      );
-    });
-
-    return m;
+      Navigator.pop(context);
+      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ChosenEvent(
+        name: name,
+        zipCode: zipCode,
+        location: location,
+        ratingsNumbers: ratingsNumbers,
+        ratings: ratings,
+        imgLink: imgLink,
+        website: website,
+        long: long,
+        lat: lat,
+        fav: true,
+        category: category,
+        by: by,
+        price: price,
+      )));
+    }
+    on PlatformException catch (e) {
+      print(e);
+    } catch (e) {
+      print(e);
+    }
   }
+
+  Future<void> removeFavorite(context) async {
+    FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    var _auth = Auth();
+
+    try {
+      // setting username variable
+      auth.User _user = await _auth.getCurrentUser();
+      var allUsers = await _firestore.collection('users').get();
+      allUsers.docs.forEach((element) async{
+        if (element.data()['uid'] == _user.uid) {
+          var resUsers = await _firestore.collection('users').doc(element.data()['username']).get();
+          List currFavorites = resUsers.data()['favorites'];
+          currFavorites.remove(name);
+          await _firestore.collection('users').doc(element.data()['username']).update({
+            'favorites': currFavorites,
+          }).catchError((onError) => {print(onError.toString())});
+
+        }
+      });
+      Navigator.pop(context);
+      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ChosenEvent(
+        name: name,
+        zipCode: zipCode,
+        location: location,
+        ratingsNumbers: ratingsNumbers,
+        ratings: ratings,
+        imgLink: imgLink,
+        website: website,
+        long: long,
+        lat: lat,
+        fav: false,
+        category: category,
+        by: by,
+        price: price,
+      )));
+    } on PlatformException catch (e) {
+      print(e);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -67,30 +149,28 @@ class ChosenEvent extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            FutureBuilder(
-              future: _getImage(context, '$name.jpg'),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done)
-                  return Container(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.elliptical(50, 30),
-                            bottomRight: Radius.elliptical(50, 30)),
-                        child: snapshot.data,
-                      ));
-                else if (snapshot.connectionState == ConnectionState.waiting)
-                  return Container(
-                    padding: EdgeInsets.all(16),
-                    child: CircularProgressIndicator(),
-                  );
-                else
-                  return Container(
-                    padding: EdgeInsets.all(16),
-
-                    child: Text(
-                        'The picture could not be found...\nCheck again later!'),
-                  );
-              },
+            Container(
+              constraints: BoxConstraints(
+                maxHeight: 350,
+                minHeight: 350,
+              ),
+              child: OptimizedCacheImage(
+                imageUrl: imgLink,
+                imageBuilder: (context, imageProvider) => Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(25),
+                      bottomLeft: Radius.circular(25)
+                    ),
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+              ),
             ),
             Container(
                 padding: EdgeInsets.all(16),
@@ -125,7 +205,53 @@ class ChosenEvent extends StatelessWidget {
                           ],)
                         ],),
                         Expanded(child: Container(),),
-                        Icon(Icons.bookmark_border, size: 30,)
+                        fav ? IconButton(icon: Icon(Icons.bookmark), onPressed: (){
+                          showDialog(context: context,
+                              barrierDismissible: true,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Remove Bookmark?'),
+                                  actions: <Widget>[
+                                    IconButton(
+                                      onPressed: (){
+                                        removeFavorite(context);
+                                      },
+                                      icon: Icon(Icons.check),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.close),
+                                      onPressed: (){
+                                        Navigator.pop(context);
+                                      },
+                                    )
+                                  ],
+                                );
+                              }
+                          );
+                        }):  IconButton(icon: Icon(Icons.bookmark_border), onPressed: (){
+                          showDialog(context: context,
+                              barrierDismissible: true,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Bookmark this Plot?'),
+                                  actions: <Widget>[
+                                    IconButton(
+                                      onPressed: (){
+                                        addFavorite(context);
+                                      },
+                                      icon: Icon(Icons.check),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.close),
+                                      onPressed: (){
+                                        Navigator.pop(context);
+                                      },
+                                    )
+                                  ],
+                                );
+                              }
+                          );
+                        })
                       ],
                     ),
                     Divider(

@@ -3,6 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cjapp/pages/feed/chosen_event.dart';
 import 'package:cjapp/pages/home.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:cjapp/services/BaseAuth.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -29,13 +32,12 @@ class _SearchPageState extends State<SearchPage> {
                 if (snapshot.hasData) {
                   receivedPlots.clear();
                   plotsNames.clear();
-                  snapshot.data.docs
-                      .forEach((element) => receivedPlots.add(element.data()));
+                  snapshot.data.docs.forEach((element) => receivedPlots.add(element.data()));
                   receivedPlots.forEach((element) {
                     plotsNames.add(element['name']);
                   });
                   if (plotsNames.length > 10) {
-                    trending.add(plotsNames.sublist(0, 10));
+                    trending = plotsNames.sublist(0, 10);
                   } else {
                     trending = plotsNames;
                   }
@@ -167,7 +169,7 @@ class SearchEntertainment extends SearchDelegate<String> {
     return ListView.builder(
         itemCount: suggestionList.length,
         itemBuilder: (context, index) => ListTile(
-              onTap: () {
+              onTap: () async{
                 query = '${suggestionList[index]}';
                 var obj;
                 receivedPlots.forEach((element) {
@@ -175,6 +177,25 @@ class SearchEntertainment extends SearchDelegate<String> {
                     obj = element;
                   }
                 });
+                FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+                // Getting Favorites
+                var _auth = Auth();
+                String username;
+                auth.User _user = await _auth.getCurrentUser();
+                var allUsers = await _firestore.collection('users').get();
+                allUsers.docs.forEach((element) {
+                  if (element.data()['uid'] == _user.uid) {
+                    username = element.data()['username'];
+                  }
+                });
+                var resUsers = await _firestore.collection('users').doc(username).get();
+                List currFavorites = resUsers.data()['favorites'];
+                bool favorite = false;
+                if(currFavorites.contains(obj['name'])){
+                  favorite = true;
+                }
+
                 Navigator.pop(context);
                 Navigator.push(
                     context,
@@ -187,6 +208,8 @@ class SearchEntertainment extends SearchDelegate<String> {
                               ratings: obj['ratings'],
                               lat: obj['lat'],
                               long: obj['long'],
+                              fav: favorite,
+                              imgLink: obj['imgLink'],
                               website: obj['website'],
                               category: obj['category'],
                               by: obj['by'],

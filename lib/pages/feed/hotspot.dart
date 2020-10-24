@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cjapp/pages/home.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/services.dart';
+import 'package:optimized_cached_image/optimized_cached_image.dart';
 import 'package:cjapp/services/BaseAuth.dart';
 import 'package:cjapp/widgets/price_icon_widget.dart';
 
@@ -16,6 +17,7 @@ class HotSpot extends StatelessWidget {
   final double ratingsNumbers;
   final double lat;
   final double long;
+  final String imgLink;
   final List ratings;
   final String website;
   final String category;
@@ -23,21 +25,8 @@ class HotSpot extends StatelessWidget {
   final bool fav;
   final String price;
 
+  const HotSpot({Key key, this.name, this.zipCode, this.imgLink, this.location, this.by, this.ratingsNumbers, this.lat, this.long, this.ratings, this.website, this.category, this.price, this.fav}) : super(key: key);
 
-  const HotSpot({Key key, this.name, this.zipCode, this.location, this.by, this.ratingsNumbers, this.lat, this.long, this.ratings, this.website, this.category, this.price, this.fav}) : super(key: key);
-
-
-
-  Future<Widget> _getImage(BuildContext context, String image) async {
-    Image m;
-    await GetFirebaseImage.loadFromStorage(context, image).then((downloadUrl) {
-      m = Image.network(
-        downloadUrl.toString(),
-        fit: BoxFit.scaleDown,
-      );
-    });
-    return m;
-  }
 
   Future<void> addFavorite(context) async {
     FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -54,12 +43,13 @@ class HotSpot extends StatelessWidget {
           await _firestore.collection('users').doc(element.data()['username']).update({
             'favorites': currFavorites,
           }).catchError((onError) => {print(onError.toString())});
-
         }
       });
+
       Navigator.pop(context);
       Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Home()));
-    } on PlatformException catch (e) {
+    }
+      on PlatformException catch (e) {
       print(e);
     } catch (e) {
       print(e);
@@ -128,9 +118,11 @@ class HotSpot extends StatelessWidget {
                     location: location,
                     ratingsNumbers: ratingsNumbers,
                     ratings: ratings,
+                    imgLink: imgLink,
                     website: website,
                     long: long,
                     lat: lat,
+                    fav: fav,
                     category: category,
                     by: by,
                     price: price,
@@ -151,38 +143,26 @@ class HotSpot extends StatelessWidget {
                 ]),
             child: Column(
               children: <Widget>[
-                SizedBox(height: 10,),
-                FutureBuilder(
-                  future: _getImage(context, '$name.jpg'),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done)
-                      return Container(
+                    Container(
                         constraints: BoxConstraints(
                           maxHeight: 200,
                           minHeight: 200,
                         ),
-                        child: ClipRRect(
-                          borderRadius: new BorderRadius.circular(25.0),
-                          child: snapshot.data,
+                        child: OptimizedCacheImage(
+                          imageUrl: imgLink,
+                          imageBuilder: (context, imageProvider) => Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(25)),
+                              image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          placeholder: (context, url) => CircularProgressIndicator(),
+                          errorWidget: (context, url, error) => Icon(Icons.error),
                         ),
-                      );
-                    else if (snapshot.connectionState == ConnectionState.waiting)
-                      return Container(
-                        padding: EdgeInsets.all(16),
-                        height: 200,
-                        width: 200,
-                        child: CircularProgressIndicator(),
-                      );
-                    else
-                      return Container(
-                        padding: EdgeInsets.all(16),
-                        height: 200,
-                        width: 200,
-                        child: Text(
-                            'The picture could not be found...\nCheck again later!'),
-                      );
-                  },
-                ),
+                      ),
                 Container(
                     padding: EdgeInsets.all(16),
                     child: Column(
@@ -288,12 +268,13 @@ class HotSpot extends StatelessWidget {
                                   fontWeight: FontWeight.bold, fontSize: 15),
                             ),
                           PriceIconWidget(price: price,)
-
                           ],
                         )
                       ],
                     ))
               ],
-            )));
+            )
+        )
+    );
   }
 }

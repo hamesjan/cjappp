@@ -7,6 +7,7 @@ import 'package:cjapp/services/BaseAuth.dart';
 import 'package:cjapp/widgets/plotserror.dart';
 
 class Feed extends StatefulWidget {
+
   @override
   _FeedState createState() => _FeedState();
 }
@@ -73,6 +74,7 @@ class _FeedState extends State<Feed> {
                           category: element['category'],
                           by: element['by'],
                           fav: fav,
+                          imgLink: element['imgLink'],
                           lat: element['lat'],
                           long: element['long'],
                           ratings: element['ratings'],
@@ -85,9 +87,7 @@ class _FeedState extends State<Feed> {
                     });
                     plots.sort((a, b) => price.contains(a.price) ? 0 : 1);
                     if (category != 'No Preference') {
-
                       plots.sort((a, b) => category.contains(a.category) ? 0 : 1);
-
                     }
                     plots.insert(0,
                         Column(children: [
