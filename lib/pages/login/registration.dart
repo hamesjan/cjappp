@@ -4,6 +4,7 @@ import 'package:cjapp/widgets/custom_button.dart';
 import 'package:cjapp/pages/login/registration_2.dart';
 import 'package:cjapp/services/BaseAuth.dart';
 import 'package:flutter/services.dart';
+import 'package:cjapp/pages/login/login.dart';
 
 class Registration extends StatefulWidget {
   @override
@@ -57,6 +58,16 @@ class _RegistrationState extends State<Registration> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Register'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_rounded),
+          onPressed: (){
+            Navigator.pop(context);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) => Login()));
+          },
+        ),
       ),
       body: Container(
         padding: EdgeInsets.all(16),

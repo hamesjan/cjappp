@@ -22,23 +22,18 @@ class AboutPlots extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SelectIconSetting(
-              icon: Icon(Icons.auto_awesome),
-              text: 'Change Your Username',
-              callback: (){},
+            Container(
+              padding: EdgeInsets.all(16),
+                child: Text(
+              'Plots is a mobile app designed to facilitate the discovery of cultural attractions, breathtaking views, local entertainment, and everything else to eat up your boredom.',
+                    style: TextStyle(fontWeight:
+                    FontWeight.bold,
+                    fontSize: 20), )),
+            Image(
+              image: AssetImage('assets/images/loginlogo.png'),
             ),
-            Divider(thickness: 2,),
-            SelectTextSetting(
-              text: 'Delete Account',
-              callback: (){
-                _auth.signOut();
-                Navigator.pop(context);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => Login()));
-              },
-            ),
+            Text('Brought to you by James Han.')
+
           ],
         ),
       ),

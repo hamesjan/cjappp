@@ -22,6 +22,7 @@ class YourAccount extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            Divider(thickness: 2,),
             SelectIconSetting(
               icon: Icon(Icons.auto_awesome),
               text: 'Change Your Username',
@@ -29,7 +30,7 @@ class YourAccount extends StatelessWidget {
             ),
             Divider(thickness: 2,),
             SelectTextSetting(
-              text: 'Delete Account',
+              text: 'Permanently Delete Account',
               callback: (){
                 _auth.signOut();
                 Navigator.pop(context);

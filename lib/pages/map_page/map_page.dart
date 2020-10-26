@@ -194,7 +194,6 @@ class MapPageState extends State<MapPage> {
                             ),
                           ),
                         ),
-
                   Container(
                     constraints: BoxConstraints(
                       minHeight: 200,

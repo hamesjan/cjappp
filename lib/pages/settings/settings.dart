@@ -1,4 +1,5 @@
 import 'package:cjapp/pages/settings/about_plots.dart';
+import 'package:cjapp/pages/settings/privacy_policy_plots.dart';
 import 'package:cjapp/pages/settings/select_setting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,10 @@ class SettingsPage extends StatelessWidget {
             SelectIconSetting(
               icon: Icon(Icons.security),
               text: 'Privacy',
-              callback: (){},
+              callback: (){
+                Navigator.push(context,
+                MaterialPageRoute(builder: (BuildContext context) => PrivacyPolicy()));
+              },
             ),
             SelectIconSetting(
               icon: Icon(Icons.person),
@@ -43,11 +47,11 @@ class SettingsPage extends StatelessWidget {
                 MaterialPageRoute(builder: (BuildContext context) => YourAccount()));
               },
             ),
-            SelectIconSetting(
-              icon: Icon(Icons.payment),
-              text: 'Payment Method',
-              callback: (){},
-            ),
+            // SelectIconSetting(
+            //   icon: Icon(Icons.payment),
+            //   text: 'Payment Method',
+            //   callback: (){},
+            // ),
             SelectIconSetting(
               icon: Icon(Icons.info),
               text: 'About',

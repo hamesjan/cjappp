@@ -8,7 +8,6 @@ import 'package:firebase_admob/firebase_admob.dart';
 import 'package:cjapp/services/BaseAuth.dart';
 import 'package:cjapp/widgets/custom_button.dart';
 
-const String testDevice = '2B7E2D7F-D8D3-4E19-8F3D-CE88B38CE908';
 
 
 class Login extends StatefulWidget {
@@ -26,12 +25,13 @@ class _LoginState extends State<Login> {
   var _auth = Auth();
 
   static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
-      testDevices: testDevice != null ? <String>[testDevice] : null,
+      testDevices: null,
       nonPersonalizedAds: true,
       keywords: <String>['Entertainment', 'Convenience', 'Fun']
   );
 
   BannerAd bannerAd;
+  // InterstitialAd interstitialAd;
 
   BannerAd createBannerAd(){
     return BannerAd(
@@ -44,6 +44,16 @@ class _LoginState extends State<Login> {
     );
   }
 
+  // InterstitialAd createInterstitialAd (){
+  //   return InterstitialAd(
+  //       adUnitId: 'ca-app-pub-1671319682516251/1543231558',
+  //       targetingInfo: targetingInfo,
+  //       listener: (MobileAdEvent event){
+  //         print('Interstitial Ad $event');
+  //       }
+  //   );
+  // }
+  //
 
   @override
   void initState() {
@@ -63,7 +73,6 @@ class _LoginState extends State<Login> {
   signInUser() async {
     try {
       String userId = await _auth.signIn(email, password);
-      print(userId);
       Navigator.pop(context);
       Navigator.push(context,
           MaterialPageRoute(builder: (BuildContext context) => Home()));
@@ -174,7 +183,7 @@ class _LoginState extends State<Login> {
                       MaterialPageRoute(
                           builder: (BuildContext context) => Registration()));
                 },
-              )
+              ),
             ],
           ),
         ),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cjapp/pages/feed/chosen_event.dart';
+import 'package:firebase_admob/firebase_admob.dart';
+import 'package:cjapp/widgets/plotserror.dart';
 import 'package:cjapp/pages/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
@@ -23,10 +25,9 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
         body: SingleChildScrollView(
       padding: EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          FutureBuilder(
+      child: Container(
+        height: MediaQuery.of(context).size.height,
+          child: FutureBuilder(
               future: _firestore.collection('plots').orderBy('clicks', descending: true).get(),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasData) {
@@ -105,15 +106,14 @@ class _SearchPageState extends State<SearchPage> {
                   );
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Container(child: CircularProgressIndicator());
+                  return Center(child: Container(width: 200, height:200,child: CircularProgressIndicator()));
                 } else {
-                  return Container(
-                    child: Text('An Error Occurred.'),
-                    color: Colors.red,
-                  );
+                 return PlotsError();
+
                 }
               }),
-        ],
+
+
       ),
     ));
   }
