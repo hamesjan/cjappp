@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:cjapp/widgets/plotserror.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +7,7 @@ import 'package:location/location.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cjapp/services/BaseAuth.dart';
 import 'package:cjapp/pages/feed/chosen_event.dart';
+import 'package:cjapp/pages/map_page/distance_calculator.dart';
 
 class MapPage extends StatefulWidget {
   @override
@@ -35,6 +35,7 @@ class MapPageState extends State<MapPage> {
   String plotLocation;
   double ratingsNumbers;
   String category;
+  double myRadiusMeters = 8046.72;
   String price;
 
   @override
@@ -60,30 +61,55 @@ class MapPageState extends State<MapPage> {
     }
   }
 
-  @override 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
+      body:
           FutureBuilder<Widget>(
             future: buildMap(context),
             builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
                 if (snapshot.hasData && _serviceEnabled && _permissionGranted.toString() == 'PermissionStatus.granted') {
-                  return snapshot.data;
+                  return Stack(
+                      children: <Widget>[
+                      snapshot.data,
+                       _buildContainer(),
+                        _setRadius(),
+                        // Align(
+                        //   alignment: Alignment.topCenter,
+                        //   child: FlatButton(
+                        //     child: Text('Hello'),
+                        //     onPressed: (){
+                        //     },
+                        //   ),
+                        // )
+                      ]
+                  );
                 }
                 else if (snapshot.connectionState == ConnectionState.waiting){
                   return Center(child: CircularProgressIndicator());
                 }
                 else{
-                  return PlotsError();
+                  return Center(
+                    child: Text('Enable location permissions to access map.\n\nSettings -> Privacy -> Location Services -> Plots', textAlign: TextAlign.center, style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold
+                    ),),
+                  );
+
                 }
               }
           ),
-          _buildContainer(),
-        ],
-      ),
     );
   }
+
+  Set<Circle> myCircle (lat, long, double myRadius){ return Set.from([Circle(
+    circleId: CircleId('my circle'),
+    center: LatLng(lat, long),
+    radius: myRadius,
+    strokeColor: Colors.pinkAccent,
+    fillColor: Colors.pinkAccent.withOpacity(0.3),
+    strokeWidth: 2
+  )]);}
 
   Widget _buildContainer() {
     return Align(
@@ -133,6 +159,55 @@ class MapPageState extends State<MapPage> {
     );
   }
 
+  Widget _setRadius(){
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Container(
+        padding: EdgeInsets.all(10),
+          child: new FittedBox(
+            child: Material(
+                color: Colors.white,
+                elevation: 14.0,
+                borderRadius: BorderRadius.circular(24.0),
+                shadowColor: Color(0x802196F3),
+                child: Container(
+                    padding: EdgeInsets.all(8),
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text('Radius: ', style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15),),
+                    DropdownButton<double> (
+                      value: myRadiusMeters,
+                      icon: Icon(Icons.arrow_drop_down, color: Colors.black),
+                      iconSize: 24,
+                      elevation: 16,
+                      style: TextStyle(color: Colors.black,
+                      ),
+                      underline: Container(
+                        height: 2,
+                        color: Colors.pinkAccent,
+                      ),
+                      onChanged: (double newValue) {
+                        setState(() {
+                          myRadiusMeters = newValue;
+                        });
+                      },
+                      items: <double>[8046.72,16093.4, 80467.2, 160934]
+                          .map<DropdownMenuItem<double>>((double value) {
+                        return DropdownMenuItem<double>(
+                          value: value,
+                          child: Text(getMiles(value).toStringAsFixed(0)),
+                        );
+                      }).toList(),
+                    ),
+                    Text('miles', style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15),),
+                  ],)
+                )
+            ),
+          ),
+        ),
+      );
+  }
 
   Widget _boxes( name, zipCode, plotLocation, ratingsNumbers, ratings, website, category, by, price, imgLink) {
     return  GestureDetector(
@@ -283,42 +358,43 @@ class MapPageState extends State<MapPage> {
     List currFavorites = resUsers.data()['favorites'];
     bool favorite = false;
 
-
     receivedPlots.forEach((element) {
-      if (element['approved']){
-        if(currFavorites.contains(element['name'])){
-          favorite = true;
+      if (getDist(_locationData.latitude, _locationData.longitude, element['lat'], element['long'], getMiles(myRadiusMeters))) {
+        if (element['approved']) {
+          if (currFavorites.contains(element['name'])) {
+            favorite = true;
+          }
+          markerList.add(Marker(
+            onTap: () {
+              GoLocation(element['lat'], element['long']);
+              setState(() {
+                name = element['name'];
+                zipCode = element['zipCode'];
+                lat = element['lat'];
+                imgLink = element['imgLink'];
+                ratingsNumbers = element['ratingsNumbers'];
+                long = element['long'];
+                fav = favorite;
+                plotLocation = element['location'];
+                category = element['category'];
+                price = element['price'];
+                ratings = element['ratings'];
+                by = element['by'];
+              });
+            },
+            markerId: MarkerId(element['name']),
+            position: LatLng(element['lat'], element['long']),
+            // infoWindow: InfoWindow(title: element['name']),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueBlue,
+            ),
+          ));
         }
-        markerList.add(Marker(
-          onTap: (){
-            GoLocation(element['lat'], element['long']);
-            setState(() {
-              name = element['name'];
-              zipCode = element['zipCode'];
-              lat = element['lat'];
-              imgLink = element['imgLink'];
-              ratingsNumbers = element['ratingsNumbers'];
-              long = element['long'];
-              fav = favorite;
-              plotLocation = element['location'];
-              category = element['category'];
-              price = element['price'];
-              ratings = element['ratings'];
-              by = element['by'];
-            });
-          },
-          markerId: MarkerId(element['name']),
-      position: LatLng(element['lat'],element['long']),
-      // infoWindow: InfoWindow(title: element['name']),
-      icon: BitmapDescriptor.defaultMarkerWithHue(
-      BitmapDescriptor.hueBlue,
-      ),
-      ));
       }
     });
     markerList.add(myMarker(_locationData.latitude, _locationData.longitude));
 
-    return Container(
+      return Container(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
       child: GoogleMap(
@@ -330,6 +406,7 @@ class MapPageState extends State<MapPage> {
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
         },
+        circles: myCircle(_locationData.latitude, _locationData.longitude, myRadiusMeters),
         markers: markerList.toSet(),
       ),
     );
