@@ -89,6 +89,7 @@ class _FeedState extends State<Feed> {
                     if (category != 'No Preference') {
                       plots.sort((a, b) => category.contains(a.category) ? 0 : 1);
                     }
+
                     plots.insert(0,
                         Column(children: [
                           Container(

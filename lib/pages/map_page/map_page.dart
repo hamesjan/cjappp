@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cjapp/widgets/plotserror.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,7 +8,6 @@ import 'package:location/location.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cjapp/services/BaseAuth.dart';
 import 'package:cjapp/pages/feed/chosen_event.dart';
-import 'package:optimized_cached_image/optimized_cached_image.dart';
 
 class MapPage extends StatefulWidget {
   @override
@@ -37,15 +37,20 @@ class MapPageState extends State<MapPage> {
   String category;
   String price;
 
-  checkPermissions() async {
+  @override
+  void initState() {
+    super.initState();
+    checkPermissions();
+  }
+
+   checkPermissions() async {
     _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
+    if (!_serviceEnabled)  {
       _serviceEnabled = await location.requestService();
       if (!_serviceEnabled) {
         return;
       }
     }
-
     _permissionGranted = await location.hasPermission();
     if (_permissionGranted == PermissionStatus.denied) {
       _permissionGranted = await location.requestPermission();
@@ -55,7 +60,7 @@ class MapPageState extends State<MapPage> {
     }
   }
 
-  @override
+  @override 
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
@@ -63,13 +68,16 @@ class MapPageState extends State<MapPage> {
           FutureBuilder<Widget>(
             future: buildMap(context),
             builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
-              if(snapshot.hasData){
-                return snapshot.data;
-          }
-              else {
-                return Center(child: CircularProgressIndicator());
+                if (snapshot.hasData && _serviceEnabled && _permissionGranted.toString() == 'PermissionStatus.granted') {
+                  return snapshot.data;
+                }
+                else if (snapshot.connectionState == ConnectionState.waiting){
+                  return Center(child: CircularProgressIndicator());
+                }
+                else{
+                  return PlotsError();
+                }
               }
-          },
           ),
           _buildContainer(),
         ],
@@ -107,8 +115,6 @@ class MapPageState extends State<MapPage> {
       ),
     );
   }
-
-
 
   Widget beforeSelect(){
     return Container(

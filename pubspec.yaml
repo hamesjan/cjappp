@@ -35,6 +35,7 @@ dependencies:
   flutter_html:
   optimized_cached_image:
   firebase_admob:
+  latlong:
   image_picker:
   webview_flutter:
   flutter_launcher_icons:
