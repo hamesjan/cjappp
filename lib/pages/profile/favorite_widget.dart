@@ -53,7 +53,7 @@ class FavoriteWidget extends StatelessWidget {
             long: info[1]['long'],
             location: info[1]['location'],
             imgLink: info[1]['imgLink'],
-            ratingsNumbers: info[1]['ratingsNumbers'],
+            ratingsNumbers: info[1]['ratingsNumbers'].toDouble(),
             ratings: info[1]['ratings'],
             website: info[1]['website'],
             category: info[1]['category'],

@@ -204,7 +204,7 @@ class SearchEntertainment extends SearchDelegate<String> {
                               name: obj['name'],
                               zipCode: obj['zipCode'],
                               location: obj['location'],
-                              ratingsNumbers: obj['ratingsNumbers'],
+                              ratingsNumbers: obj['ratingsNumbers'].toDouble(),
                               ratings: obj['ratings'],
                               lat: obj['lat'],
                               long: obj['long'],

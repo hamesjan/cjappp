@@ -116,7 +116,7 @@ class HotSpot extends StatelessWidget {
                     name: name,
                     zipCode: zipCode,
                     location: location,
-                    ratingsNumbers: ratingsNumbers,
+                    ratingsNumbers: ratingsNumbers.toDouble(),
                     ratings: ratings,
                     imgLink: imgLink,
                     website: website,

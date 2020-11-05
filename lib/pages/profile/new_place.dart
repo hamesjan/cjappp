@@ -19,7 +19,7 @@ class NewPlace extends StatefulWidget {
 }
 
 class _NewPlaceState extends State<NewPlace> {
-  String price = 'Moderate';
+  String price = 'Free';
   String category = 'Outdoors';
   String location;
   String zipCode;

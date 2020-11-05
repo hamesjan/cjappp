@@ -127,7 +127,7 @@ class MapPageState extends State<MapPage> {
                   name,
                   zipCode,
                   plotLocation,
-                  ratingsNumbers,
+                  ratingsNumbers.toDouble(),
                   ratings,
                   website,
                   category,
