@@ -7,6 +7,8 @@ import 'package:cjapp/services/BaseAuth.dart';
 import 'package:cjapp/pages/home.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter/services.dart';
+import 'dart:async';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class NewReview extends StatefulWidget {
   final String name;
@@ -20,12 +22,25 @@ class NewReview extends StatefulWidget {
 
 class _NewReviewState extends State<NewReview> {
   final _submitReviewForm = GlobalKey<FormState>();
+  final RoundedLoadingButtonController _submitButtonController = new RoundedLoadingButtonController();
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   var _auth = Auth();
   String errorMessage;
   String review;
   double rating = 0.0;
   String username;
+
+  void _startUploadReview() async {
+    Timer(Duration(milliseconds: 300), () async{
+      if (_submitReviewForm.currentState.validate()) {
+        uploadReview();
+      } else {
+        _submitButtonController.reset();
+        print(errorMessage);
+      }
+    });
+  }
 
 
   Future<void> uploadReview() async {
@@ -62,7 +77,7 @@ class _NewReviewState extends State<NewReview> {
       await _firestore.collection('users').doc(username).update({
         'reviews': currReviews,
       }).catchError((onError) => {print(onError.toString())});
-
+      _submitButtonController.success();
       Navigator.pop(context);
       Navigator.push(context,
           MaterialPageRoute(
@@ -72,6 +87,7 @@ class _NewReviewState extends State<NewReview> {
     } on PlatformException catch (e) {
       print(e);
     } catch (e) {
+      _submitButtonController.reset();
       setState(
             () {
           errorMessage = e.message;
@@ -198,16 +214,14 @@ class _NewReviewState extends State<NewReview> {
            SizedBox(
              height: 10,
            ),
-           CustomButton(
-             text: 'Submit Review',
-             callback: () async {
-               if (_submitReviewForm.currentState.validate()) {
-                 uploadReview();
-               } else {
-                 print(errorMessage);
-               }
-             },
-           )
+           RoundedLoadingButton(
+             width: 200,
+             errorColor: Colors.red,
+             child: Text('Submit Review', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+             controller: _submitButtonController,
+             onPressed: _startUploadReview,
+           ),
+
          ],
        ),
      ),

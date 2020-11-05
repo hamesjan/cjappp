@@ -7,7 +7,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cjapp/services/BaseAuth.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:flutter/services.dart';
+import 'dart:async';
 import 'dart:io';
 
 
@@ -24,6 +26,7 @@ class _NewPlaceState extends State<NewPlace> {
   String errorMessage;
   String website;
   final _submitApplicationForm = GlobalKey<FormState>();
+  final RoundedLoadingButtonController _submitButtonController = new RoundedLoadingButtonController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   var _auth = Auth();
   String name;
@@ -37,7 +40,18 @@ class _NewPlaceState extends State<NewPlace> {
     });
   }
 
-  Future<void> uploadPlot(givenContext) async {
+  void _startApplication() async {
+    Timer(Duration(milliseconds: 300), () async{
+      if (_submitApplicationForm.currentState.validate()) {
+        uploadPlot();
+      } else {
+        _submitButtonController.reset();
+        print(errorMessage);
+      }
+    });
+  }
+
+  Future<void> uploadPlot() async {
     try {
       auth.User _user = await _auth.getCurrentUser();
       await _firestore.collection('plots').doc(name).set({
@@ -64,7 +78,7 @@ class _NewPlaceState extends State<NewPlace> {
       //   print('uploaded successfully');
       //   Scaffold.of(givenContext).showSnackBar(SnackBar(content: Text('Uploaded'),));
       // });
-
+      _submitButtonController.success();
       Navigator.pop(context);
       Navigator.push(context,
           MaterialPageRoute(builder: (BuildContext context) => Home()));
@@ -292,16 +306,13 @@ class _NewPlaceState extends State<NewPlace> {
             SizedBox(
               height: 10,
             ),
-            CustomButton(
-              text: 'Submit',
-              callback: () {
-                if (_submitApplicationForm.currentState.validate()) {
-                  uploadPlot(context);
-                } else {
-                  print(errorMessage);
-                }
-              },
-            )
+            RoundedLoadingButton(
+              width: 200,
+              errorColor: Colors.red,
+              child: Text('Register', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+              controller: _submitButtonController,
+              onPressed: _startApplication,
+            ),
           ],
         ),
         ),

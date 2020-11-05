@@ -5,7 +5,9 @@ import 'package:cjapp/widgets/custom_button.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:intl/intl.dart';
+import 'dart:async';
 import 'package:cjapp/services/BaseAuth.dart';
 
 class RegistrationTwo extends StatefulWidget {
@@ -21,10 +23,21 @@ class _RegistrationTwoState extends State<RegistrationTwo> {
   String username;
   String zipCode;
   String errorMessage;
-  bool loading = false;
+  final _registration2FormKey = GlobalKey<FormState>();
   var _auth = Auth();
-
+  final RoundedLoadingButtonController _loginButtonController = new RoundedLoadingButtonController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  void _startLogin() async {
+    Timer(Duration(milliseconds: 300), () async{
+      if (_registration2FormKey.currentState.validate()) {
+        registerUser();
+      } else {
+        _loginButtonController.reset();
+      }
+    });
+  }
+
 
   Future<void> registerUser() async {
     try {
@@ -41,20 +54,35 @@ class _RegistrationTwoState extends State<RegistrationTwo> {
         'favorites': [],
         'reviews': [],
         'uid': _user.uid,
-      }).catchError((onError) => {loading = false});
-
+      }).catchError((onError) => print(onError.toString()));
+      _loginButtonController.success();
       Navigator.pop(context);
       Navigator.push(context,
           MaterialPageRoute(builder: (BuildContext context) => Home()));
     } on PlatformException catch (e) {
       print(e);
     } catch (e) {
+      _loginButtonController.reset();
       setState(
         () {
           errorMessage = e.message;
         },
       );
     }
+  }
+
+  String validateUsername(String value) {
+    if (value == null || value.isEmpty) {
+      return "Missing Email";
+    }
+    return null;
+  }
+
+  String validateZip(String value) {
+    if (value == null || value.isEmpty) {
+      return "Missing Password";
+    }
+    return null;
   }
 
   @override
@@ -65,11 +93,15 @@ class _RegistrationTwoState extends State<RegistrationTwo> {
       ),
       body: Container(
         padding: EdgeInsets.all(16),
-        child: Column(
+        child:Form(
+          key: _registration2FormKey,
+          child:
+        Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            TextField(
+            TextFormField(
+                validator: (text) => validateUsername(text),
                 onChanged: (value) => username = value,
                 decoration: InputDecoration(
                   icon: Icon(Icons.person),
@@ -80,7 +112,8 @@ class _RegistrationTwoState extends State<RegistrationTwo> {
             SizedBox(
               height: 15,
             ),
-            TextField(
+            TextFormField(
+                validator: (text) => validateZip(text),
                 onChanged: (value) => zipCode = value,
                 decoration: InputDecoration(
                     icon: Icon(Icons.location_on_rounded),
@@ -100,17 +133,17 @@ class _RegistrationTwoState extends State<RegistrationTwo> {
             SizedBox(
               height: 10,
             ),
-            CustomButton(
-              text: 'Register',
-              callback: () async {
-                loading = true;
-                registerUser();
-              },
+            RoundedLoadingButton(
+              width: 200,
+              errorColor: Colors.red,
+              child: Text('Register', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+              controller: _loginButtonController,
+              onPressed: _startLogin,
             ),
-            loading ? CircularProgressIndicator() : Container()
           ],
         ),
       ),
+      )
     );
   }
 }

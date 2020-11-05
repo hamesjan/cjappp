@@ -33,6 +33,7 @@ dependencies:
   google_maps_flutter:
   intl:
   flutter_html:
+  rounded_loading_button:
   optimized_cached_image:
   firebase_admob:
   latlong:

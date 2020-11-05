@@ -5,6 +5,8 @@ import 'package:cjapp/pages/login/registration_2.dart';
 import 'package:cjapp/services/BaseAuth.dart';
 import 'package:flutter/services.dart';
 import 'package:cjapp/pages/login/login.dart';
+import 'dart:async';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class Registration extends StatefulWidget {
   @override
@@ -17,6 +19,8 @@ class _RegistrationState extends State<Registration> {
   String confirmPassword;
   String errorMessage;
   final _registrationFormKey = GlobalKey<FormState>();
+  final RoundedLoadingButtonController _signUpButtonController = new RoundedLoadingButtonController();
+
   var _auth = Auth();
 
   String validateMatchingPasswords(
@@ -28,11 +32,22 @@ class _RegistrationState extends State<Registration> {
     return null;
   }
 
+  void _startRegister() async {
+    Timer(Duration(milliseconds: 300), () async{
+      if (_registrationFormKey.currentState.validate()) {
+        registerUser();
+      } else {
+        _signUpButtonController.reset();
+      }
+    });
+  }
+
+
   Future<void> registerUser() async {
     try {
       await _auth.signUp(email, password);
-      await _auth.sendEmailVerification();
-
+      _signUpButtonController.success();
+      // await _auth.sendEmailVerification();
       Navigator.pop(context);
       Navigator.push(
           context,
@@ -41,6 +56,7 @@ class _RegistrationState extends State<Registration> {
     } on PlatformException catch (e) {
       print(e);
     } catch (e) {
+      _signUpButtonController.reset();
       setState(
         () {
           errorMessage = e.message;
@@ -124,16 +140,13 @@ class _RegistrationState extends State<Registration> {
               SizedBox(
                 height: 10,
               ),
-              CustomButton(
-                text: 'Register',
-                callback: () {
-                  if (_registrationFormKey.currentState.validate()) {
-                    registerUser();
-                  } else {
-                    return;
-                  }
-                },
-              )
+              RoundedLoadingButton(
+                width: 200,
+                errorColor: Colors.red,
+                child: Text('Register', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                controller: _signUpButtonController,
+                onPressed: _startRegister,
+              ),
             ],
           ),
         ),

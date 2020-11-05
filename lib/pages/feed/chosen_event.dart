@@ -396,18 +396,18 @@ class ChosenEvent extends StatelessWidget {
                     ),) : Container(),
                     Divider(thickness: 2,),
                     SizedBox(height: 10,),
-                    website == '' ?
-                    CustomButton(
-                      text: 'Buy Ticket',
-                      callback: () {
-                        Navigator.pop(context);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    PlotsWebView()));
-                      },
-                    ) : Container()
+                    // website == '' ?
+                    // CustomButton(
+                    //   text: 'Buy Ticket',
+                    //   callback: () {
+                    //     Navigator.pop(context);
+                    //     Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //             builder: (BuildContext context) =>
+                    //                 PlotsWebView()));
+                    //   },
+                    // ) : Container()
                   ],
                 ))
           ],
