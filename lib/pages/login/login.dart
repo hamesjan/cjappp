@@ -4,11 +4,9 @@ import 'package:cjapp/pages/login/registration.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/services.dart';
 import 'package:cjapp/pages/home.dart';
-import 'package:firebase_admob/firebase_admob.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:cjapp/services/BaseAuth.dart';
 import 'dart:async';
-import 'package:cjapp/widgets/custom_button.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -25,53 +23,6 @@ class _LoginState extends State<Login> {
   var _auth = Auth();
   final RoundedLoadingButtonController _loginButtonController = new RoundedLoadingButtonController();
   final RoundedLoadingButtonController _signUpButtonController = new RoundedLoadingButtonController();
-
-
-  static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
-      testDevices: null,
-      nonPersonalizedAds: true,
-      keywords: <String>['Entertainment', 'Convenience', 'Fun']);
-
-  BannerAd bannerAd;
-
-  // InterstitialAd interstitialAd;
-
-  BannerAd createBannerAd() {
-    return BannerAd(
-        adUnitId: BannerAd.testAdUnitId,
-        size: AdSize.banner,
-        targetingInfo: targetingInfo,
-        listener: (MobileAdEvent event) {
-          print('BannerAd $event');
-        });
-  }
-
-  // InterstitialAd createInterstitialAd (){
-  //   return InterstitialAd(
-  //       adUnitId: 'ca-app-pub-1671319682516251/1543231558',
-  //       targetingInfo: targetingInfo,
-  //       listener: (MobileAdEvent event){
-  //         print('Interstitial Ad $event');
-  //       }
-  //   );
-  // }
-  //
-
-  @override
-  void initState() {
-    FirebaseAdMob.instance.initialize(appId: BannerAd.testAdUnitId);
-    bannerAd = createBannerAd()
-      ..load()
-      ..show();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    bannerAd.dispose();
-    super.dispose();
-  }
 
 
   void _startLogin() async {
