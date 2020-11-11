@@ -180,18 +180,18 @@ class _NewPlaceState extends State<NewPlace> {
                 )
             ),
             SizedBox(height: 10,),
-            TextFormField(
-                onChanged: (value) => website = value,
-                autocorrect: false,
-                decoration: InputDecoration(
-                    icon: Icon(Icons.computer_sharp),
-                    hintText: 'Website',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(3))
-                    )
-                )
-            ),
-            SizedBox(height: 10,),
+            // TextFormField(
+            //     onChanged: (value) => website = value,
+            //     autocorrect: false,
+            //     decoration: InputDecoration(
+            //         icon: Icon(Icons.computer_sharp),
+            //         hintText: 'Website',
+            //         border: OutlineInputBorder(
+            //             borderRadius: BorderRadius.all(Radius.circular(3))
+            //         )
+            //     )
+            // ),
+            // SizedBox(height: 10,),
             TextFormField(
                 validator: (text) => validateZip(text),
                 onChanged: (value) => zipCode = value,
