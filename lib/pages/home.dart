@@ -27,13 +27,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(
-        LifecycleEventHandler(resumeCallBack: () async => setState(() {
-          checkPermissions();
-        }))
+        LifecycleEventHandler(resumeCallBack: () async => setStateIfMounted(checkPermissions()))
     );
     _tabController = TabController(vsync: this, length: 4);
   }
 
+   setStateIfMounted(Future<void> f) {
+    if (mounted) {f;}
+  }
 
   checkPermissions() async {
     _serviceEnabled = await location.serviceEnabled();

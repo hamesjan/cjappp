@@ -37,8 +37,6 @@ class _FeedState extends State<Feed> {
     checkPermissions();
   }
 
-
-
   checkPermissions() async {
     _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled) {
