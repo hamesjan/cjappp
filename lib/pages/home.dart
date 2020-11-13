@@ -4,6 +4,8 @@ import 'package:cjapp/pages/feed/feed.dart';
 import 'package:cjapp/pages/search/search_page.dart';
 import 'package:cjapp/pages/map_page/map_page.dart';
 import 'package:cjapp/pages/settings/settings.dart';
+import 'package:cjapp/services/lifecycle_handler.dart';
+import 'package:location/location.dart';
 import 'package:cjapp/pages/profile/profile.dart';
 
 class Home extends StatefulWidget {
@@ -14,20 +16,42 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   TabController _tabController;
-
+  bool _serviceEnabled;
+  PermissionStatus _permissionGranted;
+  Location location = new Location();
 //  final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(
+        LifecycleEventHandler(resumeCallBack: () async => setState(() {
+          checkPermissions();
+        }))
+    );
     _tabController = TabController(vsync: this, length: 4);
   }
+
+
+  checkPermissions() async {
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {

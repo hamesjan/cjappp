@@ -65,6 +65,7 @@ class ChosenEvent extends StatelessWidget {
       });
 
       Navigator.pop(context);
+      Navigator.pop(context);
       Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ChosenEvent(
         name: name,
         zipCode: zipCode,
@@ -107,6 +108,7 @@ class ChosenEvent extends StatelessWidget {
 
         }
       });
+      Navigator.pop(context);
       Navigator.pop(context);
       Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ChosenEvent(
         name: name,

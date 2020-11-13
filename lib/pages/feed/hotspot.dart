@@ -47,6 +47,7 @@ class HotSpot extends StatelessWidget {
       });
 
       Navigator.pop(context);
+      Navigator.pop(context);
       Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Home()));
     }
       on PlatformException catch (e) {
@@ -75,6 +76,7 @@ class HotSpot extends StatelessWidget {
 
         }
       });
+      Navigator.pop(context);
       Navigator.pop(context);
       Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Home()));
     } on PlatformException catch (e) {

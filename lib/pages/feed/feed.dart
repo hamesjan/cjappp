@@ -7,11 +7,17 @@ import 'package:cjapp/services/BaseAuth.dart';
 import 'package:cjapp/widgets/plotserror.dart';
 import 'package:location/location.dart';
 import 'package:cjapp/pages/map_page/distance_calculator.dart';
+import 'package:flutter/services.dart';
+import 'package:cjapp/services/lifecycle_handler.dart';
+
+
 
 class Feed extends StatefulWidget {
   @override
   _FeedState createState() => _FeedState();
 }
+
+
 
 class _FeedState extends State<Feed> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -31,6 +37,8 @@ class _FeedState extends State<Feed> {
     checkPermissions();
   }
 
+
+
   checkPermissions() async {
     _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled) {
@@ -47,6 +55,7 @@ class _FeedState extends State<Feed> {
       }
     }
   }
+
 
   Future getInformation() async {
     List info = [];
@@ -339,38 +348,6 @@ class _FeedState extends State<Feed> {
                                       ),
                                     ],
                                   )
-                                  // Row(
-                                  //   children: [
-                                  //     Text('Radius', style: TextStyle(
-                                  //         fontWeight: FontWeight.bold
-                                  //     )
-                                  //       ,),
-                                  //     SizedBox(width: 10,),
-                                  //     DropdownButton<String>(
-                                  //       value: radius,
-                                  //       icon: Icon(Icons.arrow_drop_down, color: Colors.black,),
-                                  //       iconSize: 24,
-                                  //       elevation: 16,
-                                  //       style: TextStyle(color: Colors.black),
-                                  //       underline: Container(
-                                  //         height: 2,
-                                  //         color: Colors.pinkAccent,
-                                  //       ),
-                                  //       onChanged: (String newValue) {
-                                  //         setState(() {
-                                  //           radius = newValue;
-                                  //         });
-                                  //       },
-                                  //       items: <String>['5 miles', '10 miles', '50 miles', '100 miles']
-                                  //           .map<DropdownMenuItem<String>>((String value) {
-                                  //         return DropdownMenuItem<String>(
-                                  //           value: value,
-                                  //           child: Text(value),
-                                  //         );
-                                  //       }).toList(),
-                                  //     ),
-                                  //   ],
-                                  // ),
                                 ],
                               )
                             ],
@@ -408,7 +385,7 @@ class _FeedState extends State<Feed> {
                   'PermissionStatus.granted') {
                 return Center(
                   child: Text(
-                    'Enable location permissions to access map.\n\nSettings -> Privacy -> Location Services -> Plots',
+                    'Enable location permissions to access feed.\n\nSettings -> Privacy -> Location Services -> Plots',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                   ),

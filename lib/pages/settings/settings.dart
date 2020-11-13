@@ -15,7 +15,7 @@ class SettingsPage extends StatefulWidget {
   _SettingsPageState createState() => _SettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+class _SettingsPageState extends State<SettingsPage> { 
   final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
 
   static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(

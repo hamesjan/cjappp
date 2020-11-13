@@ -44,6 +44,7 @@ class MapPageState extends State<MapPage> {
     checkPermissions();
   }
 
+
    checkPermissions() async {
     _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled)  {
@@ -74,14 +75,6 @@ class MapPageState extends State<MapPage> {
                       snapshot.data,
                        _buildContainer(),
                         _setRadius(),
-                        // Align(
-                        //   alignment: Alignment.topCenter,
-                        //   child: FlatButton(
-                        //     child: Text('Hello'),
-                        //     onPressed: (){
-                        //     },
-                        //   ),
-                        // )
                       ]
                   );
                 }
@@ -95,7 +88,6 @@ class MapPageState extends State<MapPage> {
                         fontWeight: FontWeight.bold
                     ),),
                   );
-
                 }
               }
           ),

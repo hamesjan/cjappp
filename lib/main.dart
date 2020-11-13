@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'plots.',
       theme: ThemeData(
         fontFamily: 'OpenSans',
         primarySwatch: Colors.pink,
@@ -30,3 +30,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
