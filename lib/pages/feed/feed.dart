@@ -1,3 +1,4 @@
+import 'package:cjapp/widgets/no_connection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cjapp/pages/feed/hotspot.dart';
@@ -5,10 +6,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cjapp/services/BaseAuth.dart';
 import 'package:cjapp/widgets/plotserror.dart';
+import 'package:flutter/widgets.dart';
 import 'package:location/location.dart';
 import 'package:cjapp/pages/map_page/distance_calculator.dart';
-import 'package:flutter/services.dart';
-import 'package:cjapp/services/lifecycle_handler.dart';
+import 'package:cjapp/widgets/no_connection.dart';
 
 
 
@@ -85,9 +86,12 @@ class _FeedState extends State<Feed> {
     var resUsers = await _firestore.collection('users').doc(username).get();
     List currFavorites = resUsers.data()['favorites'];
     info.add(currFavorites);
-    LocationData _locationData = await location.getLocation();
-    info.add(_locationData.latitude);
-    info.add(_locationData.longitude);
+    info.add(resUsers.data()['zipCode']);
+    if(_permissionGranted.toString() == 'PermissionStatus.granted'){
+      LocationData _locationData = await location.getLocation();
+      info.add(_locationData.latitude);
+      info.add(_locationData.longitude);
+    }
     return info;
   }
 
@@ -98,51 +102,87 @@ class _FeedState extends State<Feed> {
         child: FutureBuilder(
             future: getInformation(),
             builder: (context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData &&
-                  _serviceEnabled &&
-                  _permissionGranted.toString() == 'PermissionStatus.granted') {
+              if (snapshot.hasData) {
                 plots.clear();
                 receivedPlots.clear();
                 snapshot.data[0].docs
                     .forEach((element) => receivedPlots.add(element.data()));
-                receivedPlots.forEach((element) {
-                  // if name in fav,
-                  bool fav = false;
-                  if (snapshot.data[1].contains(element['name'])) {
-                    fav = true;
-                  }
-                  if (getDist(snapshot.data[2], snapshot.data[3],
-                      element['lat'], element['long'], getMiles(radius))) {
-                    if (element['approved']) {
-                      plots.add(HotSpot(
-                        name: element['name'],
-                        location: element['location'],
-                        category: element['category'],
-                        by: element['by'],
-                        fav: fav,
-                        imgLink: element['imgLink'],
-                        lat: element['lat'],
-                        long: element['long'],
-                        ratings: element['ratings'],
-                        price: element['price'],
-                        ratingsNumbers: element['ratingsNumbers'].toDouble(),
-                        website: element['website'],
-                        zipCode: element['zipCode'],
-                      ));
+                if (_permissionGranted.toString() == 'PermissionStatus.granted') {
+                  receivedPlots.forEach((element) {
+                    // if name in fav,
+                    bool fav = false;
+                    if (snapshot.data[1].contains(element['name'])) {
+                      fav = true;
                     }
+                    if (getDist(snapshot.data[3], snapshot.data[4],
+                        element['lat'], element['long'], getMiles(radius))) {
+                      if (element['approved']) {
+                        plots.add(HotSpot(
+                          name: element['name'],
+                          location: element['location'],
+                          category: element['category'],
+                          by: element['by'],
+                          fav: fav,
+                          imgLink: element['imgLink'],
+                          lat: element['lat'],
+                          long: element['long'],
+                          ratings: element['ratings'],
+                          price: element['price'],
+                          ratingsNumbers: element['ratingsNumbers'].toDouble(),
+                          website: element['website'],
+                          zipCode: element['zipCode'],
+                        ));
+                      }
+                    }
+                  });
+                  plots.sort((a, b) => price.contains(a.price) ? 0 : 1);
+                  if (category != 'No Preference') {
+                    plots.sort((a, b) => category.contains(a.category) ? 0 : 1);
                   }
-                });
-                plots.sort((a, b) => price.contains(a.price) ? 0 : 1);
-                if (category != 'No Preference') {
-                  plots.sort((a, b) => category.contains(a.category) ? 0 : 1);
                 }
-
+                else {
+                  receivedPlots.forEach((element) {
+                    bool fav = false;
+                    if (snapshot.data[1].contains(element['name'])) {
+                      fav = true;
+                    }
+                      if (element['approved'] && element['zipCode'] == snapshot.data[2]) {
+                        plots.add(HotSpot(
+                          name: element['name'],
+                          location: element['location'],
+                          category: element['category'],
+                          by: element['by'],
+                          fav: fav,
+                          imgLink: element['imgLink'],
+                          lat: element['lat'],
+                          long: element['long'],
+                          ratings: element['ratings'],
+                          price: element['price'],
+                          ratingsNumbers: element['ratingsNumbers'].toDouble(),
+                          website: element['website'],
+                          zipCode: element['zipCode'],
+                        ));
+                      }
+                  });
+                  plots.sort((a, b) => price.contains(a.price) ? 0 : 1);
+                  if (category != 'No Preference') {
+                    plots.sort((a, b) => category.contains(a.category) ? 0 : 1);
+                  }
+                  plots.insert(0, Container(
+                    child: Text(
+                      'Enable location permissions to view plots outside your Zip Code.\n\nSettings -> Privacy -> Location Services -> Plots',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                  )
+                  );
+                }
                 plots.insert(
                     0,
                     Column(
                       children: [
                         Container(
-                          padding: EdgeInsets.all(16),
+                          padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(16)),
@@ -293,7 +333,8 @@ class _FeedState extends State<Feed> {
                                       )
                                     ],
                                   ),
-                                  Row(
+                                  
+                                  _permissionGranted.toString() == 'PermissionStatus.granted' ? Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
@@ -345,21 +386,33 @@ class _FeedState extends State<Feed> {
                                         ),
                                       ),
                                     ],
-                                  )
+                                  ) :
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                                          color: Colors.white
+                                        ),
+                                        padding: EdgeInsets.all(10),
+                                        child: Text(
+                                        'Enable Location\nto sort by radius.',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                        color: Colors.red),
+                                      ),)
                                 ],
                               )
                             ],
                           ),
                         ),
                         SizedBox(
-                          height: 15,
+                          height: 10,
                         ),
                         Divider(
                           thickness: 3,
                           color: Colors.pinkAccent,
                         ),
                         SizedBox(
-                          height: 15,
+                          height: 5,
                         ),
                       ],
                     ));
@@ -373,22 +426,24 @@ class _FeedState extends State<Feed> {
                       );
                     });
                 // Column(children: plots.map((item) => new Container(margin: EdgeInsets.only(bottom: 20),child: item)).toList());
-              } else if (snapshot.connectionState == ConnectionState.waiting) {
+              }
+              else if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
                     child: Container(
                         width: 200,
                         height: 200,
                         child: CircularProgressIndicator()));
-              } else if (_permissionGranted.toString() !=
-                  'PermissionStatus.granted') {
+              }
+              else if (snapshot.connectionState == ConnectionState.none){
                 return Center(
                   child: Text(
-                    'Enable location permissions to access feed.\n\nSettings -> Privacy -> Location Services -> Plots',
+                    'There are connectivity issues.\nPlease retry later.',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                   ),
                 );
-              } else {
+              }
+              else {
                 return PlotsError();
               }
             }));

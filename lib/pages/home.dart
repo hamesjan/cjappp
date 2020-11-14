@@ -33,7 +33,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
    setStateIfMounted(Future<void> f) {
-    if (mounted) {f;}
+    if (mounted) {
+      setState(() {
+        f;
+      });
+    }
   }
 
   checkPermissions() async {
@@ -52,6 +56,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       }
     }
   }
+
+
 
 
   @override

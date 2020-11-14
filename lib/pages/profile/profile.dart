@@ -88,6 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               text: 'Bookmarks',
                               icon: Icon(Icons.bookmarks_outlined),
                               callback: (){
+                                Navigator.pop(context);
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -131,6 +132,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         Container(width: 200, height:200,child: CircularProgressIndicator()),
                         Expanded(child: Container(),),
                       ],
+                    );
+                  }else if (snapshot.connectionState == ConnectionState.none){
+                    return Center(
+                      child: Text(
+                        'There are connectivity issues.\nPlease retry later.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                      ),
                     );
                   }
                   else {

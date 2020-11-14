@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cjapp/widgets/plotserror.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,6 +17,7 @@ class MapPage extends StatefulWidget {
 
 class MapPageState extends State<MapPage> {
   Completer<GoogleMapController> _controller = Completer();
+
   double zoomVal = 5.0;
   bool _serviceEnabled;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -64,33 +66,34 @@ class MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body:
+    return
           FutureBuilder<Widget>(
             future: buildMap(context),
             builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
-                if (snapshot.hasData && _serviceEnabled && _permissionGranted.toString() == 'PermissionStatus.granted') {
+                if (snapshot.hasData ) {
                   return Stack(
                       children: <Widget>[
                       snapshot.data,
                        _buildContainer(),
-                        _setRadius(),
+                        _permissionGranted.toString() == 'PermissionStatus.granted'? _setRadius(): enableLocation()
                       ]
                   );
                 }
                 else if (snapshot.connectionState == ConnectionState.waiting){
-                  return Center(child: CircularProgressIndicator());
-                }
-                else{
+                  return Center(child: Container(width: 200, height:200,child: CircularProgressIndicator()));
+                }else if (snapshot.connectionState == ConnectionState.none){
                   return Center(
-                    child: Text('Enable location permissions to access map.\n\nSettings -> Privacy -> Location Services -> Plots', textAlign: TextAlign.center, style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold
-                    ),),
+                    child: Text(
+                      'There are connectivity issues.\nPlease retry later.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                    ),
                   );
                 }
+                else{
+                  return PlotsError();
+                }
               }
-          ),
     );
   }
 
@@ -131,6 +134,26 @@ class MapPageState extends State<MapPage> {
         ),
 
       ),
+    );
+  }
+
+  Widget enableLocation(){
+    return Align(
+      alignment: Alignment.center,
+        child:Container(
+        padding: EdgeInsets.all(25),
+        child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+                color: Colors.white
+            ),
+            padding: EdgeInsets.all(16),
+            child:  Text('Enable your location to access more features.', style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 21
+            ),)
+        )
+        )
     );
   }
 
@@ -212,6 +235,7 @@ class MapPageState extends State<MapPage> {
                 actions: <Widget>[
                   IconButton(
                     onPressed: (){
+                      Navigator.pop(context);
                       Navigator.pop(context);
                       Navigator.push(
                           context,
@@ -328,30 +352,26 @@ class MapPageState extends State<MapPage> {
   }
 
   Future<Widget> buildMap(BuildContext context) async{
-    Location location = new Location();
-    LocationData _locationData = await location.getLocation();
-    var firestoredata = await  _firestore.collection('plots').get();
-    markerList.clear();
-    receivedPlots.clear();
-    firestoredata.docs.forEach((element) => receivedPlots.add(element.data()));
+    if (_permissionGranted.toString() != 'PermissionStatus.granted') {
+      var firestoredata = await _firestore.collection('plots').get();
+      markerList.clear();
+      receivedPlots.clear();
+      firestoredata.docs.forEach((element) =>
+          receivedPlots.add(element.data()));
+      var _auth = Auth();
+      String username;
+      auth.User _user = await _auth.getCurrentUser();
+      var allUsers = await _firestore.collection('users').get();
+      allUsers.docs.forEach((element) {
+        if (element.data()['uid'] == _user.uid) {
+          username = element.data()['username'];
+        }
+      });
+      var resUsers = await _firestore.collection('users').doc(username).get();
+      List currFavorites = resUsers.data()['favorites'];
+      bool favorite = false;
 
-
-    // Getting Favorites
-    var _auth = Auth();
-    String username;
-    auth.User _user = await _auth.getCurrentUser();
-    var allUsers = await _firestore.collection('users').get();
-    allUsers.docs.forEach((element) {
-      if (element.data()['uid'] == _user.uid) {
-        username = element.data()['username'];
-      }
-    });
-    var resUsers = await _firestore.collection('users').doc(username).get();
-    List currFavorites = resUsers.data()['favorites'];
-    bool favorite = false;
-
-    receivedPlots.forEach((element) {
-      if (getDist(_locationData.latitude, _locationData.longitude, element['lat'], element['long'], getMiles(myRadiusMeters))) {
+      receivedPlots.forEach((element) {
         if (element['approved']) {
           if (currFavorites.contains(element['name'])) {
             favorite = true;
@@ -382,26 +402,118 @@ class MapPageState extends State<MapPage> {
             ),
           ));
         }
-      }
-    });
-    markerList.add(myMarker(_locationData.latitude, _locationData.longitude));
+      });
+      return Container(
+          height: MediaQuery
+              .of(context)
+              .size
+              .height,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width,
+          child: GoogleMap(
+            zoomGesturesEnabled: true,
+            myLocationEnabled: true,
+            myLocationButtonEnabled: false,
+            mapType: MapType.normal,
+            initialCameraPosition: CameraPosition(
+                target: LatLng(34.0522, -118.2437),
+                zoom: 10),
+            markers: markerList.toSet(),
+            onMapCreated: (GoogleMapController controller) {
+              _controller.complete(controller);
+            },
+          )
+      );
+    } else  {
+      Location location = new Location();
+      LocationData _locationData = await location.getLocation();
+      var firestoredata = await _firestore.collection('plots').get();
+      markerList.clear();
+      receivedPlots.clear();
+      firestoredata.docs.forEach((element) =>
+          receivedPlots.add(element.data()));
+
+
+      // Getting Favorites
+      var _auth = Auth();
+      String username;
+      auth.User _user = await _auth.getCurrentUser();
+      var allUsers = await _firestore.collection('users').get();
+      allUsers.docs.forEach((element) {
+        if (element.data()['uid'] == _user.uid) {
+          username = element.data()['username'];
+        }
+      });
+      var resUsers = await _firestore.collection('users').doc(username).get();
+      List currFavorites = resUsers.data()['favorites'];
+      bool favorite = false;
+
+      receivedPlots.forEach((element) {
+        if (getDist(
+            _locationData.latitude, _locationData.longitude, element['lat'],
+            element['long'], getMiles(myRadiusMeters))) {
+          if (element['approved']) {
+            if (currFavorites.contains(element['name'])) {
+              favorite = true;
+            }
+            markerList.add(Marker(
+              onTap: () {
+                GoLocation(element['lat'], element['long']);
+                setState(() {
+                  name = element['name'];
+                  zipCode = element['zipCode'];
+                  lat = element['lat'];
+                  imgLink = element['imgLink'];
+                  ratingsNumbers = element['ratingsNumbers'];
+                  long = element['long'];
+                  fav = favorite;
+                  plotLocation = element['location'];
+                  category = element['category'];
+                  price = element['price'];
+                  ratings = element['ratings'];
+                  by = element['by'];
+                });
+              },
+              markerId: MarkerId(element['name']),
+              position: LatLng(element['lat'], element['long']),
+              // infoWindow: InfoWindow(title: element['name']),
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                BitmapDescriptor.hueBlue,
+              ),
+            ));
+          }
+        }
+      });
+      markerList.add(myMarker(_locationData.latitude, _locationData.longitude));
 
       return Container(
-      height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width,
-      child: GoogleMap(
-        zoomGesturesEnabled: true,
-        myLocationEnabled: true,
-        myLocationButtonEnabled: false,
-        mapType: MapType.normal,
-        initialCameraPosition:  CameraPosition(target: LatLng(_locationData.latitude, _locationData.longitude), zoom: 12),
-        onMapCreated: (GoogleMapController controller) {
-          _controller.complete(controller);
-        },
-        circles: myCircle(_locationData.latitude, _locationData.longitude, myRadiusMeters),
-        markers: markerList.toSet(),
-      ),
-    );
+        height: MediaQuery
+            .of(context)
+            .size
+            .height,
+        width: MediaQuery
+            .of(context)
+            .size
+            .width,
+        child: GoogleMap(
+          zoomGesturesEnabled: true,
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+          mapType: MapType.normal,
+          initialCameraPosition: CameraPosition(
+              target: LatLng(_locationData.latitude, _locationData.longitude),
+              zoom: 12),
+          onMapCreated: (GoogleMapController controller) {
+            _controller.complete(controller);
+          },
+          circles: myCircle(
+              _locationData.latitude, _locationData.longitude, myRadiusMeters),
+          markers: markerList.toSet(),
+        ),
+      );
+    }
   }
 
   Future<void> GoLocation(double lat,double long) async {

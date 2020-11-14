@@ -22,11 +22,9 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: SingleChildScrollView(
-      padding: EdgeInsets.all(16),
-      child: Container(
+    return Container(
         height: MediaQuery.of(context).size.height,
+          padding: EdgeInsets.all(16),
           child: FutureBuilder(
               future: _firestore.collection('plots').orderBy('clicks', descending: true).get(),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -43,7 +41,7 @@ class _SearchPageState extends State<SearchPage> {
                     trending = plotsNames;
                   }
 
-                  return new Column(
+                  return new SingleChildScrollView(child:Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                      children: [
                       InkWell(
@@ -103,19 +101,27 @@ class _SearchPageState extends State<SearchPage> {
                       ),
 
                     ],
+                  )
                   );
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: Container(width: 200, height:200,child: CircularProgressIndicator()));
-                } else {
+                } else if (snapshot.connectionState == ConnectionState.none){
+                  return Center(
+                    child: Text(
+                      'There are connectivity issues.\nPlease retry later.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                    ),
+                  );
+                }else {
                  return PlotsError();
 
                 }
               }),
 
 
-      ),
-    ));
+      );
   }
 }
 
@@ -196,6 +202,7 @@ class SearchEntertainment extends SearchDelegate<String> {
                   favorite = true;
                 }
 
+                Navigator.pop(context);
                 Navigator.pop(context);
                 Navigator.push(
                     context,
