@@ -1,9 +1,11 @@
+import 'package:cjapp/pages/login/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cjapp/widgets/rating_stars.dart';
 import 'package:cjapp/pages/feed/chosen_event.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cjapp/pages/home.dart';
+import 'package:cjapp/services/global_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/services.dart';
 import 'package:optimized_cached_image/optimized_cached_image.dart';
@@ -87,28 +89,34 @@ class HotSpot extends StatelessWidget {
   }
 
   Future<void> registerClick() async {
-    FirebaseFirestore _firestore = FirebaseFirestore.instance;
-    try {
-      // Adding Data to Plots collection
-      var resPlots = await _firestore.collection('plots').doc(name).get();
-      var currNum = resPlots.data()['clicks'];
-      await _firestore.collection('plots').doc(name).update({
-        'clicks': currNum + 1,
-      }).catchError((onError) => {print(onError.toString())});
-
-
-    } on PlatformException catch (e) {
-      print(e);
-    } catch (e) {
-      print(e);
+    final auth.FirebaseAuth _authFirebase = auth.FirebaseAuth.instance;
+    if (_authFirebase.currentUser == null) {
+      return;
+    } else {
+      FirebaseFirestore _firestore = FirebaseFirestore.instance;
+      try {
+        // Adding Data to Plots collection
+        var resPlots = await _firestore.collection('plots').doc(name).get();
+        var currNum = resPlots.data()['clicks'];
+        await _firestore.collection('plots').doc(name).update({
+          'clicks': currNum + 1,
+        }).catchError((onError) => {print(onError.toString())});
+      } on PlatformException catch (e) {
+        print(e);
+      } catch (e) {
+        print(e);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final auth.FirebaseAuth _authFirebase = auth.FirebaseAuth.instance;
+
     return InkWell(
         borderRadius: BorderRadius.all(Radius.circular(25)),
         onTap: () {
+          incrementLocalScore();
           registerClick();
           Navigator.pop(context);
           Navigator.push(
@@ -182,8 +190,38 @@ class HotSpot extends StatelessWidget {
                                     fontSize: 22, fontWeight: FontWeight.bold),
                               ),
                             ),
-
                             Expanded(child: Container(),),
+                       _authFirebase.currentUser == null ?  Container(
+                         child: IconButton(icon: Icon(Icons.bookmark_border), onPressed: (){
+                           showDialog(context: context,
+                               barrierDismissible: true,
+                               builder: (BuildContext context) {
+                                 return AlertDialog(
+                                   title: Text('You must log in to bookmark.'),
+                                   actions: <Widget>[
+                                     IconButton(
+                                       onPressed: (){
+                                         Navigator.pop(context);
+                                         Navigator.pop(context);
+                                         Navigator.push(context,
+                                         MaterialPageRoute(
+                                           builder: (BuildContext context) => Login()
+                                         ));
+                                       },
+                                       icon: Icon(Icons.login, color: Colors.green,),
+                                     ),
+                                     IconButton(
+                                       icon: Icon(Icons.close),
+                                       onPressed: (){
+                                         Navigator.pop(context);
+                                       },
+                                     )
+                                   ],
+                                 );
+                               }
+                           );
+                         })
+                       ) : Container(child:
                            fav ? IconButton(icon: Icon(Icons.bookmark), onPressed: (){
                              showDialog(context: context,
                                  barrierDismissible: true,
@@ -231,6 +269,7 @@ class HotSpot extends StatelessWidget {
                                   }
                               );
                             })
+                           )
                           ],
                         ),
                        Row(

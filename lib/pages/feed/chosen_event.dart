@@ -1,4 +1,5 @@
 import 'package:cjapp/pages/feed/plots_web_view.dart';
+import 'package:cjapp/pages/login/login.dart';
 import 'package:cjapp/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -136,6 +137,7 @@ class ChosenEvent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final auth.FirebaseAuth _authFirebase = auth.FirebaseAuth.instance;
     return Scaffold(
       appBar: AppBar(
         title: Text(name),
@@ -207,6 +209,39 @@ class ChosenEvent extends StatelessWidget {
                           ],)
                         ],),
                         Expanded(child: Container(),),
+                        _authFirebase.currentUser == null ?  Container(
+                            child: IconButton(icon: Icon(Icons.bookmark_border), onPressed: (){
+                              showDialog(context: context,
+                                  barrierDismissible: true,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('You must log in to bookmark.'),
+                                      actions: <Widget>[
+                                        IconButton(
+                                          onPressed: (){
+                                            Navigator.pop(context);
+                                            Navigator.pop(context);
+                                            Navigator.push(context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext context) => Login()
+                                                ));
+                                          },
+                                          icon: Icon(Icons.login, color: Colors.green,),
+                                        ),
+                                        IconButton(
+                                          icon: Icon(Icons.close),
+                                          onPressed: (){
+                                            Navigator.pop(context);
+                                          },
+                                        )
+                                      ],
+                                    );
+                                  }
+                              );
+                            })
+                        ) : Container(
+                          child:
+
                         fav ? IconButton(icon: Icon(Icons.bookmark), onPressed: (){
                           showDialog(context: context,
                               barrierDismissible: true,
@@ -254,6 +289,7 @@ class ChosenEvent extends StatelessWidget {
                               }
                           );
                         })
+                        )
                       ],
                     ),
                     Divider(
@@ -285,15 +321,45 @@ class ChosenEvent extends StatelessWidget {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(25)),
                                 onTap: () {
-                                  Navigator.pop(context);
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              NewReview(
-                                                by: by,
-                                                name: name,
-                                              )));
+                                  if (_authFirebase.currentUser == null) {
+                                    showDialog(context: context,
+                                        barrierDismissible: true,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text('You must log in to leave a review.'),
+                                            actions: <Widget>[
+                                              IconButton(
+                                                onPressed: (){
+                                                  Navigator.pop(context);
+                                                  Navigator.pop(context);
+                                                  Navigator.push(context,
+                                                      MaterialPageRoute(
+                                                          builder: (BuildContext context) => Login()
+                                                      ));
+                                                },
+                                                icon: Icon(Icons.login, color: Colors.green,),
+                                              ),
+                                              IconButton(
+                                                icon: Icon(Icons.close),
+                                                onPressed: (){
+                                                  Navigator.pop(context);
+                                                },
+                                              )
+                                            ],
+                                          );
+                                        }
+                                    );
+                                  } else {
+                                    Navigator.pop(context);
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (BuildContext context) =>
+                                                NewReview(
+                                                  by: by,
+                                                  name: name,
+                                                )));
+                                  }
                                 },
                                 child: Ink(
                                     padding: EdgeInsets.all(12),
@@ -319,15 +385,45 @@ class ChosenEvent extends StatelessWidget {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(100)),
                                 onTap: () {
-                                  Navigator.pop(context);
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              NewReview(
-                                                by: by,
-                                                name: name,
-                                              )));
+                                  if (_authFirebase.currentUser == null ){
+                                    showDialog(context: context,
+                                        barrierDismissible: true,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text('You must log in to leave a review.'),
+                                            actions: <Widget>[
+                                              IconButton(
+                                                onPressed: (){
+                                                  Navigator.pop(context);
+                                                  Navigator.pop(context);
+                                                  Navigator.push(context,
+                                                      MaterialPageRoute(
+                                                          builder: (BuildContext context) => Login()
+                                                      ));
+                                                },
+                                                icon: Icon(Icons.login, color: Colors.green,),
+                                              ),
+                                              IconButton(
+                                                icon: Icon(Icons.close),
+                                                onPressed: (){
+                                                  Navigator.pop(context);
+                                                },
+                                              )
+                                            ],
+                                          );
+                                        }
+                                    );
+                                  } else {
+                                    Navigator.pop(context);
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (BuildContext context) =>
+                                                NewReview(
+                                                  by: by,
+                                                  name: name,
+                                                )));
+                                  }
                                 },
                                 child: Ink(
                                   padding: EdgeInsets.all(10),

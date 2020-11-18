@@ -52,6 +52,7 @@ class _RegistrationTwoState extends State<RegistrationTwo> {
         'joined': _formatToday,
         'zipCode': zipCode,
         'favorites': [],
+        'local_score': 0,
         'reviews': [],
         'uid': _user.uid,
       }).catchError((onError) => print(onError.toString()));
@@ -73,7 +74,7 @@ class _RegistrationTwoState extends State<RegistrationTwo> {
 
   String validateUsername(String value) {
     if (value == null || value.isEmpty) {
-      return "Missing Email";
+      return "Missing Username";
     }
     return null;
   }

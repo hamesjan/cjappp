@@ -32,6 +32,13 @@ class _RegistrationState extends State<Registration> {
     return null;
   }
 
+  String validateEmail(String value) {
+    if (value == null || value.isEmpty) {
+      return "Missing email";
+    }
+    return null;
+  }
+
   void _startRegister() async {
     Timer(Duration(milliseconds: 300), () async{
       if (_registrationFormKey.currentState.validate()) {
@@ -96,6 +103,7 @@ class _RegistrationState extends State<Registration> {
               TextFormField(
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (value) => email = value,
+                  validator: (value) => validateEmail(value),
                   decoration: InputDecoration(
                     icon: Icon(Icons.mail),
                     border: OutlineInputBorder(

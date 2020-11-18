@@ -17,25 +17,25 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> { 
   final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
-
-  static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
-      testDevices: null,
-      nonPersonalizedAds: true,
-      keywords: <String>['Entertainment', 'Convenience', 'Fun']);
-
-  BannerAd bannerAd;
-
-  // InterstitialAd interstitialAd;
-
-  BannerAd createBannerAd() {
-    return BannerAd(
-        adUnitId: 'ca-app-pub-1671319682516251/1543231558',
-        size: AdSize.banner,
-        targetingInfo: targetingInfo,
-        listener: (MobileAdEvent event) {
-          print('BannerAd $event');
-        });
-  }
+  //
+  // static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
+  //     testDevices: null,
+  //     nonPersonalizedAds: true,
+  //     keywords: <String>['Entertainment', 'Convenience', 'Fun']);
+  //
+  // BannerAd bannerAd;
+  //
+  // // InterstitialAd interstitialAd;
+  //
+  // BannerAd createBannerAd() {
+  //   return BannerAd(
+  //       adUnitId: 'ca-app-pub-1671319682516251/1543231558',
+  //       size: AdSize.banner,
+  //       targetingInfo: targetingInfo,
+  //       listener: (MobileAdEvent event) {
+  //         print('BannerAd $event');
+  //       });
+  // }
 
   // InterstitialAd createInterstitialAd (){
   //   return InterstitialAd(
@@ -48,21 +48,21 @@ class _SettingsPageState extends State<SettingsPage> {
   // }
   //
 
-  @override
-  void initState() {
-    FirebaseAdMob.instance.initialize(appId: BannerAd.testAdUnitId);
-    bannerAd = createBannerAd()
-      ..load()
-      ..show();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    bannerAd.dispose();
-    super.dispose();
-  }
+  // @override
+  // void initState() {
+  //   FirebaseAdMob.instance.initialize(appId: BannerAd.testAdUnitId);
+  //   bannerAd = createBannerAd()
+  //     ..load()
+  //     ..show();
+  //   super.initState();
+  // }
+  //
+  // @override
+  // void dispose() {
+  //   // TODO: implement dispose
+  //   bannerAd.dispose();
+  //   super.dispose();
+  // }
 
 
   @override
@@ -128,6 +128,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           IconButton(
                             onPressed: (){
                               _auth.signOut();
+                              Navigator.pop(context);
                               Navigator.pop(context);
                               Navigator.push(
                                   context,

@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.pink,
       ),
       // home: Home(),
-      home:_auth.currentUser == null ? Login() : Home(),
+      home: Home(),
     );
   }
 }

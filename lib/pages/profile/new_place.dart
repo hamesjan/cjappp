@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cjapp/widgets/custom_button.dart';
 import 'package:cjapp/pages/home.dart';
+import 'package:cjapp/services/global_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -78,6 +79,7 @@ class _NewPlaceState extends State<NewPlace> {
       //   print('uploaded successfully');
       //   Scaffold.of(givenContext).showSnackBar(SnackBar(content: Text('Uploaded'),));
       // });
+      incrementLocalScore();
       _submitButtonController.success();
       Navigator.pop(context);
       Navigator.push(context,
@@ -309,7 +311,7 @@ class _NewPlaceState extends State<NewPlace> {
             RoundedLoadingButton(
               width: 200,
               errorColor: Colors.red,
-              child: Text('Register', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+              child: Text('Submit', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
               controller: _submitButtonController,
               onPressed: _startApplication,
             ),

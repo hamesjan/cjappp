@@ -7,6 +7,7 @@ import 'package:cjapp/widgets/rating_stars.dart';
 import 'package:location/location.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cjapp/services/BaseAuth.dart';
+import 'package:cjapp/services/global_functions.dart';
 import 'package:cjapp/pages/feed/chosen_event.dart';
 import 'package:cjapp/pages/map_page/distance_calculator.dart';
 
@@ -235,6 +236,7 @@ class MapPageState extends State<MapPage> {
                 actions: <Widget>[
                   IconButton(
                     onPressed: (){
+                      incrementLocalScore();
                       Navigator.pop(context);
                       Navigator.pop(context);
                       Navigator.push(
@@ -352,21 +354,26 @@ class MapPageState extends State<MapPage> {
   }
 
   Future<Widget> buildMap(BuildContext context) async{
+    final auth.FirebaseAuth _authFirebase = auth.FirebaseAuth.instance;
     if (_permissionGranted.toString() != 'PermissionStatus.granted') {
       var firestoredata = await _firestore.collection('plots').get();
       markerList.clear();
       receivedPlots.clear();
       firestoredata.docs.forEach((element) =>
           receivedPlots.add(element.data()));
-      var _auth = Auth();
       String username;
-      auth.User _user = await _auth.getCurrentUser();
-      var allUsers = await _firestore.collection('users').get();
-      allUsers.docs.forEach((element) {
-        if (element.data()['uid'] == _user.uid) {
-          username = element.data()['username'];
-        }
-      });
+      if (_authFirebase.currentUser == null) {
+        username = 'testUser1';
+      } else {
+        var _auth = Auth();
+        auth.User _user = await _auth.getCurrentUser();
+        var allUsers = await _firestore.collection('users').get();
+        allUsers.docs.forEach((element) {
+          if (element.data()['uid'] == _user.uid) {
+            username = element.data()['username'];
+          }
+        });
+      }
       var resUsers = await _firestore.collection('users').doc(username).get();
       List currFavorites = resUsers.data()['favorites'];
       bool favorite = false;
@@ -437,15 +444,21 @@ class MapPageState extends State<MapPage> {
 
 
       // Getting Favorites
-      var _auth = Auth();
+
       String username;
-      auth.User _user = await _auth.getCurrentUser();
-      var allUsers = await _firestore.collection('users').get();
-      allUsers.docs.forEach((element) {
-        if (element.data()['uid'] == _user.uid) {
-          username = element.data()['username'];
-        }
-      });
+      if (_authFirebase.currentUser == null) {
+        username = 'testUser1';
+      } else {
+        var _auth = Auth();
+        auth.User _user = await _auth.getCurrentUser();
+        var allUsers = await _firestore.collection('users').get();
+        allUsers.docs.forEach((element) {
+          if (element.data()['uid'] == _user.uid) {
+            username = element.data()['username'];
+          }
+        });
+      }
+
       var resUsers = await _firestore.collection('users').doc(username).get();
       List currFavorites = resUsers.data()['favorites'];
       bool favorite = false;

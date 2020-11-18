@@ -1,3 +1,4 @@
+import 'package:cjapp/services/global_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -166,6 +167,7 @@ class SearchEntertainment extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
+    final auth.FirebaseAuth _authFirebase = auth.FirebaseAuth.instance;
     final suggestionList = query.isEmpty
         ? recentSearches
         : plotsNames
@@ -186,22 +188,26 @@ class SearchEntertainment extends SearchDelegate<String> {
                 FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
                 // Getting Favorites
-                var _auth = Auth();
                 String username;
-                auth.User _user = await _auth.getCurrentUser();
-                var allUsers = await _firestore.collection('users').get();
-                allUsers.docs.forEach((element) {
-                  if (element.data()['uid'] == _user.uid) {
-                    username = element.data()['username'];
-                  }
-                });
+                if (_authFirebase.currentUser == null) {
+                  username = 'testUser1';
+                } else {
+                  var _auth = Auth();
+                  auth.User _user = await _auth.getCurrentUser();
+                  var allUsers = await _firestore.collection('users').get();
+                  allUsers.docs.forEach((element) {
+                    if (element.data()['uid'] == _user.uid) {
+                      username = element.data()['username'];
+                    }
+                  });
+                }
                 var resUsers = await _firestore.collection('users').doc(username).get();
                 List currFavorites = resUsers.data()['favorites'];
                 bool favorite = false;
                 if(currFavorites.contains(obj['name'])){
                   favorite = true;
                 }
-
+                incrementLocalScore();
                 Navigator.pop(context);
                 Navigator.pop(context);
                 Navigator.push(

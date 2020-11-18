@@ -4,6 +4,7 @@ import 'package:cjapp/widgets/custom_button.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cjapp/services/BaseAuth.dart';
+import 'package:cjapp/services/global_functions.dart';
 import 'package:cjapp/pages/home.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter/services.dart';
@@ -30,6 +31,7 @@ class _NewReviewState extends State<NewReview> {
   String review;
   double rating = 0.0;
   String username;
+  int local_score;
 
   void _startUploadReview() async {
     Timer(Duration(milliseconds: 300), () async{
@@ -52,16 +54,18 @@ class _NewReviewState extends State<NewReview> {
         if (element.data()['uid'] == _user.uid) {
           setState(() {
             username = element.data()['username'];
+            local_score = element.data()['status'];
           });
         }
       });
+
 
       // Adding Data to Plots collection
       var resPlots = await _firestore.collection('plots').doc(widget.name).get();
       var currNum = resPlots.data()['ratingsNumbers'];
       List currList = resPlots.data()['ratings'];
       var newNum = (currList.length * currNum + rating) / (currList.length + 1);
-      var newEntry = {'by':username,'review':review, 'rating': rating };
+      var newEntry = {'by':username,'review':review, 'rating': rating, };
       currList.add(newEntry);
       await _firestore.collection('plots').doc(widget.name).update({
         'ratings': currList,
@@ -72,11 +76,12 @@ class _NewReviewState extends State<NewReview> {
       // Adding Data to Users Collection
       var resUsers = await _firestore.collection('users').doc(username).get();
       List currReviews = resUsers.data()['reviews'];
-      var newReview = {'place': widget.name, 'review': review, 'rating': rating};
+      var newReview = {'place': widget.name, 'review': review, 'rating': rating, };
       currReviews.add(newReview);
       await _firestore.collection('users').doc(username).update({
         'reviews': currReviews,
       }).catchError((onError) => {print(onError.toString())});
+      incrementLocalScore();
       _submitButtonController.success();
       Navigator.pop(context);
       Navigator.push(context,

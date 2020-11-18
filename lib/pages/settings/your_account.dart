@@ -28,6 +28,7 @@ class YourAccount extends StatelessWidget {
       await _user.delete();
       await _auth.signOut();
       Navigator.pop(context);
+      Navigator.pop(context);
       Navigator.push(
           context,
           MaterialPageRoute(

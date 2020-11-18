@@ -1,3 +1,4 @@
+import 'package:cjapp/pages/login/reset_password.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cjapp/pages/login/registration.dart';
@@ -158,6 +159,37 @@ class _LoginState extends State<Login> {
                 controller: _signUpButtonController,
                 onPressed: _startRegister,
               ),
+              SizedBox(
+                height: 15,
+              ),
+              FlatButton(
+                child: Text('Continue as Guest', style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: Colors.blue
+                ),),
+                onPressed: (){
+                    Navigator.pop(context);
+                    Navigator.push(context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => Home()
+                    ));
+                    },
+              ),
+              FlatButton(
+                child: Text('Forgot Password?', style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: Colors.red
+                ),),
+                onPressed: (){
+                  Navigator.pop(context);
+                  Navigator.push(context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => ResetPassword()
+                      ));
+                },
+              )
             ],
           ),
         ),

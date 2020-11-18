@@ -21,6 +21,7 @@ class Feed extends StatefulWidget {
 
 
 class _FeedState extends State<Feed> {
+  final auth.FirebaseAuth _authFirebase = auth.FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   PermissionStatus _permissionGranted;
   bool _serviceEnabled;
@@ -59,15 +60,21 @@ class _FeedState extends State<Feed> {
   Future getInformation() async {
     List info = [];
     info.clear();
-    var _auth = Auth();
     String username;
-    auth.User _user = await _auth.getCurrentUser();
-    var allUsers = await _firestore.collection('users').get();
-    allUsers.docs.forEach((element) {
-      if (element.data()['uid'] == _user.uid) {
-        username = element.data()['username'];
-      }
-    });
+    if (_authFirebase.currentUser == null) {
+      username = 'testUser1';
+    } else {
+      var _auth = Auth();
+      auth.User _user = await _auth.getCurrentUser();
+      var allUsers = await _firestore.collection('users').get();
+      allUsers.docs.forEach((element) {
+        if (element.data()['uid'] == _user.uid) {
+          username = element.data()['username'];
+        }
+      });
+    }
+
+
     if (sortBy == 'Popular') {
       info.add(await _firestore
           .collection('plots')

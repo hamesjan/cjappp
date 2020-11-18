@@ -1,3 +1,4 @@
+import 'package:cjapp/pages/home.dart';
 import 'package:cjapp/pages/profile/favorite_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,6 +17,9 @@ class DisplayFavorites extends StatelessWidget {
         leading: IconButton(
           onPressed: (){
             Navigator.pop(context);
+            Navigator.push(context, MaterialPageRoute(
+              builder: (BuildContext context) => Home()
+            ));
           },
           icon: Icon(Icons.arrow_back_ios_rounded),
         ),
