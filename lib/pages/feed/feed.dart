@@ -26,7 +26,7 @@ class _FeedState extends State<Feed> {
   PermissionStatus _permissionGranted;
   bool _serviceEnabled;
   Location location = new Location();
-  String sortBy = 'Popular';
+  String sortBy = 'Newest';
   String price = 'Free';
   String category = 'No Preference';
   double radius = 8046.72;
@@ -86,9 +86,7 @@ class _FeedState extends State<Feed> {
           .orderBy('ratingsNumbers', descending: true)
           .get());
     } else if (sortBy == 'Newest') {
-      info.add(await _firestore.collection('plots').get());
-    } else if (sortBy == 'Rising') {
-      info.add(await _firestore.collection('plots').get());
+      info.add(await _firestore.collection('plots').orderBy('timestamp', descending: true).get());
     }
     var resUsers = await _firestore.collection('users').doc(username).get();
     List currFavorites = resUsers.data()['favorites'];
@@ -130,6 +128,7 @@ class _FeedState extends State<Feed> {
                           category: element['category'],
                           by: element['by'],
                           fav: fav,
+                          timestamp: element['timestamp'],
                           imgLink: element['imgLink'],
                           lat: element['lat'],
                           long: element['long'],
@@ -160,6 +159,7 @@ class _FeedState extends State<Feed> {
                           category: element['category'],
                           by: element['by'],
                           fav: fav,
+                          timestamp: element['timestamp'],
                           imgLink: element['imgLink'],
                           lat: element['lat'],
                           long: element['long'],
@@ -235,10 +235,9 @@ class _FeedState extends State<Feed> {
                                           });
                                         },
                                         items: <String>[
-                                          'Popular',
-                                          'Best Rated',
                                           'Newest',
-                                          'Rising'
+                                          'Best Rated',
+                                          'Popular',
                                         ].map<DropdownMenuItem<String>>(
                                             (String value) {
                                           return DropdownMenuItem<String>(

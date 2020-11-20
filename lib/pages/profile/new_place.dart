@@ -59,6 +59,7 @@ class _NewPlaceState extends State<NewPlace> {
         'name': name,
         'zipCode': zipCode,
         'location' : location,
+        'timestamp': DateTime.now().toString(),
         'ratings': [],
         'ratingsNumbers': 0.0,
         'website': website,

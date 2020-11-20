@@ -18,6 +18,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String lastDT;
 
   Future getInformation() async {
     var _auth = Auth();
@@ -117,8 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             fontSize: 22),
                                       ),
                                       Divider(thickness: 2,),
-                                      Text('As you interact with plots, your local score will grow and along with will your title.\n'
-                                          'Listed elow are the possible titles to earn'),
+                                      Text('As you interact with plots, your local score will grow and along with will your title.'),
                                       Divider(thickness: 2,),
                                       Text('Rando', style: TextStyle(
                                         fontWeight: FontWeight.bold,

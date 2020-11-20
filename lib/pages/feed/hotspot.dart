@@ -18,6 +18,7 @@ class HotSpot extends StatelessWidget {
   final String location;
   final double ratingsNumbers;
   final double lat;
+  final String timestamp;
   final double long;
   final String imgLink;
   final List ratings;
@@ -27,7 +28,7 @@ class HotSpot extends StatelessWidget {
   final bool fav;
   final String price;
 
-  const HotSpot({Key key, this.name, this.zipCode, this.imgLink, this.location, this.by, this.ratingsNumbers, this.lat, this.long, this.ratings, this.website, this.category, this.price, this.fav}) : super(key: key);
+  const HotSpot({Key key, this.name, this.zipCode, this.timestamp, this.imgLink, this.location, this.by, this.ratingsNumbers, this.lat, this.long, this.ratings, this.website, this.category, this.price, this.fav}) : super(key: key);
 
 
   Future<void> addFavorite(context) async {
