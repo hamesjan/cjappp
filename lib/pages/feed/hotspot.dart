@@ -17,8 +17,11 @@ class HotSpot extends StatelessWidget {
   final String zipCode;
   final String location;
   final double ratingsNumbers;
+  final double burntRating;
   final double lat;
   final String timestamp;
+  final String byText;
+  final String description;
   final double long;
   final String imgLink;
   final List ratings;
@@ -28,7 +31,7 @@ class HotSpot extends StatelessWidget {
   final bool fav;
   final String price;
 
-  const HotSpot({Key key, this.name, this.zipCode, this.timestamp, this.imgLink, this.location, this.by, this.ratingsNumbers, this.lat, this.long, this.ratings, this.website, this.category, this.price, this.fav}) : super(key: key);
+  const HotSpot({Key key, this.name, this.zipCode, this.burntRating, this.byText, this.description, this.timestamp, this.imgLink, this.location, this.by, this.ratingsNumbers, this.lat, this.long, this.ratings, this.website, this.category, this.price, this.fav}) : super(key: key);
 
 
   Future<void> addFavorite(context) async {
@@ -119,17 +122,20 @@ class HotSpot extends StatelessWidget {
         onTap: () {
           incrementLocalScore();
           registerClick();
-          Navigator.pop(context);
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (BuildContext context) => ChosenEvent(
                     name: name,
                     zipCode: zipCode,
+                    byText: byText,
+                    description: description,
                     location: location,
+                    fromFeed: true,
                     ratingsNumbers: ratingsNumbers.toDouble(),
                     ratings: ratings,
                     imgLink: imgLink,
+                    burntRating: burntRating,
                     website: website,
                     long: long,
                     lat: lat,
@@ -309,7 +315,22 @@ class HotSpot extends StatelessWidget {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 15),
                             ),
-                          PriceIconWidget(price: price,)
+                            ratings.length == 0 ? Container() : Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(10)),
+                              ),
+                              child: Row(children: <Widget>[
+                                Icon(Icons.local_fire_department,size: 25, color: Colors.redAccent,),
+                              ],),
+                            ),
+                            ratings.length == 0 ? Container() : Text(burntRating.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),),
+                            ratings.length == 0 ? Container() :
+                            Text(
+                              ' • ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15),
+                            ),
+                          PriceIconWidget(price: price,),
                           ],
                         )
                       ],

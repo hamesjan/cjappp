@@ -32,3 +32,18 @@ Future<void> incrementLocalScore () async {
   }
 }
 
+Future<String> returnUsername() async{
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  var _auth = Auth();
+  String username;
+  auth.User _user = await _auth.getCurrentUser();
+  var allUsers = await _firestore.collection('users').get();
+  allUsers.docs.forEach((element) {
+    if (element.data()['uid'] == _user.uid) {
+      username = element.data()['username'];
+    }
+  });
+
+  return username;
+}

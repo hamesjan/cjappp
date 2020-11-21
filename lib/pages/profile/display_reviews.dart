@@ -23,7 +23,7 @@ class DisplayReviews extends StatelessWidget {
         SingleChildScrollView(
             child: reviews == null ? Container() :
             new Column(children: [
-              Column(children: reviews.map((item) => new Container( margin: EdgeInsets.all(15), child: ReviewWidget(place: item['place'], rating: item['rating'],
+              Column(children: reviews.map((item) => new Container( margin: EdgeInsets.all(15), child: ReviewWidget(place: item['place'], rating: item['rating'].toString(),
               review: item['review'],))).toList())
     ])
         ),

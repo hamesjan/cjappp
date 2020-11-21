@@ -29,7 +29,7 @@ class _FeedState extends State<Feed> {
   String sortBy = 'Newest';
   String price = 'Free';
   String category = 'No Preference';
-  double radius = 8046.72;
+  double radius = 40233.6;
   List plots = [];
   List receivedPlots = [];
 
@@ -128,6 +128,9 @@ class _FeedState extends State<Feed> {
                           category: element['category'],
                           by: element['by'],
                           fav: fav,
+                          burntRating: element['burntRating'],
+                          byText: element['by_text'],
+                          description: element['description'],
                           timestamp: element['timestamp'],
                           imgLink: element['imgLink'],
                           lat: element['lat'],
@@ -159,6 +162,8 @@ class _FeedState extends State<Feed> {
                           category: element['category'],
                           by: element['by'],
                           fav: fav,
+                          byText: element['by_text'],
+                          description: element['description'],
                           timestamp: element['timestamp'],
                           imgLink: element['imgLink'],
                           lat: element['lat'],
@@ -372,8 +377,8 @@ class _FeedState extends State<Feed> {
                                           });
                                         },
                                         items: <double>[
-                                          8046.72,
                                           16093.4,
+                                          40233.6,
                                           80467.2,
                                           160934
                                         ].map<DropdownMenuItem<double>>(

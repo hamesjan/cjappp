@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-getLocalRank(String name,int localScore){
+getLocalRank(String name, int localScore){
   List<String> certifiedOGs = [
     'hamesjan',
     'yoda420',

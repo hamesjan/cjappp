@@ -1,17 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:cjapp/widgets/custom_button.dart';
 import 'package:cjapp/pages/home.dart';
 import 'package:cjapp/services/global_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cjapp/services/BaseAuth.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:cjapp/services/global_functions.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 import 'dart:io';
+import 'dart:core';
+import 'package:intl/intl.dart';
 
 
 class NewPlace extends StatefulWidget {
@@ -23,9 +26,10 @@ class _NewPlaceState extends State<NewPlace> {
   String price = 'Free';
   String category = 'Outdoors';
   String location;
-  String zipCode;
   String errorMessage;
   String website;
+  bool anon = false;
+  String description;
   final _submitApplicationForm = GlobalKey<FormState>();
   final RoundedLoadingButtonController _submitButtonController = new RoundedLoadingButtonController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -35,10 +39,16 @@ class _NewPlaceState extends State<NewPlace> {
 
 
   Future getImage()async{
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      _image = image;
-    });
+    var status = await Permission.photos.status;
+    print(status.toString());
+    if (status == PermissionStatus.granted) {
+      var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+      setState(() {
+        _image = image;
+      });
+    } else {
+      openAppSettings();
+    }
   }
 
   void _startApplication() async {
@@ -54,28 +64,40 @@ class _NewPlaceState extends State<NewPlace> {
 
   Future<void> uploadPlot() async {
     try {
+      String byText = 'Uploaded ${DateFormat('yMMMMd').format(DateTime.now())} by Anonymous';
+      String username = await returnUsername();
+      String timestamp = DateTime.now().toString();
+      if (!anon) {
+        byText = 'Uploaded ${DateFormat('yMMMMd').format(DateTime.now())} by $username';
+      }
       auth.User _user = await _auth.getCurrentUser();
       await _firestore.collection('plots').doc(name).set({
         'name': name,
-        'zipCode': zipCode,
+        'zipCode': 'To do',
         'location' : location,
-        'timestamp': DateTime.now().toString(),
+        'timestamp': timestamp,
         'ratings': [],
         'ratingsNumbers': 0.0,
+        'burntRating': 0.0,
         'website': website,
         'category': category,
         'approved': false,
         'imgLink': '',
+        'by_text': byText,
+        'description': description,
         'lat': 0.0,
         'long': 0.0,
         'price': price,
         'by': _user.uid,
         'clicks': 0
       }).catchError((onError) => {print(onError.toString())});
-      String filename = '$name.jpg';
-      StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child(filename);
-      StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
-      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+      if (_image != null) {
+        String filename = '$name.jpg';
+        StorageReference firebaseStorageRef = FirebaseStorage.instance.ref()
+            .child(filename);
+        StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
+        StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+      }
       // setState(() {
       //   print('uploaded successfully');
       //   Scaffold.of(givenContext).showSnackBar(SnackBar(content: Text('Uploaded'),));
@@ -83,14 +105,12 @@ class _NewPlaceState extends State<NewPlace> {
       incrementLocalScore();
       _submitButtonController.success();
       Navigator.pop(context);
-      Navigator.push(context,
-          MaterialPageRoute(builder: (BuildContext context) => Home()));
     } on PlatformException catch (e) {
       print(e);
     } catch (e) {
       setState(
             () {
-          errorMessage = e.message;
+          errorMessage = e.toString();
         },
       );
     }
@@ -153,16 +173,17 @@ class _NewPlaceState extends State<NewPlace> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             displaySelectedFile(_image),
+            Text('Photo permissions must be enabled.') ,
             RaisedButton(child: Text('Get Image'), onPressed:(){getImage();},elevation: 10, padding: EdgeInsets.all(5),),
             SizedBox(height: 10,),
+            Divider(thickness: 2,),
             TextFormField(
                 validator: (text) => validateName(text),
                 onChanged: (value) => name = value,
                 autocorrect: false,
                 maxLines: null,
                 decoration: InputDecoration(
-                    icon: Icon(Icons.tag),
-                    hintText: 'Plot Name',
+                    labelText: 'Plot Name',
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(3))
                     )
@@ -175,14 +196,29 @@ class _NewPlaceState extends State<NewPlace> {
                 autocorrect: false,
                 maxLines: null,
                 decoration: InputDecoration(
-                    icon: Icon(Icons.map),
-                    hintText: 'Location',
+                    hintText: '1234 John Smith St. 90304',
+                    labelText: 'Location',
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(3))
                     )
                 )
             ),
             SizedBox(height: 10,),
+            TextFormField(
+                onChanged: (value) => description = value,
+                autocorrect: false,
+                maxLines: null,
+                minLines: 3,
+                decoration: InputDecoration(
+                    hintText: 'This place is lit!!!',
+                    labelText: 'Description',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(3))
+                    )
+                )
+            ),
+            SizedBox(height: 10,),
+            Divider(thickness: 2,),
             // TextFormField(
             //     onChanged: (value) => website = value,
             //     autocorrect: false,
@@ -195,19 +231,19 @@ class _NewPlaceState extends State<NewPlace> {
             //     )
             // ),
             // SizedBox(height: 10,),
-            TextFormField(
-                validator: (text) => validateZip(text),
-                onChanged: (value) => zipCode = value,
-                autocorrect: false,
-                decoration: InputDecoration(
-                    icon: Icon(Icons.location_city),
-                    hintText: 'Zip code',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(3))
-                    )
-                )
-            ),
-            SizedBox(height: 10,),
+            // TextFormField(
+            //     validator: (text) => validateZip(text),
+            //     onChanged: (value) => zipCode = value,
+            //     autocorrect: false,
+            //     decoration: InputDecoration(
+            //         icon: Icon(Icons.location_city),
+            //         hintText: 'Zip code',
+            //         border: OutlineInputBorder(
+            //             borderRadius: BorderRadius.all(Radius.circular(3))
+            //         )
+            //     )
+            // ),
+            // SizedBox(height: 10,),
             Container(
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -307,7 +343,27 @@ class _NewPlaceState extends State<NewPlace> {
             )
                 : Container(),
             SizedBox(
-              height: 10,
+              height: 5,
+            ),
+            Row(children: [
+              Expanded(child: Container(),),
+              Text('Upload\nAnonymously',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                fontSize: 20
+              ),),
+              Checkbox(
+                  value: anon,
+                  activeColor: Colors.green,
+                  onChanged:(bool newValue){
+                    setState(() {
+                      anon = newValue;
+                    });
+                  }),
+              Expanded(child: Container(),),
+            ],),
+            SizedBox(
+              height: 20,
             ),
             RoundedLoadingButton(
               width: 200,

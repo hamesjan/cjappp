@@ -13,9 +13,10 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class NewReview extends StatefulWidget {
   final String name;
+  final bool fromFeed;
   final String by;
 
-  const NewReview({Key key, this.name, this.by}) : super(key: key);
+  const NewReview({Key key, this.name, this.by, this.fromFeed}) : super(key: key);
 
   @override
   _NewReviewState createState() => _NewReviewState();
@@ -30,6 +31,7 @@ class _NewReviewState extends State<NewReview> {
   String errorMessage;
   String review;
   double rating = 0.0;
+  double burnt_rating = 0.0;
   String username;
   int local_score;
 
@@ -63,20 +65,23 @@ class _NewReviewState extends State<NewReview> {
       // Adding Data to Plots collection
       var resPlots = await _firestore.collection('plots').doc(widget.name).get();
       var currNum = resPlots.data()['ratingsNumbers'];
+      var currBurntRating = resPlots.data()['burntRating'];
       List currList = resPlots.data()['ratings'];
+      var newBurntRating = (currList.length * currBurntRating + burnt_rating) / (currList.length + 1);
       var newNum = (currList.length * currNum + rating) / (currList.length + 1);
       var newEntry = {'by':username,'review':review, 'rating': rating, };
       currList.add(newEntry);
       await _firestore.collection('plots').doc(widget.name).update({
         'ratings': currList,
         'ratingsNumbers': newNum,
+        'burntRating' : newBurntRating
       }).catchError((onError) => {print(onError.toString())});
 
 
       // Adding Data to Users Collection
       var resUsers = await _firestore.collection('users').doc(username).get();
       List currReviews = resUsers.data()['reviews'];
-      var newReview = {'place': widget.name, 'review': review, 'rating': rating, };
+      var newReview = {'place': widget.name, 'review': review, 'rating': rating, 'burntRating': burnt_rating };
       currReviews.add(newReview);
       await _firestore.collection('users').doc(username).update({
         'reviews': currReviews,
@@ -84,11 +89,13 @@ class _NewReviewState extends State<NewReview> {
       incrementLocalScore();
       _submitButtonController.success();
       Navigator.pop(context);
-      Navigator.push(context,
-          MaterialPageRoute(
-              builder: (BuildContext context) => Home()
-          ));
-
+      if (!widget.fromFeed) {
+        Navigator.pop(context);
+        Navigator.push(context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => Home()
+            ));
+      }
     } on PlatformException catch (e) {
       print(e);
     } catch (e) {
@@ -113,15 +120,18 @@ class _NewReviewState extends State<NewReview> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Write a Review'),
+        title: Text('Burnt Rating'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_rounded),
           onPressed: (){
             Navigator.pop(context);
-            Navigator.push(context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => Home()
-            ));
+            if (!widget.fromFeed) {
+              Navigator.pop(context);
+              Navigator.push(context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => Home()
+                  ));
+            }
           },
         ),
       ),
@@ -145,6 +155,79 @@ class _NewReviewState extends State<NewReview> {
                Expanded(child: Container(),),
              ],
            ),
+           Container(
+             padding: EdgeInsets.all(16),
+             width: MediaQuery.of(context).size.width / 1.1,
+             decoration: BoxDecoration(
+                 color: Colors.grey,
+                 gradient: LinearGradient(
+                     begin: Alignment.topCenter,
+                     end: Alignment.bottomCenter,
+                     colors: [
+                       Colors.grey,
+                       Colors.white
+                     ]
+                 ),
+                 borderRadius: BorderRadius.all(Radius.circular(25))
+             ),
+             child: Column(
+               children: [
+                 Row(
+                   mainAxisAlignment: MainAxisAlignment.center,
+                   children: [
+                     Text('Slide Bars to Rate', style: TextStyle(
+                         fontWeight: FontWeight.bold,
+                         fontSize: 20
+                     ),),
+                   ],
+                 ),
+                 SizedBox(height: 5,),
+                 RatingBar(
+                   initialRating: 0,
+                   minRating: 0,
+                   direction: Axis.horizontal,
+                   allowHalfRating: true,
+                   itemCount: 5,
+                   itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                   itemBuilder: (context, _) => Icon(
+                     Icons.star,
+                     color: Colors.pinkAccent,
+                   ),
+                   onRatingUpdate: (rate) {
+                     setState(() {
+                       rating = rate;
+                     });
+                   },
+                 ),
+                 Text('${rating.toString()}', style: TextStyle(
+                     fontWeight: FontWeight.bold,
+                     fontSize: 15
+                 ),),
+                 SizedBox(height: 5,),
+                 RatingBar(
+                   initialRating: 0,
+                   minRating: 0,
+                   direction: Axis.horizontal,
+                   allowHalfRating: true,
+                   itemCount: 5,
+                   itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                   itemBuilder: (context, _) => Icon(
+                     Icons.local_fire_department,
+                     color: Colors.red,
+                   ),
+                   onRatingUpdate: (rate) {
+                     setState(() {
+                       burnt_rating = rate;
+                     });
+                   },
+                 ),
+                 Text('${burnt_rating.toString()}', style: TextStyle(
+                     fontWeight: FontWeight.bold,
+                     fontSize: 15
+                 ),),
+               ],
+             ),
+           ),
            SizedBox(
              height: 10,
            ),
@@ -153,9 +236,10 @@ class _NewReviewState extends State<NewReview> {
                onChanged: (value) => review = value,
                autocorrect: false,
                maxLines: null,
+               minLines: 5,
                decoration: InputDecoration(
-                   icon: Icon(Icons.rate_review),
-                   hintText: 'Write Your Review Here',
+                   labelText: 'Write Your Review Here',
+                   hintText: 'This place is lit!',
                    border: OutlineInputBorder(
                        borderRadius: BorderRadius.all(Radius.circular(3))
                    )
@@ -164,51 +248,7 @@ class _NewReviewState extends State<NewReview> {
            SizedBox(
              height: 10,
            ),
-        Container(
-          padding: EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.grey,
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.grey,
-                Colors.white
-              ]
-            ),
-            borderRadius: BorderRadius.all(Radius.circular(25))
-          ),
-          child: Column(
-            children: [
-              Text('Slide Stars to Rate', style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15
-              ),),
-              SizedBox(height: 5,),
-              RatingBar(
-                initialRating: 0,
-                minRating: 0,
-                direction: Axis.horizontal,
-                allowHalfRating: true,
-                itemCount: 5,
-                itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                itemBuilder: (context, _) => Icon(
-                  Icons.star,
-                  color: Colors.pink,
-                ),
-                onRatingUpdate: (rate) {
-                  setState(() {
-                    rating = rate;
-                  });
-                },
-              ),
-              Text('${rating.toString()} / 5.0', style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15
-              ),),
-            ],
-          ),
-        ),
+
            errorMessage != null
                ? Text(
              errorMessage,

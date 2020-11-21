@@ -16,12 +16,16 @@ import 'package:flutter/services.dart';
 import 'package:cjapp/widgets/rating_stars.dart';
 
 class ChosenEvent extends StatelessWidget {
+  final bool fromFeed;
   final String name;
   final String zipCode;
   final String location;
   final double ratingsNumbers;
+  final double burntRating;
   final double lat;
   final double long;
+  final String byText;
+  final String description;
   final String imgLink;
   final List ratings;
   final bool fav;
@@ -33,9 +37,13 @@ class ChosenEvent extends StatelessWidget {
   const ChosenEvent(
       {Key key,
       this.name,
+        this.fromFeed,
       this.zipCode,
         this.imgLink,
       this.location,
+        this.burntRating,
+        this.description,
+        this.byText,
       this.by,
         this.fav,
       this.ratingsNumbers,
@@ -144,9 +152,11 @@ class ChosenEvent extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
-            Navigator.push(context,
-                MaterialPageRoute(builder: (BuildContext context) => Home()));
+              Navigator.pop(context);
+              if (!fromFeed) {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (BuildContext context) => Home()));
+              }
           },
         ),
       ),
@@ -186,27 +196,44 @@ class ChosenEvent extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                          Text(
-                            name,
-                            style:
-                            TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                          ),
+                            Container(
+                              width: MediaQuery.of(context).size.width / 1.3,
+                              child: Text(
+                                name,
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    color: Colors.pink,
+                                    fontSize: 25, fontWeight: FontWeight.bold),
+                              ),
+                            ),
                           Row(children: [
                             Text(
                               category,
                               style: TextStyle(
-                                  fontSize: 15,
+                                  fontSize: 17,
                                   color: Colors.blue,
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              ' • ',
+                              '  • ',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 15),
                             ),
                             PriceIconWidget(price: price,)
 
-                          ],)
+                          ],),
+                            Container(
+                              width: MediaQuery.of(context).size.width / 1.3,
+                              child: Text(
+                                byText,
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+
                         ],),
                         Expanded(child: Container(),),
                         _authFirebase.currentUser == null ?  Container(
@@ -292,15 +319,153 @@ class ChosenEvent extends StatelessWidget {
                         )
                       ],
                     ),
-                    Divider(
-                      thickness: 3,
+                    description.isEmpty ? Container():
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Divider(
+                          thickness: 3,
+                        ),
+                        Text('Description', style: TextStyle(
+                            fontSize: 22,
+                            color: Colors.pink,
+                            fontWeight: FontWeight.bold
+                        ),),
+                        Container(
+                          width: MediaQuery.of(context).size.width / 1.3,
+                          child: Text(
+                            description,
+                            maxLines: 10,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+
+                                fontSize: 15, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(
-                      height: 5,
+                    Divider(thickness: 3,),
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Column(
+                            children: [
+                              Text('Burnt Rating', style: TextStyle(
+                                  fontSize: 22,
+                                  color: Colors.pink,
+                                  fontWeight: FontWeight.bold
+                              ),),
+                              Row(children: [
+                                Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                                      ),
+                                      child: Row(children: <Widget>[
+                                        Icon(Icons.local_fire_department,size: 55, color: Colors.redAccent,),
+                                      ],),
+                                    ),
+                                    ratings.length == 0 ? Text('No Ratings Yet', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),) : Text(burntRating.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),),
+                                  ],
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.info_outline),
+                                  onPressed: (){
+                                    showDialog(context: context,
+                                        barrierDismissible: true,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Column(
+                                              children: [
+                                                Text('A "burnt" rating dictates how populous a plot is.'),
+                                                SizedBox(
+                                                  height: 20,
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                  children: [
+                                                    Text('Lowkey', style: TextStyle(
+                                                        fontWeight: FontWeight.bold
+                                                    ),),
+                                                    Column(
+                                                      children: [
+                                                        Row(
+                                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            Column(
+                                                              children: [
+                                                                Icon(Icons.local_fire_department, color: Colors.red,),
+                                                                Text('1'),
+                                                              ],
+                                                            ),
+                                                            Column(
+                                                              children: [
+                                                                Icon(Icons.local_fire_department, color: Colors.red,),
+                                                                Text('2'),
+                                                              ],
+                                                            ),
+                                                            Column(
+                                                              children: [
+                                                                Icon(Icons.local_fire_department, color: Colors.red,),
+                                                                Text('3'),
+                                                              ],
+                                                            ),
+                                                            Column(
+                                                              children: [
+                                                                Icon(Icons.local_fire_department, color: Colors.red,),
+                                                                Text('4'),
+                                                              ],
+                                                            ),
+                                                            Column(
+                                                              children: [
+                                                                Icon(Icons.local_fire_department, color: Colors.red,),
+                                                                Text('5'),
+                                                              ],
+                                                            )
+                                                          ],
+                                                        ),
+                                                        Icon(Icons.switch_left_sharp)
+                                                      ],
+                                                    ),
+                                                    Text('Saturated', style: TextStyle(
+                                                        fontWeight: FontWeight.bold
+                                                    ))
+                                                  ],)
+
+                                              ],
+                                            ),
+                                            actions: <Widget>[
+                                              IconButton(
+                                                icon: Icon(Icons.close),
+                                                onPressed: (){
+                                                  Navigator.pop(context);
+                                                },
+                                              )
+                                            ],
+                                          );
+                                        }
+                                    );
+                                  },
+                                ),
+                              ],),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
+                    Divider(thickness: 3,),
                     Row(
                       children: <Widget>[
-                        ratings.length == 0 ? Container() :RatingStars(rating: ratingsNumbers),
+                        Text('Reviews', style: TextStyle(
+                            fontSize: 22,
+                            color: Colors.pink,
+                            fontWeight: FontWeight.bold
+                        ),),
+                        SizedBox(width: 10,),
+                        ratings.length == 0 ? Container() : RatingStars(rating: ratingsNumbers),
                         ratings.length == 0
                             ? Container()
                             : SizedBox(
@@ -309,11 +474,11 @@ class ChosenEvent extends StatelessWidget {
                         ratings.length == 0
                             ? Container()
                             : Text(
-                                '${ratings.length} Ratings',
+                                '${ratings.length} Reviews',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 15),
                               ),
-                        SizedBox(
+                        ratings.length == 0 ? Container() : SizedBox(
                           width: 15,
                         ),
                         ratings.length == 0
@@ -350,12 +515,12 @@ class ChosenEvent extends StatelessWidget {
                                         }
                                     );
                                   } else {
-                                    Navigator.pop(context);
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (BuildContext context) =>
                                                 NewReview(
+                                                  fromFeed: fromFeed,
                                                   by: by,
                                                   name: name,
                                                 )));
@@ -364,7 +529,7 @@ class ChosenEvent extends StatelessWidget {
                                 child: Ink(
                                     padding: EdgeInsets.all(12),
                                     decoration: BoxDecoration(
-                                        color: Colors.lightBlueAccent,
+                                        color: Colors.redAccent,
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(25))),
                                     child: Row(
@@ -374,7 +539,7 @@ class ChosenEvent extends StatelessWidget {
                                           color: Colors.black,
                                         ),
                                         Text(
-                                          'Be the first review!',
+                                          'Be the first rating!',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold),
                                         )
@@ -414,13 +579,13 @@ class ChosenEvent extends StatelessWidget {
                                         }
                                     );
                                   } else {
-                                    Navigator.pop(context);
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (BuildContext context) =>
                                                 NewReview(
                                                   by: by,
+                                                  fromFeed: fromFeed,
                                                   name: name,
                                                 )));
                                   }
@@ -428,7 +593,7 @@ class ChosenEvent extends StatelessWidget {
                                 child: Ink(
                                   padding: EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                      color: Colors.lightBlueAccent,
+                                      color: Colors.redAccent,
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(100))),
                                   child: Icon(
@@ -439,10 +604,28 @@ class ChosenEvent extends StatelessWidget {
                               )
                       ],
                     ),
-                    SizedBox(
-                      height: 5,
-                    ),
+                    ratings.length > 0 ?SizedBox(
+                      height: 10,
+                    ) : Container(),
+                    ratings.length > 0 ? Text('"${ratings[0]['review']}"\n- ${ratings[0]['by']}', style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15
+                    ),) : Container(),
+                    ratings.length > 1 ? SizedBox(height: 5,) : Container(),
+                    ratings.length > 1 ? Divider(thickness: 2,) : Container(),
+                    ratings.length > 1 ? SizedBox(height: 5,) : Container(),
+                    ratings.length > 1 ? Text('"${ratings[1]['review']}"\n- ${ratings[1]['by']}', style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15
+                    ),) : Container(),
+                    SizedBox(height: 10,),
                     Divider(thickness: 2,),
+                    Text('Location', style: TextStyle(
+                        fontSize: 22,
+                        color: Colors.pink,
+                        fontWeight: FontWeight.bold
+                    ),),
+                    SizedBox(height: 5,),
                     InkWell(
                       borderRadius: BorderRadius.all(Radius.circular(25)),
                       onTap: () {
@@ -474,26 +657,6 @@ class ChosenEvent extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    ratings.length == 0 ? Container() : Divider(thickness: 2,),
-                    ratings.length == 0 ? Container() : Text('Reviews', style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20
-                    ),),
-                    ratings.length > 0 ? Text('"${ratings[0]['review']}"\n- ${ratings[0]['by']}', style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15
-                    ),) : Container(),
-                    ratings.length > 1 ? Divider(thickness: 2,) : Container(),
-                    ratings.length > 1 ? SizedBox(height: 10,) : Container(),
-                    ratings.length > 1 ? Text('"${ratings[1]['review']}"\n- ${ratings[1]['by']}', style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15
-                    ),) : Container(),
-                    Divider(thickness: 2,),
-                    SizedBox(height: 10,),
                     // website == '' ?
                     // CustomButton(
                     //   text: 'Buy Ticket',

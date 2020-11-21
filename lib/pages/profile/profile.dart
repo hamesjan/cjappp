@@ -7,9 +7,8 @@ import 'package:cjapp/pages/profile/display_favorites.dart';
 import 'package:cjapp/pages/settings/select_setting.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'get_local_rank.dart';
-import 'package:firebase_auth/firebase_auth.dart' as auth;
-import 'package:cjapp/widgets/custom_button.dart';
-import 'package:cjapp/services/BaseAuth.dart';
+import 'package:cjapp/services/global_functions.dart';
+import 'package:intl/intl.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -21,16 +20,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String lastDT;
 
   Future getInformation() async {
-    var _auth = Auth();
-    String username;
-    auth.User _user = await _auth.getCurrentUser();
-    var allUsers = await _firestore.collection('users').get();
-    allUsers.docs.forEach((element) {
-      if (element.data()['uid'] == _user.uid) {
-        username = element.data()['username'];
-      }
-    });
-
+    String username = await returnUsername();
     var resUsers = await _firestore.collection('users').doc(username).get();
     return resUsers.data();
   }
@@ -239,6 +229,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                   Icon(Icons.arrow_right),
                                 ],
                               ),
+                              // FlatButton(
+                              //   child: Text(';hae'),
+                              //   onPressed: (){
+                              //     String byText = 'Uploaded ${DateFormat('yMMMMd').format(DateTime.now())} by Anonymous';
+                              //     print(byText);
+                              //   },
+                              // )
                             ],
                           ))),
                 ),

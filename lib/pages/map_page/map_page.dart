@@ -32,13 +32,16 @@ class MapPageState extends State<MapPage> {
   double lat;
   bool fav;
   double long;
+  double burntRating;
+  String byText;
+  String description;
   List ratings;
   String website;
   String by;
   String plotLocation;
   double ratingsNumbers;
   String category;
-  double myRadiusMeters = 8046.72;
+  double myRadiusMeters = 40233.6;
   String price;
 
   @override
@@ -208,7 +211,7 @@ class MapPageState extends State<MapPage> {
                           myRadiusMeters = newValue;
                         });
                       },
-                      items: <double>[8046.72,16093.4, 80467.2, 160934]
+                      items: <double>[16093.4,40233.6, 80467.2, 160934]
                           .map<DropdownMenuItem<double>>((double value) {
                         return DropdownMenuItem<double>(
                           value: value,
@@ -246,7 +249,10 @@ class MapPageState extends State<MapPage> {
                                 name: name,
                                 lat: lat,
                                 fav: fav,
-                                long: long,
+                                 byText: byText,
+                                 burntRating: burntRating,
+                                 description: description,
+                                 long: long,
                                 zipCode: zipCode,
                                 location: plotLocation,
                                 ratingsNumbers: ratingsNumbers,
@@ -256,6 +262,7 @@ class MapPageState extends State<MapPage> {
                                 category: category,
                                 by: by,
                                 price: price,
+                                fromFeed: false,
                               )));
                     },
                     icon: Icon(Icons.check, color: Colors.green, ),
@@ -283,8 +290,8 @@ class MapPageState extends State<MapPage> {
                 children: <Widget>[
                  Container(
                           constraints: BoxConstraints(
-                            maxHeight: 200,
-                            minHeight: 200,
+                            maxHeight: 250,
+                            minHeight: 250,
                           ),
                           child: ClipRRect(
                             borderRadius: new BorderRadius.circular(25.0),
@@ -295,10 +302,10 @@ class MapPageState extends State<MapPage> {
                         ),
                   Container(
                     constraints: BoxConstraints(
-                      minHeight: 200,
-                      minWidth: 200,
-                      maxWidth: 200,
-                      maxHeight: 200
+                      minHeight: 250,
+                      minWidth: 250,
+                      maxWidth: 250,
+                      maxHeight: 250
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -340,7 +347,21 @@ class MapPageState extends State<MapPage> {
                               Expanded(child: Container(),),
                             ],),
                             SizedBox(height:5.0),
-                            Text('${ratingsNumbers.toString()} / 5.0', textAlign: TextAlign.center,)
+                            Text('${ratingsNumbers.toString()} / 5.0', textAlign: TextAlign.center,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  ),
+                                  child: Row(children: <Widget>[
+                                    Icon(Icons.local_fire_department,size: 22, color: Colors.redAccent,),
+                                  ],),
+                                ),
+                                Text(burntRating.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),),
+                              ],
+                            )
                           ],)
                         ],
                       )
@@ -365,14 +386,7 @@ class MapPageState extends State<MapPage> {
       if (_authFirebase.currentUser == null) {
         username = 'testUser1';
       } else {
-        var _auth = Auth();
-        auth.User _user = await _auth.getCurrentUser();
-        var allUsers = await _firestore.collection('users').get();
-        allUsers.docs.forEach((element) {
-          if (element.data()['uid'] == _user.uid) {
-            username = element.data()['username'];
-          }
-        });
+       username = await returnUsername();
       }
       var resUsers = await _firestore.collection('users').doc(username).get();
       List currFavorites = resUsers.data()['favorites'];
@@ -390,6 +404,9 @@ class MapPageState extends State<MapPage> {
                 name = element['name'];
                 zipCode = element['zipCode'];
                 lat = element['lat'];
+                burntRating = element['burntRating'];
+                description = element['description'];
+                byText = element['by_text'];
                 imgLink = element['imgLink'];
                 ratingsNumbers = element['ratingsNumbers'];
                 long = element['long'];
@@ -449,14 +466,7 @@ class MapPageState extends State<MapPage> {
       if (_authFirebase.currentUser == null) {
         username = 'testUser1';
       } else {
-        var _auth = Auth();
-        auth.User _user = await _auth.getCurrentUser();
-        var allUsers = await _firestore.collection('users').get();
-        allUsers.docs.forEach((element) {
-          if (element.data()['uid'] == _user.uid) {
-            username = element.data()['username'];
-          }
-        });
+        username = await returnUsername();
       }
 
       var resUsers = await _firestore.collection('users').doc(username).get();
@@ -478,7 +488,10 @@ class MapPageState extends State<MapPage> {
                   name = element['name'];
                   zipCode = element['zipCode'];
                   lat = element['lat'];
+                  burntRating = element['burntRating'];
                   imgLink = element['imgLink'];
+                  description = element['description'];
+                  byText = element['by_text'];
                   ratingsNumbers = element['ratingsNumbers'];
                   long = element['long'];
                   fav = favorite;

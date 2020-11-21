@@ -32,7 +32,7 @@ class _SearchPageState extends State<SearchPage> {
                 if (snapshot.hasData) {
                   receivedPlots.clear();
                   plotsNames.clear();
-                  snapshot.data.docs.forEach((element) => receivedPlots.add(element.data()));
+                  snapshot.data.docs.forEach((element) => element.data()['approved'] ? receivedPlots.add(element.data()): null );
                   receivedPlots.forEach((element) {
                     plotsNames.add(element['name']);
                   });
@@ -219,6 +219,10 @@ class SearchEntertainment extends SearchDelegate<String> {
                               location: obj['location'],
                               ratingsNumbers: obj['ratingsNumbers'].toDouble(),
                               ratings: obj['ratings'],
+                              burntRating: obj['burntRating'],
+                              fromFeed: false,
+                              byText: obj['by_text'],
+                              description: obj['description'],
                               lat: obj['lat'],
                               long: obj['long'],
                               fav: favorite,

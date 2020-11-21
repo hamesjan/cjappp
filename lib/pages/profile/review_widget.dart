@@ -4,7 +4,7 @@ import 'package:cjapp/widgets/rating_stars.dart';
 
 class ReviewWidget extends StatelessWidget {
   final String review;
-  final double rating;
+  final String rating;
   final String place;
 
 
@@ -32,7 +32,7 @@ class ReviewWidget extends StatelessWidget {
           Row(
             children: [
               Expanded(child: Container(),),
-              RatingStars(rating: rating,),
+              RatingStars(rating: double.parse(rating),),
               Expanded(child: Container(),),
             ],
           ),
