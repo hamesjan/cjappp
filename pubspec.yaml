@@ -36,7 +36,8 @@ dependencies:
   rounded_loading_button:
   optimized_cached_image:
   firebase_admob:
-  permission_handler:
+  permission_handler: 4.4.0
+  device_info:
   latlong:
   image_picker:
   webview_flutter:

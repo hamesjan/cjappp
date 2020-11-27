@@ -96,6 +96,9 @@ class _FeedState extends State<Feed> {
       LocationData _locationData = await location.getLocation();
       info.add(_locationData.latitude);
       info.add(_locationData.longitude);
+    } else {
+      info.add(34.0522);
+      info.add(-118.2437);
     }
     return info;
   }

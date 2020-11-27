@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:cjapp/services/BaseAuth.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/services.dart';
+import 'package:cjapp/services/global_functions.dart';
 
 
 class ChangeUsername extends StatefulWidget {
@@ -25,26 +26,34 @@ class _ChangeUsernameState extends State<ChangeUsername> {
 
   Future<void> changeName() async {
     try {
-      var _auth = Auth();
-      String old_username;
-      auth.User _user = await _auth.getCurrentUser();
-      var allUsers = await _firestore.collection('users').get();
-      allUsers.docs.forEach((element) {
-        if (element.data()['uid'] == _user.uid) {
-          old_username = element.data()['username'];
+      bool taken = false;
+      String oldUsername = await returnUsername();
+      var takenNames = await _firestore.collection('users').get();
+      takenNames.docs.forEach((element) {
+        if (element.data()['username'] == username){
+          taken = true;
         }
       });
-      await _firestore.collection('users').doc(old_username).update({
-        'username': username
-      });
-      var resUsers = await _firestore.collection('users').doc(old_username).get();
-      Map<String,dynamic> holder = resUsers.data();
-      await _firestore.collection('users').doc(username).set(holder);
-      await _firestore.collection('users').doc(old_username).delete();
-      _changeUsernameButtonController.success();
-      Navigator.pop(context);
-      Navigator.push(context,
-          MaterialPageRoute(builder: (BuildContext context) => YourAccount()));
+      if(taken){
+        _changeUsernameButtonController.reset();
+        setState(
+              () {
+            errorMessage = 'Sorry, that username is taken.';
+          },
+        );
+      } else {
+        await _firestore.collection('users').doc(oldUsername).update({
+          'username': username
+        });
+        var resUsers = await _firestore.collection('users').doc(oldUsername).get();
+        Map<String,dynamic> holder = resUsers.data();
+        await _firestore.collection('users').doc(username).set(holder);
+        await _firestore.collection('users').doc(oldUsername).delete();
+        _changeUsernameButtonController.success();
+        Navigator.pop(context);
+        Navigator.push(context,
+            MaterialPageRoute(builder: (BuildContext context) => YourAccount()));
+      }
     } on PlatformException catch (e) {
       print(e);
     } catch (e) {

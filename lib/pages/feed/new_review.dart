@@ -146,10 +146,11 @@ class _NewReviewState extends State<NewReview> {
                Expanded(child: Container(),),
                Row(children: [
                  Text('For ', style: TextStyle(
-                   fontSize: 20
+                   fontSize: 25
                  ),),
                  Text(widget.name, style: TextStyle(
-                   fontSize: 20, fontWeight: FontWeight.bold
+                   color: Colors.pinkAccent,
+                   fontSize: 25, fontWeight: FontWeight.bold
                  ),),
                ],),
                Expanded(child: Container(),),

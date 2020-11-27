@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-getLocalRank(String name, int localScore){
-  List<String> certifiedOGs = [
-    'hamesjan',
-    'yoda420',
-    'Mkpark',
-    'Teteu',
-    'weejlostinjuice',
-    'cahlze'
-  ];
-  if (certifiedOGs.contains(name)){
+getLocalRank(String name, int localScore, bool oG){
+  if (oG){
    return Container(
      decoration: BoxDecoration(
          borderRadius: BorderRadius.all(Radius.circular(15)),

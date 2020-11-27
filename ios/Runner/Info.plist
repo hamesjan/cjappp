@@ -2,7 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -27,26 +26,22 @@
 	<true/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSContactsUsageDescription</key>
-    <string>For Permissions API</string>
-    <key>NSCalendarsUsageDescription</key>
-    <string>For Permissions API</string>
-    <key>NSAppleMusicUsageDescription</key>
-    <string>For Permissions API</string>
-    <key>NSMotionUsageDescription</key>
-    <string>For Permissions API</string>
-    <key>NSSpeechRecognitionUsageDescription</key>
-    <string>For Permissions API</string>
-    <key>NSCameraUsageDescription</key>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>For Permissions API</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>For Permissions API</string>
+	<key>NSPhotoLibraryUsageDescription</key>
     <string>For adding images to submit plots</string>
-	<key>NSCameraUsageDescription</key>
-	<string>For adding images to submit plots</string>
+	<key>NSContactsUsageDescription</key>
+	<string>For Permissions API</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Our app needs to query your location to display plots within your radius</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Our app needs to query your location to display plots within your radius.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>For adding images to submit plots</string>
+	<key>NSMotionUsageDescription</key>
+	<string>For Permissions API</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>For Permissions API</string>
 	<key>SKAdNetworkItems</key>
 	<array>
 		<dict>

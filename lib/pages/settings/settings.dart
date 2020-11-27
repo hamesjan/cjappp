@@ -7,7 +7,6 @@ import 'package:cjapp/pages/home.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cjapp/pages/login/login.dart';
 import 'package:cjapp/pages/settings/your_account.dart';
-import 'package:firebase_admob/firebase_admob.dart';
 
 
 class SettingsPage extends StatefulWidget {
@@ -17,53 +16,6 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> { 
   final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
-  //
-  // static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
-  //     testDevices: null,
-  //     nonPersonalizedAds: true,
-  //     keywords: <String>['Entertainment', 'Convenience', 'Fun']);
-  //
-  // BannerAd bannerAd;
-  //
-  // // InterstitialAd interstitialAd;
-  //
-  // BannerAd createBannerAd() {
-  //   return BannerAd(
-  //       adUnitId: 'ca-app-pub-1671319682516251/1543231558',
-  //       size: AdSize.banner,
-  //       targetingInfo: targetingInfo,
-  //       listener: (MobileAdEvent event) {
-  //         print('BannerAd $event');
-  //       });
-  // }
-
-  // InterstitialAd createInterstitialAd (){
-  //   return InterstitialAd(
-  //       adUnitId: 'ca-app-pub-1671319682516251/1543231558',
-  //       targetingInfo: targetingInfo,
-  //       listener: (MobileAdEvent event){
-  //         print('Interstitial Ad $event');
-  //       }
-  //   );
-  // }
-  //
-
-  // @override
-  // void initState() {
-  //   FirebaseAdMob.instance.initialize(appId: BannerAd.testAdUnitId);
-  //   bannerAd = createBannerAd()
-  //     ..load()
-  //     ..show();
-  //   super.initState();
-  // }
-  //
-  // @override
-  // void dispose() {
-  //   // TODO: implement dispose
-  //   bannerAd.dispose();
-  //   super.dispose();
-  // }
-
 
   @override
   Widget build(BuildContext context) {

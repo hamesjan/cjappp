@@ -1,6 +1,7 @@
 import 'package:cjapp/pages/feed/plots_web_view.dart';
 import 'package:cjapp/pages/login/login.dart';
 import 'package:cjapp/widgets/custom_button.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cjapp/widgets/price_icon_widget.dart';
@@ -15,7 +16,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:cjapp/widgets/rating_stars.dart';
 
-class ChosenEvent extends StatelessWidget {
+// const String testDevice = 'AEF6DE53-7481-4037-B60E-37B5AE065D58[37493]';
+const String testDevice = '8CB7D76E-52F4-44E3-A581-61FBD3D38BEC';
+
+class ChosenEvent extends StatefulWidget {
   final bool fromFeed;
   final String name;
   final String zipCode;
@@ -34,26 +38,45 @@ class ChosenEvent extends StatelessWidget {
   final String by;
   final String price;
 
-  const ChosenEvent(
-      {Key key,
-      this.name,
-        this.fromFeed,
-      this.zipCode,
-        this.imgLink,
-      this.location,
-        this.burntRating,
-        this.description,
-        this.byText,
-      this.by,
-        this.fav,
-      this.ratingsNumbers,
-        this.lat,
-        this.long,
-      this.ratings,
-      this.website,
-      this.category,
-      this.price})
-      : super(key: key);
+  const ChosenEvent({Key key, this.fromFeed, this.name, this.zipCode, this.location, this.ratingsNumbers, this.burntRating, this.lat, this.long, this.byText, this.description, this.imgLink, this.ratings, this.fav, this.website, this.category, this.by, this.price}) : super(key: key);
+
+  @override
+  _ChosenEventState createState() => _ChosenEventState();
+}
+
+class _ChosenEventState extends State<ChosenEvent> {
+  static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
+    testDevices: testDevice != null ? <String>[testDevice] : null,
+    nonPersonalizedAds: true,
+    keywords: <String>['Entertainment', 'Plots', 'Los Angeles', 'Restaurants']
+  );
+
+  // BannerAd _bannerAd;
+  // BannerAd createBannerAd(){
+  //   return BannerAd(adUnitId: 'ca-app-pub-1671319682516251/1543231558',
+  //       size: AdSize.banner,
+  //     targetingInfo: targetingInfo,
+  //
+  //     listener: (MobileAdEvent event){
+  //       print('BannerAd $event');
+  //     }
+  //   );
+  // }
+  //
+  // @override
+  // void initState(){
+  //   FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-1671319682516251~7637527304');
+  //   _bannerAd = createBannerAd()..load()..show(
+  //     anchorType: AnchorType.bottom,
+  //   );
+  //   super.initState();
+  // }
+  //
+  // @override
+  // void dispose(){
+  //   _bannerAd.dispose();
+  //   super.dispose();
+  // }
 
   Future<void> addFavorite(context) async {
     FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -66,29 +89,33 @@ class ChosenEvent extends StatelessWidget {
         if (element.data()['uid'] == _user.uid) {
           var resUsers = await _firestore.collection('users').doc(element.data()['username']).get();
           List currFavorites = resUsers.data()['favorites'];
-          currFavorites.add(name);
+          currFavorites.add(widget.name);
           await _firestore.collection('users').doc(element.data()['username']).update({
             'favorites': currFavorites,
           }).catchError((onError) => {print(onError.toString())});
         }
       });
 
-      Navigator.pop(context);
-      Navigator.pop(context);
-      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ChosenEvent(
-        name: name,
-        zipCode: zipCode,
-        location: location,
-        ratingsNumbers: ratingsNumbers,
-        ratings: ratings,
-        imgLink: imgLink,
-        website: website,
-        long: long,
-        lat: lat,
+        Navigator.pop(context);
+        Navigator.pop(context);
+        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ChosenEvent(
+        name: widget.name,
+        zipCode: widget.zipCode,
+        location: widget.location,
+        ratingsNumbers: widget.ratingsNumbers,
+        ratings: widget.ratings,
+        burntRating: widget.burntRating,
+        fromFeed: widget.fromFeed,
+        byText: widget.byText,
+        description: widget.description,
+        lat: widget.lat,
+        long: widget.long,
         fav: true,
-        category: category,
-        by: by,
-        price: price,
+        imgLink: widget.imgLink,
+        website: widget.website,
+        category: widget.category,
+        by: widget.by,
+        price: widget.price,
       )));
     }
     on PlatformException catch (e) {
@@ -110,7 +137,7 @@ class ChosenEvent extends StatelessWidget {
         if (element.data()['uid'] == _user.uid) {
           var resUsers = await _firestore.collection('users').doc(element.data()['username']).get();
           List currFavorites = resUsers.data()['favorites'];
-          currFavorites.remove(name);
+          currFavorites.remove(widget.name);
           await _firestore.collection('users').doc(element.data()['username']).update({
             'favorites': currFavorites,
           }).catchError((onError) => {print(onError.toString())});
@@ -120,19 +147,23 @@ class ChosenEvent extends StatelessWidget {
       Navigator.pop(context);
       Navigator.pop(context);
       Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ChosenEvent(
-        name: name,
-        zipCode: zipCode,
-        location: location,
-        ratingsNumbers: ratingsNumbers,
-        ratings: ratings,
-        imgLink: imgLink,
-        website: website,
-        long: long,
-        lat: lat,
+        name: widget.name,
+        zipCode: widget.zipCode,
+        location: widget.location,
+        ratingsNumbers: widget.ratingsNumbers,
+        ratings: widget.ratings,
+        burntRating: widget.burntRating,
+        fromFeed: widget.fromFeed,
+        byText: widget.byText,
+        description: widget.description,
+        lat: widget.lat,
+        long: widget.long,
         fav: false,
-        category: category,
-        by: by,
-        price: price,
+        imgLink: widget.imgLink,
+        website: widget.website,
+        category: widget.category,
+        by: widget.by,
+        price: widget.price,
       )));
     } on PlatformException catch (e) {
       print(e);
@@ -148,15 +179,15 @@ class ChosenEvent extends StatelessWidget {
     final auth.FirebaseAuth _authFirebase = auth.FirebaseAuth.instance;
     return Scaffold(
       appBar: AppBar(
-        title: Text(name),
+        title: Text(widget.name),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-              Navigator.pop(context);
-              if (!fromFeed) {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (BuildContext context) => Home()));
-              }
+            Navigator.pop(context);
+            if (!widget.fromFeed) {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (BuildContext context) => Home()));
+            }
           },
         ),
       ),
@@ -169,12 +200,12 @@ class ChosenEvent extends StatelessWidget {
                 minHeight: 350,
               ),
               child: OptimizedCacheImage(
-                imageUrl: imgLink,
+                imageUrl: widget.imgLink,
                 imageBuilder: (context, imageProvider) => Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(25),
-                      bottomLeft: Radius.circular(25)
+                        bottomRight: Radius.circular(25),
+                        bottomLeft: Radius.circular(25)
                     ),
                     image: DecorationImage(
                       image: imageProvider,
@@ -199,7 +230,7 @@ class ChosenEvent extends StatelessWidget {
                             Container(
                               width: MediaQuery.of(context).size.width / 1.3,
                               child: Text(
-                                name,
+                                widget.name,
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -207,26 +238,26 @@ class ChosenEvent extends StatelessWidget {
                                     fontSize: 25, fontWeight: FontWeight.bold),
                               ),
                             ),
-                          Row(children: [
-                            Text(
-                              category,
-                              style: TextStyle(
-                                  fontSize: 17,
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              '  • ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 15),
-                            ),
-                            PriceIconWidget(price: price,)
+                            Row(children: [
+                              Text(
+                                widget.category,
+                                style: TextStyle(
+                                    fontSize: 17,
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                '  • ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
+                              PriceIconWidget(price: widget.price,)
 
-                          ],),
+                            ],),
                             Container(
                               width: MediaQuery.of(context).size.width / 1.3,
                               child: Text(
-                                byText,
+                                widget.byText,
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -234,7 +265,7 @@ class ChosenEvent extends StatelessWidget {
                               ),
                             ),
 
-                        ],),
+                          ],),
                         Expanded(child: Container(),),
                         _authFirebase.currentUser == null ?  Container(
                             child: IconButton(icon: Icon(Icons.bookmark_border), onPressed: (){
@@ -267,59 +298,59 @@ class ChosenEvent extends StatelessWidget {
                               );
                             })
                         ) : Container(
-                          child:
+                            child:
 
-                        fav ? IconButton(icon: Icon(Icons.bookmark), onPressed: (){
-                          showDialog(context: context,
-                              barrierDismissible: true,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('Remove Bookmark?'),
-                                  actions: <Widget>[
-                                    IconButton(
-                                      onPressed: (){
-                                        removeFavorite(context);
-                                      },
-                                      icon: Icon(Icons.check),
-                                    ),
-                                    IconButton(
-                                      icon: Icon(Icons.close),
-                                      onPressed: (){
-                                        Navigator.pop(context);
-                                      },
-                                    )
-                                  ],
-                                );
-                              }
-                          );
-                        }):  IconButton(icon: Icon(Icons.bookmark_border), onPressed: (){
-                          showDialog(context: context,
-                              barrierDismissible: true,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('Bookmark this Plot?'),
-                                  actions: <Widget>[
-                                    IconButton(
-                                      onPressed: (){
-                                        addFavorite(context);
-                                      },
-                                      icon: Icon(Icons.check),
-                                    ),
-                                    IconButton(
-                                      icon: Icon(Icons.close),
-                                      onPressed: (){
-                                        Navigator.pop(context);
-                                      },
-                                    )
-                                  ],
-                                );
-                              }
-                          );
-                        })
+                            widget.fav ? IconButton(icon: Icon(Icons.bookmark), onPressed: (){
+                              showDialog(context: context,
+                                  barrierDismissible: true,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('Remove Bookmark?'),
+                                      actions: <Widget>[
+                                        IconButton(
+                                          onPressed: (){
+                                            removeFavorite(context);
+                                          },
+                                          icon: Icon(Icons.check),
+                                        ),
+                                        IconButton(
+                                          icon: Icon(Icons.close),
+                                          onPressed: (){
+                                            Navigator.pop(context);
+                                          },
+                                        )
+                                      ],
+                                    );
+                                  }
+                              );
+                            }):  IconButton(icon: Icon(Icons.bookmark_border), onPressed: (){
+                              showDialog(context: context,
+                                  barrierDismissible: true,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('Bookmark this Plot?'),
+                                      actions: <Widget>[
+                                        IconButton(
+                                          onPressed: (){
+                                            addFavorite(context);
+                                          },
+                                          icon: Icon(Icons.check),
+                                        ),
+                                        IconButton(
+                                          icon: Icon(Icons.close),
+                                          onPressed: (){
+                                            Navigator.pop(context);
+                                          },
+                                        )
+                                      ],
+                                    );
+                                  }
+                              );
+                            })
                         )
                       ],
                     ),
-                    description.isEmpty ? Container():
+                    widget.description.isEmpty ? Container():
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -334,7 +365,7 @@ class ChosenEvent extends StatelessWidget {
                         Container(
                           width: MediaQuery.of(context).size.width / 1.3,
                           child: Text(
-                            description,
+                            widget.description,
                             maxLines: 10,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -367,7 +398,7 @@ class ChosenEvent extends StatelessWidget {
                                         Icon(Icons.local_fire_department,size: 55, color: Colors.redAccent,),
                                       ],),
                                     ),
-                                    ratings.length == 0 ? Text('No Ratings Yet', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),) : Text(burntRating.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),),
+                                    widget.ratings.length == 0 ? Text('No Ratings Yet', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),) : Text(widget.burntRating.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),),
                                   ],
                                 ),
                                 IconButton(
@@ -465,156 +496,156 @@ class ChosenEvent extends StatelessWidget {
                             fontWeight: FontWeight.bold
                         ),),
                         SizedBox(width: 10,),
-                        ratings.length == 0 ? Container() : RatingStars(rating: ratingsNumbers),
-                        ratings.length == 0
+                        widget.ratings.length == 0 ? Container() : RatingStars(rating: widget.ratingsNumbers),
+                        widget.ratings.length == 0
                             ? Container()
                             : SizedBox(
-                                width: 5,
-                              ),
-                        ratings.length == 0
+                          width: 5,
+                        ),
+                        widget.ratings.length == 0
                             ? Container()
                             : Text(
-                                '${ratings.length} Reviews',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 15),
-                              ),
-                        ratings.length == 0 ? Container() : SizedBox(
+                          '${widget.ratings.length} Reviews',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
+                        ),
+                        widget.ratings.length == 0 ? Container() : SizedBox(
                           width: 15,
                         ),
-                        ratings.length == 0
+                        widget.ratings.length == 0
                             ? InkWell(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(25)),
-                                onTap: () {
-                                  if (_authFirebase.currentUser == null) {
-                                    showDialog(context: context,
-                                        barrierDismissible: true,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: Text('You must log in to leave a review.'),
-                                            actions: <Widget>[
-                                              IconButton(
-                                                onPressed: (){
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
-                                                  Navigator.push(context,
-                                                      MaterialPageRoute(
-                                                          builder: (BuildContext context) => Login()
-                                                      ));
-                                                },
-                                                icon: Icon(Icons.login, color: Colors.green,),
-                                              ),
-                                              IconButton(
-                                                icon: Icon(Icons.close),
-                                                onPressed: (){
-                                                  Navigator.pop(context);
-                                                },
-                                              )
-                                            ],
-                                          );
-                                        }
-                                    );
-                                  } else {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (BuildContext context) =>
-                                                NewReview(
-                                                  fromFeed: fromFeed,
-                                                  by: by,
-                                                  name: name,
-                                                )));
-                                  }
-                                },
-                                child: Ink(
-                                    padding: EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                        color: Colors.redAccent,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(25))),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.add,
-                                          color: Colors.black,
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(25)),
+                          onTap: () {
+                            if (_authFirebase.currentUser == null) {
+                              showDialog(context: context,
+                                  barrierDismissible: true,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('You must log in to leave a review.'),
+                                      actions: <Widget>[
+                                        IconButton(
+                                          onPressed: (){
+                                            Navigator.pop(context);
+                                            Navigator.pop(context);
+                                            Navigator.push(context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext context) => Login()
+                                                ));
+                                          },
+                                          icon: Icon(Icons.login, color: Colors.green,),
                                         ),
-                                        Text(
-                                          'Be the first rating!',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
+                                        IconButton(
+                                          icon: Icon(Icons.close),
+                                          onPressed: (){
+                                            Navigator.pop(context);
+                                          },
                                         )
                                       ],
-                                    )),
-                              )
-                            : InkWell(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(100)),
-                                onTap: () {
-                                  if (_authFirebase.currentUser == null ){
-                                    showDialog(context: context,
-                                        barrierDismissible: true,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: Text('You must log in to leave a review.'),
-                                            actions: <Widget>[
-                                              IconButton(
-                                                onPressed: (){
-                                                  Navigator.pop(context);
-                                                  Navigator.pop(context);
-                                                  Navigator.push(context,
-                                                      MaterialPageRoute(
-                                                          builder: (BuildContext context) => Login()
-                                                      ));
-                                                },
-                                                icon: Icon(Icons.login, color: Colors.green,),
-                                              ),
-                                              IconButton(
-                                                icon: Icon(Icons.close),
-                                                onPressed: (){
-                                                  Navigator.pop(context);
-                                                },
-                                              )
-                                            ],
-                                          );
-                                        }
                                     );
-                                  } else {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (BuildContext context) =>
-                                                NewReview(
-                                                  by: by,
-                                                  fromFeed: fromFeed,
-                                                  name: name,
-                                                )));
                                   }
-                                },
-                                child: Ink(
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      color: Colors.redAccent,
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(100))),
-                                  child: Icon(
+                              );
+                            } else {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          NewReview(
+                                            fromFeed: widget.fromFeed,
+                                            by: widget.by,
+                                            name: widget.name,
+                                          )));
+                            }
+                          },
+                          child: Ink(
+                              padding: EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                  color: Colors.redAccent,
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(25))),
+                              child: Row(
+                                children: [
+                                  Icon(
                                     Icons.add,
                                     color: Colors.black,
                                   ),
-                                ),
-                              )
+                                  Text(
+                                    'Be the first rating!',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              )),
+                        )
+                            : InkWell(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(100)),
+                          onTap: () {
+                            if (_authFirebase.currentUser == null ){
+                              showDialog(context: context,
+                                  barrierDismissible: true,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('You must log in to leave a review.'),
+                                      actions: <Widget>[
+                                        IconButton(
+                                          onPressed: (){
+                                            Navigator.pop(context);
+                                            Navigator.pop(context);
+                                            Navigator.push(context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext context) => Login()
+                                                ));
+                                          },
+                                          icon: Icon(Icons.login, color: Colors.green,),
+                                        ),
+                                        IconButton(
+                                          icon: Icon(Icons.close),
+                                          onPressed: (){
+                                            Navigator.pop(context);
+                                          },
+                                        )
+                                      ],
+                                    );
+                                  }
+                              );
+                            } else {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          NewReview(
+                                            by: widget.by,
+                                            fromFeed: widget.fromFeed,
+                                            name: widget.name,
+                                          )));
+                            }
+                          },
+                          child: Ink(
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                                color: Colors.redAccent,
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(100))),
+                            child: Icon(
+                              Icons.add,
+                              color: Colors.black,
+                            ),
+                          ),
+                        )
                       ],
                     ),
-                    ratings.length > 0 ?SizedBox(
+                    widget.ratings.length > 0 ?SizedBox(
                       height: 10,
                     ) : Container(),
-                    ratings.length > 0 ? Text('"${ratings[0]['review']}"\n- ${ratings[0]['by']}', style: TextStyle(
+                    widget.ratings.length > 0 ? Text('"${widget.ratings[0]['review']}"\n- ${widget.ratings[0]['by']}', style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15
                     ),) : Container(),
-                    ratings.length > 1 ? SizedBox(height: 5,) : Container(),
-                    ratings.length > 1 ? Divider(thickness: 2,) : Container(),
-                    ratings.length > 1 ? SizedBox(height: 5,) : Container(),
-                    ratings.length > 1 ? Text('"${ratings[1]['review']}"\n- ${ratings[1]['by']}', style: TextStyle(
+                    widget.ratings.length > 1 ? SizedBox(height: 5,) : Container(),
+                    widget.ratings.length > 1 ? Divider(thickness: 2,) : Container(),
+                    widget.ratings.length > 1 ? SizedBox(height: 5,) : Container(),
+                    widget.ratings.length > 1 ? Text('"${widget.ratings[1]['review']}"\n- ${widget.ratings[1]['by']}', style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15
                     ),) : Container(),
@@ -626,14 +657,31 @@ class ChosenEvent extends StatelessWidget {
                         fontWeight: FontWeight.bold
                     ),),
                     SizedBox(height: 5,),
+                    Text('Click to access location', style: TextStyle(
+                      fontWeight: FontWeight.bold
+                    ),),
                     InkWell(
                       borderRadius: BorderRadius.all(Radius.circular(25)),
                       onTap: () {
-                        MapUtils.openMap(lat,long);
+                        MapUtils.openMap(widget.lat,widget.long);
                       },
                       child: Ink(
                         padding: EdgeInsets.all(5),
-                        child: Row(
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          margin: const EdgeInsets.only(bottom: 6.0), //Same as `blurRadius` i guess
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(25)),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey,
+                                offset: Offset(0.0, 1.0), //(x,y)
+                                blurRadius: 6.0,
+                              ),
+                            ],
+                          ),
+                          child: Row(
                           children: <Widget>[
                             Icon(
                               Icons.room,
@@ -645,18 +693,19 @@ class ChosenEvent extends StatelessWidget {
                             Container(
                               width: MediaQuery.of(context).size.width / 1.5,
                               child: Text(
-                                location,
+                                widget.location,
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.bold),
                               ),
                             ),
-
                           ],
                         ),
+                        )
                       ),
                     ),
+                    Container(height: 100,)
                     // website == '' ?
                     // CustomButton(
                     //   text: 'Buy Ticket',
@@ -686,3 +735,7 @@ class GetFirebaseImage extends ChangeNotifier {
     return await FirebaseStorage.instance.ref().child(image).getDownloadURL();
   }
 }
+
+
+
+

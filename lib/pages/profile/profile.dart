@@ -8,6 +8,7 @@ import 'package:cjapp/pages/settings/select_setting.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'get_local_rank.dart';
 import 'package:cjapp/services/global_functions.dart';
+import 'package:device_info/device_info.dart';
 import 'package:intl/intl.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -19,10 +20,26 @@ class _ProfilePageState extends State<ProfilePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String lastDT;
 
+  // Future<String> _getId() async {
+  //   var deviceInfo = DeviceInfoPlugin();
+  //     var iosDeviceInfo = await deviceInfo.iosInfo;
+  //     return iosDeviceInfo.identifierForVendor; // unique ID on iOS
+  //
+  // }
+
   Future getInformation() async {
+    List info = [];
+    bool oGStatus = false;
     String username = await returnUsername();
+    var oG = await _firestore.collection('appInfo').doc('certifiedOGs').get();
+    if(oG.data().containsKey(username)){
+        oGStatus = true;
+    }
+
     var resUsers = await _firestore.collection('users').doc(username).get();
-    return resUsers.data();
+    info.add(resUsers.data());
+    info.add(oGStatus);
+    return info;
   }
 
   @override
@@ -53,7 +70,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            snapshot.data['username'],
+                            snapshot.data[0]['username'],
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 40),
                           ),
@@ -61,7 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             height: 10,
                           ),
                           Text(
-                            'Joined ${snapshot.data['joined']}',
+                            'Joined ${snapshot.data[0]['joined']}',
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 15),
                           ),
@@ -83,14 +100,14 @@ class _ProfilePageState extends State<ProfilePage> {
                             fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        snapshot.data['local_score'].toString(),
+                        snapshot.data[0]['local_score'].toString(),
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.pinkAccent,
                             fontSize: 60),
                       ),
-                      getLocalRank(snapshot.data['username'],
-                          snapshot.data['local_score']),
+                      getLocalRank(snapshot.data[0]['username'],
+                          snapshot.data[0]['local_score'], snapshot.data[1]),
                       IconButton(
                         icon: Icon(Icons.info_outline),
                         onPressed: () {
@@ -173,7 +190,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         context,
                         MaterialPageRoute(
                             builder: (BuildContext context) => DisplayFavorites(
-                                  favorites: snapshot.data['favorites'],
+                                  favorites: snapshot.data[0]['favorites'],
                                 )));
                   },
                 ),
@@ -188,7 +205,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         context,
                         MaterialPageRoute(
                             builder: (BuildContext context) => DisplayReviews(
-                                  reviews: snapshot.data['reviews'],
+                                  reviews: snapshot.data[0]['reviews'],
                                 )));
                   },
                 ),
@@ -231,9 +248,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                               // FlatButton(
                               //   child: Text(';hae'),
-                              //   onPressed: (){
-                              //     String byText = 'Uploaded ${DateFormat('yMMMMd').format(DateTime.now())} by Anonymous';
-                              //     print(byText);
+                              //   onPressed: () async {
                               //   },
                               // )
                             ],

@@ -10,6 +10,7 @@ import 'package:cjapp/pages/settings/settings.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cjapp/services/lifecycle_handler.dart';
 import 'package:location/location.dart';
+import 'package:cjapp/pages/profile/new_place.dart';
 import 'package:cjapp/pages/profile/profile.dart';
 
 class Home extends StatefulWidget {
@@ -117,6 +118,18 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ],
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => NewPlace()));
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Colors.pink,
+      ),
+
       bottomNavigationBar: SafeArea(
         child: TabBar(
           controller: _tabController,

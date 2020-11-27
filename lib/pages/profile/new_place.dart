@@ -23,6 +23,7 @@ class NewPlace extends StatefulWidget {
 }
 
 class _NewPlaceState extends State<NewPlace> {
+  final _picker = ImagePicker();
   String price = 'Free';
   String category = 'Outdoors';
   String location;
@@ -39,15 +40,18 @@ class _NewPlaceState extends State<NewPlace> {
 
 
   Future getImage()async{
-    var status = await Permission.photos.status;
-    print(status.toString());
-    if (status == PermissionStatus.granted) {
-      var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    try {
+      PickedFile image = await _picker.getImage(source: ImageSource.gallery);
       setState(() {
-        _image = image;
+        _image = File(image.path);
       });
-    } else {
-      openAppSettings();
+    } catch(e) {
+      print(e.toString());
+      setState(
+            () {
+          errorMessage = 'You need to enable image permissions.';
+        },
+      );
     }
   }
 
@@ -335,16 +339,6 @@ class _NewPlaceState extends State<NewPlace> {
             SizedBox(
               height: 10,
             ),
-            errorMessage != null
-                ? Text(
-              errorMessage,
-              style: TextStyle(color: Colors.red),
-              textAlign: TextAlign.center,
-            )
-                : Container(),
-            SizedBox(
-              height: 5,
-            ),
             Row(children: [
               Expanded(child: Container(),),
               Text('Upload\nAnonymously',
@@ -362,6 +356,14 @@ class _NewPlaceState extends State<NewPlace> {
                   }),
               Expanded(child: Container(),),
             ],),
+            SizedBox(height: 5,),
+            errorMessage != null
+                ? Text(
+              errorMessage,
+              style: TextStyle(color: Colors.red),
+              textAlign: TextAlign.center,
+            )
+                : Container(),
             SizedBox(
               height: 20,
             ),
