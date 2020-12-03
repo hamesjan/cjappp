@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cjapp/services/BaseAuth.dart';
 import 'package:cjapp/widgets/plotserror.dart';
 import 'package:flutter/widgets.dart';
+import 'package:cjapp/services/app_colors.dart';
 import 'package:location/location.dart';
 import 'package:cjapp/pages/map_page/distance_calculator.dart';
 import 'package:cjapp/widgets/no_connection.dart';
@@ -204,7 +205,7 @@ class _FeedState extends State<Feed> {
                               gradient: LinearGradient(
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter,
-                                  colors: [Colors.pinkAccent, Colors.white10])),
+                                  colors: [MaterialColor(0xfff2a3f3, color), Colors.white10])),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
@@ -235,7 +236,7 @@ class _FeedState extends State<Feed> {
                                         ),
                                         underline: Container(
                                           height: 2,
-                                          color: Colors.pinkAccent,
+                                          color: MaterialColor(0xfff2a3f3, color),
                                         ),
                                         onChanged: (String newValue) {
                                           setState(() {
@@ -278,7 +279,7 @@ class _FeedState extends State<Feed> {
                                         ),
                                         underline: Container(
                                           height: 2,
-                                          color: Colors.pinkAccent,
+                                          color: MaterialColor(0xfff2a3f3, color),
                                         ),
                                         onChanged: (String newValue) {
                                           setState(() {
@@ -325,7 +326,7 @@ class _FeedState extends State<Feed> {
                                         style: TextStyle(color: Colors.black),
                                         underline: Container(
                                           height: 2,
-                                          color: Colors.pinkAccent,
+                                          color: MaterialColor(0xfff2a3f3, color),
                                         ),
                                         onChanged: (String newValue) {
                                           setState(() {
@@ -372,7 +373,7 @@ class _FeedState extends State<Feed> {
                                         ),
                                         underline: Container(
                                           height: 2,
-                                          color: Colors.pinkAccent,
+                                          color: MaterialColor(0xfff2a3f3, color),
                                         ),
                                         onChanged: (double newValue) {
                                           setState(() {
@@ -423,7 +424,7 @@ class _FeedState extends State<Feed> {
                         ),
                         Divider(
                           thickness: 3,
-                          color: Colors.pinkAccent,
+                          color: MaterialColor(0xfff2a3f3, color),
                         ),
                         SizedBox(
                           height: 5,

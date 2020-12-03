@@ -11,6 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cjapp/services/lifecycle_handler.dart';
 import 'package:location/location.dart';
 import 'package:cjapp/pages/profile/new_place.dart';
+import 'package:cjapp/services/app_colors.dart';
 import 'package:cjapp/pages/profile/profile.dart';
 
 class Home extends StatefulWidget {
@@ -74,15 +75,15 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         elevation: 0,
         title: Text(
           'Welcome',
-          style: TextStyle(color: Colors.white, fontSize: 22),
+          style: TextStyle(color: Colors.black, fontSize: 22),
         ),
-        backgroundColor: Colors.pinkAccent,
+        backgroundColor: MaterialColor(0xfff2a3f3, color),
         actions: <Widget>[
           _auth.currentUser == null ?
           IconButton(
             icon: Icon(
               Icons.login,
-              color: Colors.white,
+              color: Colors.black,
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -94,7 +95,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ): IconButton(
             icon: Icon(
               Icons.settings,
-              color: Colors.white,
+              color: Colors.black,
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -127,7 +128,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   builder: (BuildContext context) => NewPlace()));
         },
         child: Icon(Icons.add),
-        backgroundColor: Colors.pink,
+        backgroundColor: MaterialColor(0xfff2a3f3, color),
       ),
 
       bottomNavigationBar: SafeArea(

@@ -4,6 +4,7 @@ import 'package:cjapp/widgets/custom_button.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cjapp/services/BaseAuth.dart';
+import 'package:cjapp/widgets/thank_you.dart';
 import 'package:cjapp/services/global_functions.dart';
 import 'package:cjapp/pages/home.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -89,13 +90,11 @@ class _NewReviewState extends State<NewReview> {
       incrementLocalScore();
       _submitButtonController.success();
       Navigator.pop(context);
-      if (!widget.fromFeed) {
-        Navigator.pop(context);
-        Navigator.push(context,
-            MaterialPageRoute(
-                builder: (BuildContext context) => Home()
-            ));
-      }
+      Navigator.push(context,
+      MaterialPageRoute(
+        builder: (BuildContext context) => ThankYou()
+      ));
+
     } on PlatformException catch (e) {
       print(e);
     } catch (e) {

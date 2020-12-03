@@ -1,6 +1,5 @@
-import 'package:cjapp/pages/feed/plots_web_view.dart';
 import 'package:cjapp/pages/login/login.dart';
-import 'package:cjapp/widgets/custom_button.dart';
+import 'package:cjapp/widgets/thank_you.dart';
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -350,7 +349,7 @@ class _ChosenEventState extends State<ChosenEvent> {
                         )
                       ],
                     ),
-                    widget.description.isEmpty ? Container():
+                    widget.description.isEmpty || widget.description == null ? Container():
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -554,7 +553,8 @@ class _ChosenEventState extends State<ChosenEvent> {
                                             fromFeed: widget.fromFeed,
                                             by: widget.by,
                                             name: widget.name,
-                                          )));
+                                          )
+                                  ));
                             }
                           },
                           child: Ink(
@@ -618,7 +618,8 @@ class _ChosenEventState extends State<ChosenEvent> {
                                             by: widget.by,
                                             fromFeed: widget.fromFeed,
                                             name: widget.name,
-                                          )));
+                                          )
+                                  ));
                             }
                           },
                           child: Ink(

@@ -1,15 +1,14 @@
+import 'package:cjapp/widgets/thank_you.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:cjapp/pages/home.dart';
 import 'package:cjapp/services/global_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cjapp/services/BaseAuth.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:cjapp/services/app_colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
-import 'package:cjapp/services/global_functions.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 import 'dart:io';
@@ -30,7 +29,7 @@ class _NewPlaceState extends State<NewPlace> {
   String errorMessage;
   String website;
   bool anon = false;
-  String description;
+  String description = '';
   final _submitApplicationForm = GlobalKey<FormState>();
   final RoundedLoadingButtonController _submitButtonController = new RoundedLoadingButtonController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -109,6 +108,10 @@ class _NewPlaceState extends State<NewPlace> {
       incrementLocalScore();
       _submitButtonController.success();
       Navigator.pop(context);
+      Navigator.push(context,
+      MaterialPageRoute(
+        builder: (BuildContext context) => ThankYou()
+      ));
     } on PlatformException catch (e) {
       print(e);
     } catch (e) {
@@ -256,7 +259,7 @@ class _NewPlaceState extends State<NewPlace> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.pinkAccent,
+                        MaterialColor(0xfff2a3f3, color),
                         Colors.white10
                       ]
                   )
@@ -283,7 +286,7 @@ class _NewPlaceState extends State<NewPlace> {
                             ),
                             underline: Container(
                               height: 2,
-                              color: Colors.pinkAccent,
+                              color: MaterialColor(0xfff2a3f3, color),
                             ),
                             onChanged: (String newValue) {
                               setState(() {
@@ -314,7 +317,7 @@ class _NewPlaceState extends State<NewPlace> {
                             style: TextStyle(color: Colors.black),
                             underline: Container(
                               height: 2,
-                              color: Colors.pinkAccent,
+                              color: MaterialColor(0xfff2a3f3, color),
                             ),
                             onChanged: (String newValue) {
                               setState(() {

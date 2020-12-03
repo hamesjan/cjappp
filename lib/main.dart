@@ -3,6 +3,8 @@ import 'package:cjapp/pages/login/login.dart';
 import 'package:cjapp/pages/home.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cjapp/services/app_colors.dart';
+
 
 const String testDevice = 'Mobile_id';
 
@@ -23,7 +25,7 @@ class MyApp extends StatelessWidget {
       title: 'plots.',
       theme: ThemeData(
         fontFamily: 'OpenSans',
-        primarySwatch: Colors.pink,
+        primarySwatch: MaterialColor(0xfff2a3f3, color),
       ),
       // home: Home(),
       home: Home(),

@@ -87,113 +87,115 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: EdgeInsets.all(16),
-        child: Form(
-          key: _loginFormKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                constraints: BoxConstraints(
-                  maxHeight: 200,
-                  minHeight: 200,
-                ),
-                child: ClipRRect(
-                  borderRadius: new BorderRadius.circular(25.0),
-                  child: Image(
-                    image: AssetImage('assets/images/loginlogo.png'),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.all(16),
+          child: Form(
+            key: _loginFormKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  constraints: BoxConstraints(
+                    maxHeight: 200,
+                    minHeight: 200,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: new BorderRadius.circular(25.0),
+                    child: Image(
+                      image: AssetImage('assets/images/loginlogo.png'),
+                    ),
                   ),
                 ),
-              ),
-              TextFormField(
-                  onChanged: (value) => email = value,
-                  validator: (text) => validateEmail(text),
-                  decoration: InputDecoration(
-                    icon: Icon(Icons.mail),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(3))),
-                    hintText: 'Email',
-                  )),
-              SizedBox(
-                height: 15,
-              ),
-              TextFormField(
-                  onChanged: (value) => password = value,
-                  obscureText: true,
-                  validator: (text) => validatePassword(text),
-                  autocorrect: false,
-                  decoration: InputDecoration(
-                      icon: Icon(Icons.vpn_key),
-                      hintText: 'Password',
+                TextFormField(
+                    onChanged: (value) => email = value,
+                    validator: (text) => validateEmail(text),
+                    decoration: InputDecoration(
+                      icon: Icon(Icons.mail),
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(3))))),
-              SizedBox(
-                height: 10,
-              ),
-              errorMessage != null
-                  ? Text(
-                      errorMessage,
-                      style: TextStyle(color: Colors.red),
-                      textAlign: TextAlign.center,
-                    )
-                  : Container(),
-              SizedBox(
-                height: 10,
-              ),
-              RoundedLoadingButton(
-                width: 200,
-                errorColor: Colors.red,
-                child: Text('Login', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                controller: _loginButtonController,
-                onPressed: _startLogin,
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              RoundedLoadingButton(
-                width: 200,
-                errorColor: Colors.red,
-                child: Text('Register', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                controller: _signUpButtonController,
-                onPressed: _startRegister,
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              FlatButton(
-                child: Text('Continue as Guest', style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                  color: Colors.blue
-                ),),
-                onPressed: (){
+                          borderRadius: BorderRadius.all(Radius.circular(3))),
+                      hintText: 'Email',
+                    )),
+                SizedBox(
+                  height: 15,
+                ),
+                TextFormField(
+                    onChanged: (value) => password = value,
+                    obscureText: true,
+                    validator: (text) => validatePassword(text),
+                    autocorrect: false,
+                    decoration: InputDecoration(
+                        icon: Icon(Icons.vpn_key),
+                        hintText: 'Password',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(3))))),
+                SizedBox(
+                  height: 10,
+                ),
+                errorMessage != null
+                    ? Text(
+                  errorMessage,
+                  style: TextStyle(color: Colors.red),
+                  textAlign: TextAlign.center,
+                )
+                    : Container(),
+                SizedBox(
+                  height: 10,
+                ),
+                RoundedLoadingButton(
+                  width: 200,
+                  errorColor: Colors.red,
+                  child: Text('Login', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                  controller: _loginButtonController,
+                  onPressed: _startLogin,
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                RoundedLoadingButton(
+                  width: 200,
+                  errorColor: Colors.red,
+                  child: Text('Register', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                  controller: _signUpButtonController,
+                  onPressed: _startRegister,
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                FlatButton(
+                  child: Text('Continue as Guest', style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: Colors.blue
+                  ),),
+                  onPressed: (){
                     Navigator.pop(context);
                     Navigator.push(context,
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => Home()
-                    ));
-                    },
-              ),
-              FlatButton(
-                child: Text('Forgot Password?', style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    color: Colors.red
-                ),),
-                onPressed: (){
-                  Navigator.pop(context);
-                  Navigator.push(context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) => ResetPassword()
-                      ));
-                },
-              )
-            ],
+                        MaterialPageRoute(
+                            builder: (BuildContext context) => Home()
+                        ));
+                  },
+                ),
+                FlatButton(
+                  child: Text('Forgot Password?', style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: Colors.red
+                  ),),
+                  onPressed: (){
+                    Navigator.pop(context);
+                    Navigator.push(context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) => ResetPassword()
+                        ));
+                  },
+                )
+              ],
+            ),
           ),
         ),
-      ),
+      )
     );
   }
 }

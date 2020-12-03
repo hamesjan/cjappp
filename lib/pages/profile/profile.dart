@@ -57,13 +57,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [Colors.blueAccent, Colors.white10]),
+                        colors: [Colors.pinkAccent, Colors.white10]),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.person,
-                        color: Colors.blueAccent,
+                        color: Colors.pinkAccent,
                         size: 125,
                       ),
                       Column(
