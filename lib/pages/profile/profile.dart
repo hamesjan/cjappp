@@ -1,9 +1,11 @@
 import 'package:cjapp/pages/profile/new_place.dart';
+import 'package:cjapp/pages/profile/your_plots.dart';
 import 'package:cjapp/widgets/plotserror.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cjapp/pages/profile/display_reviews.dart';
 import 'package:cjapp/pages/profile/display_favorites.dart';
+import 'package:cjapp/services/app_colors.dart';
 import 'package:cjapp/pages/settings/select_setting.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'get_local_rank.dart';
@@ -57,7 +59,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [Colors.pinkAccent, Colors.white10]),
+                        colors: [MaterialColor(0xfff2a3f3, color), Colors.white10]),
                   ),
                   child: Row(
                     children: [
@@ -181,6 +183,36 @@ class _ProfilePageState extends State<ProfilePage> {
                 Divider(
                   thickness: 2,
                 ),
+                    SelectIconSetting(
+                      text: 'Your Plots',
+                      icon: Icon(Icons.place),
+                      callback: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) => YourPlots(
+                                  plots: snapshot.data[0]['plots'],
+                                )
+                            ));
+                      },
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    SelectIconSetting(
+                      text: 'Reviews',
+                      icon: Icon(Icons.rate_review_outlined),
+                      callback: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) => DisplayReviews(
+                                  reviews: snapshot.data[0]['reviews'],
+                                )));
+                      },
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
                 SelectIconSetting(
                   text: 'Bookmarks',
                   icon: Icon(Icons.bookmarks_outlined),
@@ -195,23 +227,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   },
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 15,
                 ),
-                SelectIconSetting(
-                  text: 'Reviews',
-                  icon: Icon(Icons.rate_review_outlined),
-                  callback: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) => DisplayReviews(
-                                  reviews: snapshot.data[0]['reviews'],
-                                )));
-                  },
-                ),
-                SizedBox(
-                  height: 10,
-                ),
+
                 InkWell(
                   onTap: () {
                     Navigator.push(

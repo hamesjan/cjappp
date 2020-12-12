@@ -1,4 +1,3 @@
-import 'package:cjapp/widgets/no_connection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cjapp/pages/feed/hotspot.dart';
@@ -9,12 +8,21 @@ import 'package:cjapp/widgets/plotserror.dart';
 import 'package:flutter/widgets.dart';
 import 'package:cjapp/services/app_colors.dart';
 import 'package:location/location.dart';
+import 'package:cjapp/pages/home.dart';
 import 'package:cjapp/pages/map_page/distance_calculator.dart';
-import 'package:cjapp/widgets/no_connection.dart';
 
 
 
 class Feed extends StatefulWidget {
+  final String initSortBy;
+  final String initPrice;
+  final String initCategory;
+  final double initRadius;
+  final Function setInit;
+
+  const Feed({Key key, this.initSortBy, this.initPrice, this.initCategory, this.initRadius, this.setInit}) : super(key: key);
+
+
   @override
   _FeedState createState() => _FeedState();
 }
@@ -27,17 +35,26 @@ class _FeedState extends State<Feed> {
   PermissionStatus _permissionGranted;
   bool _serviceEnabled;
   Location location = new Location();
+
   String sortBy = 'Newest';
   String price = 'Free';
   String category = 'No Preference';
   double radius = 40233.6;
+
   List plots = [];
   List receivedPlots = [];
+
 
   @override
   void initState() {
     super.initState();
     checkPermissions();
+    setState(() {
+      sortBy = widget.initSortBy;
+      price = widget.initPrice;
+      category = widget.initCategory;
+      radius = widget.initRadius;
+    });
   }
 
   checkPermissions() async {
@@ -242,6 +259,12 @@ class _FeedState extends State<Feed> {
                                           setState(() {
                                             sortBy = newValue;
                                           });
+                                          widget.setInit(
+                                              sortBy,
+                                              price,
+                                              category,
+                                              radius
+                                          );
                                         },
                                         items: <String>[
                                           'Newest',
@@ -285,6 +308,12 @@ class _FeedState extends State<Feed> {
                                           setState(() {
                                             category = newValue;
                                           });
+                                          widget.setInit(
+                                              sortBy,
+                                              price,
+                                              category,
+                                              radius
+                                          );
                                         },
                                         items: <String>[
                                           'No Preference',
@@ -332,6 +361,12 @@ class _FeedState extends State<Feed> {
                                           setState(() {
                                             price = newValue;
                                           });
+                                          widget.setInit(
+                                              sortBy,
+                                              price,
+                                              category,
+                                              radius
+                                          );
                                         },
                                         items: <String>[
                                           'Free',
@@ -379,6 +414,12 @@ class _FeedState extends State<Feed> {
                                           setState(() {
                                             radius = newValue;
                                           });
+                                          widget.setInit(
+                                              sortBy,
+                                              price,
+                                              category,
+                                              radius
+                                          );
                                         },
                                         items: <double>[
                                           16093.4,

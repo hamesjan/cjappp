@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'plots.',
-      theme: ThemeData(
+       theme: ThemeData(
         fontFamily: 'OpenSans',
         primarySwatch: MaterialColor(0xfff2a3f3, color),
       ),

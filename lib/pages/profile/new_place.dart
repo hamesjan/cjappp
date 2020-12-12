@@ -38,6 +38,8 @@ class _NewPlaceState extends State<NewPlace> {
   File _image;
 
 
+
+
   Future getImage()async{
     try {
       PickedFile image = await _picker.getImage(source: ImageSource.gallery);
@@ -106,6 +108,17 @@ class _NewPlaceState extends State<NewPlace> {
       //   Scaffold.of(givenContext).showSnackBar(SnackBar(content: Text('Uploaded'),));
       // });
       incrementLocalScore();
+
+      // Updating user plots
+      var sample1 = await _firestore.collection('users').doc(username).get();
+      List currPlots = sample1.data()['plots'];
+      currPlots.add(name);
+      await _firestore.collection('users').doc(username).update({
+        'plots': currPlots,
+      }).catchError((onError) => {print(onError.toString())});
+
+
+
       _submitButtonController.success();
       Navigator.pop(context);
       Navigator.push(context,

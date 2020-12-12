@@ -1,5 +1,6 @@
+import 'package:cjapp/pages/feed/all_reviews.dart';
 import 'package:cjapp/pages/login/login.dart';
-import 'package:cjapp/widgets/thank_you.dart';
+import 'package:share/share.dart';
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -227,7 +228,7 @@ class _ChosenEventState extends State<ChosenEvent> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              width: MediaQuery.of(context).size.width / 1.3,
+                              width: MediaQuery.of(context).size.width / 1.5,
                               child: Text(
                                 widget.name,
                                 maxLines: 3,
@@ -254,7 +255,7 @@ class _ChosenEventState extends State<ChosenEvent> {
 
                             ],),
                             Container(
-                              width: MediaQuery.of(context).size.width / 1.3,
+                              width: MediaQuery.of(context).size.width / 1.5,
                               child: Text(
                                 widget.byText,
                                 maxLines: 3,
@@ -266,6 +267,11 @@ class _ChosenEventState extends State<ChosenEvent> {
 
                           ],),
                         Expanded(child: Container(),),
+                        Container(
+                            child: IconButton(icon: Icon(Icons.share), onPressed: (){
+                              Share.share('Check out ${widget.name} on plots! https://www.google.com/maps/search/?api=1&query=${widget.lat},${widget.long}', subject: '${widget.name}');
+                            })
+                        ),
                         _authFirebase.currentUser == null ?  Container(
                             child: IconButton(icon: Icon(Icons.bookmark_border), onPressed: (){
                               showDialog(context: context,
@@ -636,7 +642,7 @@ class _ChosenEventState extends State<ChosenEvent> {
                         )
                       ],
                     ),
-                    widget.ratings.length > 0 ?SizedBox(
+                    widget.ratings.length > 0 ? SizedBox(
                       height: 10,
                     ) : Container(),
                     widget.ratings.length > 0 ? Text('"${widget.ratings[0]['review']}"\n- ${widget.ratings[0]['by']}', style: TextStyle(
@@ -652,6 +658,22 @@ class _ChosenEventState extends State<ChosenEvent> {
                     ),) : Container(),
                     SizedBox(height: 10,),
                     Divider(thickness: 2,),
+                    widget.ratings.length > 2 ? FlatButton(
+                      child: Text('More Reviews', style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          color: Colors.blue
+                      ),),
+                      onPressed: (){
+                        Navigator.push(context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) => AllReviews(
+                                  ratings: widget.ratings,
+                                  name: widget.name,
+                                )
+                            ));
+                      },
+                    ): Container(),
                     Text('Location', style: TextStyle(
                         fontSize: 22,
                         color: Colors.pink,

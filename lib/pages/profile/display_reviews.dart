@@ -19,7 +19,12 @@ class DisplayReviews extends StatelessWidget {
           icon: Icon(Icons.arrow_back_ios_rounded),
         ),
       ),
-      body:
+      body: reviews.length == 0 ? Center(
+        child: Text('No reviews found.', style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 22
+        ),),
+      ):
         SingleChildScrollView(
             child: reviews == null ? Container() :
             new Column(children: [

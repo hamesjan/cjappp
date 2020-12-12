@@ -1,3 +1,4 @@
+import 'package:cjapp/pages/view_profile/view_user_profile.dart';
 import 'package:cjapp/widgets/please_sign_in.dart';
 import 'package:cjapp/widgets/plotserror.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   PermissionStatus _permissionGranted;
   Location location = new Location();
 //  final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
+
+  String sortBy = 'Newest';
+  String price = 'Free';
+  String category = 'No Preference';
+  double radius = 40233.6;
 
 
 
@@ -64,7 +70,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     }
   }
 
-
+  setInitVariablesFeed(s, p, c, r) => setState((){
+    sortBy = s;
+    price = p;
+    category = c;
+    radius = r;
+  });
 
 
   @override
@@ -72,6 +83,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
+        // leading: IconButton(
+        //   icon: Icon(Icons.favorite),
+        //   onPressed: (){
+        //       Navigator.push(context, MaterialPageRoute(
+        //         builder: (BuildContext context) => ViewProfile(
+        //           username: 'southbay1',
+        //         )
+        //       ));
+        //   },
+        // ),
         elevation: 0,
         title: Text(
           'Welcome',
@@ -112,7 +133,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           physics: NeverScrollableScrollPhysics(),
           controller: _tabController,
           children: <Widget>[
-            Feed(),
+            Feed(
+              initCategory: category,
+              initPrice: price,
+              initRadius: radius,
+              initSortBy: sortBy,
+              setInit: setInitVariablesFeed,
+            ),
             SearchPage(),
             _auth.currentUser == null ? PleaseSignIn() : ProfilePage(),
             MapPage(),
@@ -127,7 +154,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               MaterialPageRoute(
                   builder: (BuildContext context) => NewPlace()));
         },
-        child: Icon(Icons.add),
+        child: Icon(Icons.add, color: Colors.black,),
         backgroundColor: MaterialColor(0xfff2a3f3, color),
       ),
 

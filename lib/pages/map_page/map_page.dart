@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cjapp/widgets/rating_stars.dart';
 import 'package:location/location.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
-import 'package:cjapp/services/BaseAuth.dart';
+import 'package:cjapp/services/app_colors.dart';
 import 'package:cjapp/services/global_functions.dart';
 import 'package:cjapp/pages/feed/chosen_event.dart';
 import 'package:cjapp/pages/map_page/distance_calculator.dart';
@@ -105,8 +105,8 @@ class MapPageState extends State<MapPage> {
     circleId: CircleId('my circle'),
     center: LatLng(lat, long),
     radius: myRadius,
-    strokeColor: Colors.pinkAccent,
-    fillColor: Colors.pinkAccent.withOpacity(0.3),
+    strokeColor: MaterialColor(0xfff2a3f3, color),
+    fillColor: MaterialColor(0xfff2a3f3, color).withOpacity(0.3),
     strokeWidth: 2
   )]);}
 
@@ -204,7 +204,7 @@ class MapPageState extends State<MapPage> {
                       ),
                       underline: Container(
                         height: 2,
-                        color: Colors.pinkAccent,
+                        color: MaterialColor(0xfff2a3f3, color),
                       ),
                       onChanged: (double newValue) {
                         setState(() {

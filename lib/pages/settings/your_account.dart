@@ -80,7 +80,7 @@ class YourAccount extends StatelessWidget {
                     barrierDismissible: true,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: Text('Are you sure you want to delete your account?'),
+                        title: Text('Are you sure you want to delete your account?\nThis action can not be undone.'),
                         content: Text('This action can not be undone.', style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 22,
