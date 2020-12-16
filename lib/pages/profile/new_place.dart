@@ -89,7 +89,7 @@ class _NewPlaceState extends State<NewPlace> {
         'approved': false,
         'imgLink': '',
         'by_text': byText,
-        'description': description,
+        'description': description.trim(),
         'lat': 0.0,
         'long': 0.0,
         'price': price,

@@ -10,6 +10,8 @@ import 'package:flutter/services.dart';
 import 'package:cjapp/services/global_functions.dart';
 
 
+// Change Bytext on each plots
+
 class ChangeUsername extends StatefulWidget {
   @override
   _ChangeUsernameState createState() => _ChangeUsernameState();
@@ -77,8 +79,20 @@ class _ChangeUsernameState extends State<ChangeUsername> {
   }
 
   String validateUsername(String value) {
+    List<String> validLetters = ['a', 'b', 'c', 'd', 'e', 'f', 'g','h','i','j',
+      'k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z', '1', '2',
+      '3','4','5','6','7','8','9','0', '_', '.'];
+    for (var i = 0; i < value.length; i++) {
+      if (validLetters.contains(value[i].toLowerCase())){
+        continue;
+      } else {
+        return "Invalid characters in username";
+      }
+    }
     if (value == null || value.isEmpty) {
       return "Username is invalid.";
+    } else if (value.length > 20) {
+      return "Username has to be less than 20 characters.";
     }
     return null;
   }

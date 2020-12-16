@@ -2,7 +2,6 @@ import 'package:cjapp/pages/home.dart';
 import 'package:cjapp/pages/profile/favorite_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:cjapp/pages/profile/review_widget.dart';
 
 class DisplayFavorites extends StatelessWidget {
   final List favorites;

@@ -71,10 +71,15 @@ class _ProfilePageState extends State<ProfilePage> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            snapshot.data[0]['username'],
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 40),
+                          Container(
+                            width: MediaQuery.of(context).size.width / 2,
+                            child: Text(
+                                snapshot.data[0]['username'],
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontSize: 25, fontWeight: FontWeight.bold),
+                            ),
                           ),
                           SizedBox(
                             height: 10,
@@ -207,6 +212,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             MaterialPageRoute(
                                 builder: (BuildContext context) => DisplayReviews(
                                   reviews: snapshot.data[0]['reviews'],
+                                  myReview: true,
                                 )));
                       },
                     ),

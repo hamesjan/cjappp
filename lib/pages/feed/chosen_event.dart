@@ -1,5 +1,6 @@
 import 'package:cjapp/pages/feed/all_reviews.dart';
 import 'package:cjapp/pages/login/login.dart';
+import 'package:cjapp/pages/view_profile/view_user_profile.dart';
 import 'package:share/share.dart';
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
@@ -254,17 +255,6 @@ class _ChosenEventState extends State<ChosenEvent> {
                               PriceIconWidget(price: widget.price,)
 
                             ],),
-                            Container(
-                              width: MediaQuery.of(context).size.width / 1.5,
-                              child: Text(
-                                widget.byText,
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    fontSize: 15, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-
                           ],),
                         Expanded(child: Container(),),
                         Container(
@@ -355,6 +345,72 @@ class _ChosenEventState extends State<ChosenEvent> {
                         )
                       ],
                     ),
+                    InkWell(
+                      borderRadius: BorderRadius.all(Radius.circular(25)),
+                      onTap: () async{
+                        if (widget.byText.split(' ')[5] == 'Anonymous'){
+                        } else {
+                          final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+                          String str;
+                          var allUsers = await _firestore.collection('users').get();
+                          allUsers.docs.forEach((element) {
+                            if (element.data()['uid'] == widget.by) {
+                              str = element.data()['username'];
+                            }
+                          });
+
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (BuildContext context) => ViewProfile(
+                                username: str),
+                          )
+                          );
+                        }
+                      },
+                      child: Ink(
+                          padding: EdgeInsets.all(5),
+                          child: Container(
+                            padding: EdgeInsets.all(10),
+                            margin: const EdgeInsets.only(bottom: 6.0), //Same as `blurRadius` i guess
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(25)),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey,
+                                  offset: Offset(0.0, 1.0), //(x,y)
+                                  blurRadius: 6.0,
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: <Widget>[
+                                widget.byText.split(' ')[5] == 'Anonymous' ?  Icon(
+                                  Icons.face,
+                                  color: Colors.red,
+                                ) :  Icon(
+                                  Icons.face,
+                                  color: Colors.green,
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Container(
+                                  width: MediaQuery.of(context).size.width / 1.5,
+                                  child: Text(
+                                    widget.byText,
+                                    maxLines: 3,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        color: Colors.blue,
+
+                                        fontSize: 15, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                      ),
+                    ),
                     widget.description.isEmpty || widget.description == null ? Container():
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -380,6 +436,7 @@ class _ChosenEventState extends State<ChosenEvent> {
                         ),
                       ],
                     ),
+
                     Divider(thickness: 3,),
                     Container(
                       child: Row(
@@ -403,7 +460,7 @@ class _ChosenEventState extends State<ChosenEvent> {
                                         Icon(Icons.local_fire_department,size: 55, color: Colors.redAccent,),
                                       ],),
                                     ),
-                                    widget.ratings.length == 0 ? Text('No Ratings Yet', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),) : Text(widget.burntRating.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),),
+                                    widget.ratings.length == 0 ? Text('No Ratings Yet', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),) : Text(widget.burntRating.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),),
                                   ],
                                 ),
                                 IconButton(

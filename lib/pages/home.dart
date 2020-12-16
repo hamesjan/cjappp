@@ -83,16 +83,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        // leading: IconButton(
-        //   icon: Icon(Icons.favorite),
-        //   onPressed: (){
-        //       Navigator.push(context, MaterialPageRoute(
-        //         builder: (BuildContext context) => ViewProfile(
-        //           username: 'southbay1',
-        //         )
-        //       ));
-        //   },
-        // ),
         elevation: 0,
         title: Text(
           'Welcome',

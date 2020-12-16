@@ -24,7 +24,7 @@ class AllReviews extends StatelessWidget {
       SingleChildScrollView(
           child: ratings == null ? Container() :
           new Column(children: [
-            Column(children: ratings.map((item) => new Container( margin: EdgeInsets.all(15), child: ReviewWidget(place: item['by'], rating: item['rating'].toString(),
+            Column(children: ratings.map((item) => new Container( margin: EdgeInsets.all(15), child: ReviewWidget(myReview: false, place: item['by'], rating: item['rating'].toString(),
               review: item['review'],))).toList())
           ])
       ),

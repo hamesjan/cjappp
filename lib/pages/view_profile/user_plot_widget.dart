@@ -30,18 +30,18 @@ class UserPlotWidget extends StatelessWidget {
         padding: EdgeInsets.all(10),
         child: InkWell(
             onTap: () {
-              Navigator.pop(context);
-              Navigator.push(context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) => EditPlot(
-                        name: name,
-                        description: description,
-                        imgLink: imgLink,
-                        category: category,
-                        location: location,
-                        price: price,
-                      )
-                  ));
+              // Navigator.pop(context);
+              // Navigator.push(context,
+              //     MaterialPageRoute(
+              //         builder: (BuildContext context) => EditPlot(
+              //           name: name,
+              //           description: description,
+              //           imgLink: imgLink,
+              //           category: category,
+              //           location: location,
+              //           price: price,
+              //         )
+              //     ));
             },
             child: new Ink(
                 decoration: BoxDecoration(

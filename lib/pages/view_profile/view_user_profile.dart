@@ -1,18 +1,15 @@
+import 'package:cjapp/pages/profile/display_reviews.dart';
 import 'package:cjapp/pages/view_profile/view_user_plots.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:cjapp/pages/profile/new_place.dart';
-import 'package:cjapp/pages/profile/your_plots.dart';
+
 import 'package:cjapp/widgets/plotserror.dart';
-import 'package:cjapp/pages/profile/display_reviews.dart';
-import 'package:cjapp/pages/profile/display_favorites.dart';
+
 import 'package:cjapp/services/app_colors.dart';
 import 'package:cjapp/pages/settings/select_setting.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cjapp/pages/profile/get_local_rank.dart';
-import 'package:cjapp/services/global_functions.dart';
-import 'package:device_info/device_info.dart';
-import 'package:intl/intl.dart';
+import 'package:cjapp/pages/feed/all_reviews.dart';
 
 class ViewProfile extends StatefulWidget {
   final String username;
@@ -77,10 +74,15 @@ class _ViewProfileState extends State<ViewProfile> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                snapshot.data[0]['username'],
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 40),
+                              Container(
+                                width: MediaQuery.of(context).size.width / 2,
+                                child: Text(
+                                  snapshot.data[0]['username'],
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontSize: 25, fontWeight: FontWeight.bold),
+                                ),
                               ),
                               SizedBox(
                                 height: 10,
@@ -214,6 +216,7 @@ class _ViewProfileState extends State<ViewProfile> {
                             MaterialPageRoute(
                                 builder: (BuildContext context) => DisplayReviews(
                                   reviews: snapshot.data[0]['reviews'],
+                                  myReview: false,
                                 )));
                       },
                     ),

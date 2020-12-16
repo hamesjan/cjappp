@@ -359,7 +359,7 @@ class MapPageState extends State<MapPage> {
                                     Icon(Icons.local_fire_department,size: 22, color: Colors.redAccent,),
                                   ],),
                                 ),
-                                Text(burntRating.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),),
+                                Text(burntRating.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),),
                               ],
                             )
                           ],)

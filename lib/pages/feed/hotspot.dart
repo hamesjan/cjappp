@@ -323,7 +323,7 @@ class HotSpot extends StatelessWidget {
                                 Icon(Icons.local_fire_department,size: 25, color: Colors.redAccent,),
                               ],),
                             ),
-                            ratings.length == 0 ? Container() : Text(burntRating.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),),
+                            ratings.length == 0 ? Container() : Text(burntRating.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),),
                             ratings.length == 0 ? Container() :
                             Text(
                               ' • ',

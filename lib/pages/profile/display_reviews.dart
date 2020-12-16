@@ -4,8 +4,9 @@ import 'package:cjapp/pages/profile/review_widget.dart';
 
 class DisplayReviews extends StatelessWidget {
   final List reviews;
+  final bool myReview;
 
-  DisplayReviews({this.reviews});
+  DisplayReviews({this.reviews, this.myReview});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +29,7 @@ class DisplayReviews extends StatelessWidget {
         SingleChildScrollView(
             child: reviews == null ? Container() :
             new Column(children: [
-              Column(children: reviews.map((item) => new Container( margin: EdgeInsets.all(15), child: ReviewWidget(place: item['place'], rating: item['rating'].toString(),
+              Column(children: reviews.map((item) => new Container( margin: EdgeInsets.all(15), child: ReviewWidget(myReview: myReview, place: item['place'], rating: item['rating'].toString(),
               review: item['review'],))).toList())
     ])
         ),

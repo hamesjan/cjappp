@@ -109,7 +109,7 @@ class _NewReviewState extends State<NewReview> {
 
 
   String validateReview(String value) {
-    if (value == null || value.isEmpty) {
+    if (value == null || value.isEmpty || value.trim() == '') {
       return "Missing Review";
     }
     return null;
