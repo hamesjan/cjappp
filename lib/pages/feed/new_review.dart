@@ -237,6 +237,12 @@ class _NewReviewState extends State<NewReview> {
                autocorrect: false,
                maxLines: null,
                minLines: 5,
+               toolbarOptions: ToolbarOptions(
+                 copy: true,
+                 paste: true,
+                 selectAll: true,
+                 cut: true,
+               ),
                decoration: InputDecoration(
                    labelText: 'Write Your Review Here',
                    hintText: 'This place is lit!',

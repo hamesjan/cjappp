@@ -549,155 +549,161 @@ class _ChosenEventState extends State<ChosenEvent> {
                         ],
                       ),
                     ),
-                    Divider(thickness: 3,),
-                    Row(
-                      children: <Widget>[
-                        Text('Reviews', style: TextStyle(
-                            fontSize: 22,
-                            color: Colors.pink,
-                            fontWeight: FontWeight.bold
-                        ),),
-                        SizedBox(width: 10,),
-                        widget.ratings.length == 0 ? Container() : RatingStars(rating: widget.ratingsNumbers),
-                        widget.ratings.length == 0
-                            ? Container()
-                            : SizedBox(
-                          width: 5,
-                        ),
-                        widget.ratings.length == 0
-                            ? Container()
-                            : Text(
-                          '${widget.ratings.length} Reviews',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 15),
-                        ),
-                        widget.ratings.length == 0 ? Container() : SizedBox(
-                          width: 15,
-                        ),
-                        widget.ratings.length == 0
-                            ? InkWell(
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(25)),
-                          onTap: () {
-                            if (_authFirebase.currentUser == null) {
-                              showDialog(context: context,
-                                  barrierDismissible: true,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text('You must log in to leave a review.'),
-                                      actions: <Widget>[
-                                        IconButton(
-                                          onPressed: (){
-                                            Navigator.pop(context);
-                                            Navigator.pop(context);
-                                            Navigator.push(context,
-                                                MaterialPageRoute(
-                                                    builder: (BuildContext context) => Login()
-                                                ));
-                                          },
-                                          icon: Icon(Icons.login, color: Colors.green,),
-                                        ),
-                                        IconButton(
-                                          icon: Icon(Icons.close),
-                                          onPressed: (){
-                                            Navigator.pop(context);
-                                          },
-                                        )
-                                      ],
-                                    );
-                                  }
-                              );
-                            } else {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          NewReview(
-                                            fromFeed: widget.fromFeed,
-                                            by: widget.by,
-                                            name: widget.name,
+                    Divider(thickness: 2,),
+                    SizedBox(width: 10,),
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          widget.ratings.length == 0 ? Container() :
+                          Column(
+                            children: [
+                              RatingStars(rating: widget.ratingsNumbers),
+                              Text( '${widget.ratingsNumbers.toStringAsFixed(1)} / 5.0',)
+                            ],
+                          ),
+                          widget.ratings.length == 0
+                              ? Container()
+                              : SizedBox(
+                            width: 5,
+                          ),
+                          widget.ratings.length == 0
+                              ? Container()
+                              : Text(
+                            '( ${widget.ratings.length} )',
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold, fontSize: 15),
+                          ),
+                          widget.ratings.length == 0 ? Container() : SizedBox(
+                            width: 15,
+                          ),
+                          widget.ratings.length == 0
+                              ? InkWell(
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(25)),
+                            onTap: () {
+                              if (_authFirebase.currentUser == null) {
+                                showDialog(context: context,
+                                    barrierDismissible: true,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text('You must log in to leave a review.'),
+                                        actions: <Widget>[
+                                          IconButton(
+                                            onPressed: (){
+                                              Navigator.pop(context);
+                                              Navigator.pop(context);
+                                              Navigator.push(context,
+                                                  MaterialPageRoute(
+                                                      builder: (BuildContext context) => Login()
+                                                  ));
+                                            },
+                                            icon: Icon(Icons.login, color: Colors.green,),
+                                          ),
+                                          IconButton(
+                                            icon: Icon(Icons.close),
+                                            onPressed: (){
+                                              Navigator.pop(context);
+                                            },
                                           )
-                                  ));
-                            }
-                          },
-                          child: Ink(
-                              padding: EdgeInsets.all(12),
+                                        ],
+                                      );
+                                    }
+                                );
+                              } else {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            NewReview(
+                                              fromFeed: widget.fromFeed,
+                                              by: widget.by,
+                                              name: widget.name,
+                                            )
+                                    ));
+                              }
+                            },
+                            child: Ink(
+                                padding: EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                    color: Colors.redAccent,
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(25))),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.add,
+                                      color: Colors.black,
+                                    ),
+                                    Text(
+                                      'Be the first rating!',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    )
+                                  ],
+                                )),
+                          )
+                              : InkWell(
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(100)),
+                            onTap: () {
+                              if (_authFirebase.currentUser == null ){
+                                showDialog(context: context,
+                                    barrierDismissible: true,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text('You must log in to leave a review.'),
+                                        actions: <Widget>[
+                                          IconButton(
+                                            onPressed: (){
+                                              Navigator.pop(context);
+                                              Navigator.pop(context);
+                                              Navigator.push(context,
+                                                  MaterialPageRoute(
+                                                      builder: (BuildContext context) => Login()
+                                                  ));
+                                            },
+                                            icon: Icon(Icons.login, color: Colors.green,),
+                                          ),
+                                          IconButton(
+                                            icon: Icon(Icons.close),
+                                            onPressed: (){
+                                              Navigator.pop(context);
+                                            },
+                                          )
+                                        ],
+                                      );
+                                    }
+                                );
+                              } else {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            NewReview(
+                                              by: widget.by,
+                                              fromFeed: widget.fromFeed,
+                                              name: widget.name,
+                                            )
+                                    ));
+                              }
+                            },
+                            child: Ink(
+                              padding: EdgeInsets.all(10),
                               decoration: BoxDecoration(
                                   color: Colors.redAccent,
                                   borderRadius: BorderRadius.all(
-                                      Radius.circular(25))),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.add,
-                                    color: Colors.black,
-                                  ),
-                                  Text(
-                                    'Be the first rating!',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold),
-                                  )
-                                ],
-                              )),
-                        )
-                            : InkWell(
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(100)),
-                          onTap: () {
-                            if (_authFirebase.currentUser == null ){
-                              showDialog(context: context,
-                                  barrierDismissible: true,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text('You must log in to leave a review.'),
-                                      actions: <Widget>[
-                                        IconButton(
-                                          onPressed: (){
-                                            Navigator.pop(context);
-                                            Navigator.pop(context);
-                                            Navigator.push(context,
-                                                MaterialPageRoute(
-                                                    builder: (BuildContext context) => Login()
-                                                ));
-                                          },
-                                          icon: Icon(Icons.login, color: Colors.green,),
-                                        ),
-                                        IconButton(
-                                          icon: Icon(Icons.close),
-                                          onPressed: (){
-                                            Navigator.pop(context);
-                                          },
-                                        )
-                                      ],
-                                    );
-                                  }
-                              );
-                            } else {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          NewReview(
-                                            by: widget.by,
-                                            fromFeed: widget.fromFeed,
-                                            name: widget.name,
-                                          )
-                                  ));
-                            }
-                          },
-                          child: Ink(
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                color: Colors.redAccent,
-                                borderRadius: BorderRadius.all(
-                                    Radius.circular(100))),
-                            child: Icon(
-                              Icons.add,
-                              color: Colors.black,
+                                      Radius.circular(100))),
+                              child: Icon(
+                                Icons.add,
+                                color: Colors.black,
+                              ),
                             ),
-                          ),
-                        )
-                      ],
+                          )
+                        ],
+                      ),
+
                     ),
                     widget.ratings.length > 0 ? SizedBox(
                       height: 10,

@@ -223,6 +223,12 @@ class _EditPlotState extends State<EditPlot> {
                 ),),
                 TextFormField(
                     maxLines: null,
+                    toolbarOptions: ToolbarOptions(
+                      copy: true,
+                      paste: true,
+                      selectAll: true,
+                      cut: true,
+                    ),
                     initialValue: widget.name,
                     validator: (text) => validateUsername(text),
                     onChanged: (value) => newName = value,
@@ -234,6 +240,12 @@ class _EditPlotState extends State<EditPlot> {
                     fontSize: 22
                 ),),
                 TextFormField(
+                    toolbarOptions: ToolbarOptions(
+                      copy: true,
+                      paste: true,
+                      selectAll: true,
+                      cut: true,
+                    ),
                     maxLines: null,
                     minLines: 3,
                     initialValue: widget.description,
@@ -246,6 +258,12 @@ class _EditPlotState extends State<EditPlot> {
                     fontSize: 22
                 ),),
                 TextFormField(
+                    toolbarOptions: ToolbarOptions(
+                      copy: true,
+                      paste: true,
+                      selectAll: true,
+                      cut: true,
+                    ),
                     maxLines: null,
                     initialValue: widget.location,
                     validator: (text) => validateLocation(text),

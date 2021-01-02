@@ -274,7 +274,9 @@ class _FeedState extends State<Feed> {
                                             (String value) {
                                           return DropdownMenuItem<String>(
                                             value: value,
-                                            child: Text(value),
+                                            child: Text(value, style: TextStyle(
+                                                fontWeight: FontWeight.normal
+                                            ),),
                                           );
                                         }).toList(),
                                       ),
@@ -326,7 +328,9 @@ class _FeedState extends State<Feed> {
                                             (String value) {
                                           return DropdownMenuItem<String>(
                                             value: value,
-                                            child: Text(value),
+                                            child: Text(value, style: TextStyle(
+                                              fontWeight: FontWeight.normal
+                                            ),),
                                           );
                                         }).toList(),
                                       ),
@@ -377,7 +381,9 @@ class _FeedState extends State<Feed> {
                                             (String value) {
                                           return DropdownMenuItem<String>(
                                             value: value,
-                                            child: Text(value),
+                                            child: Text(value, style: TextStyle(
+                                                fontWeight: FontWeight.normal
+                                            ),),
                                           );
                                         }).toList(),
                                       )
@@ -431,7 +437,9 @@ class _FeedState extends State<Feed> {
                                           return DropdownMenuItem<double>(
                                             value: value,
                                             child: Text(getMiles(value)
-                                                .toStringAsFixed(0)),
+                                                .toStringAsFixed(0), style: TextStyle(
+                                                fontWeight: FontWeight.normal
+                                            ),),
                                           );
                                         }).toList(),
                                       ),

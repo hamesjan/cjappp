@@ -202,6 +202,12 @@ class _NewPlaceState extends State<NewPlace> {
                 onChanged: (value) => name = value,
                 autocorrect: false,
                 maxLines: null,
+                toolbarOptions: ToolbarOptions(
+                  copy: true,
+                  paste: true,
+                  selectAll: true,
+                  cut: true,
+                ),
                 decoration: InputDecoration(
                     labelText: 'Plot Name',
                     border: OutlineInputBorder(
@@ -215,6 +221,12 @@ class _NewPlaceState extends State<NewPlace> {
                 onChanged: (value) => location = value,
                 autocorrect: false,
                 maxLines: null,
+                toolbarOptions: ToolbarOptions(
+                  copy: true,
+                  paste: true,
+                  selectAll: true,
+                  cut: true,
+                ),
                 decoration: InputDecoration(
                     hintText: '1234 John Smith St. 90304',
                     labelText: 'Location',
@@ -229,6 +241,12 @@ class _NewPlaceState extends State<NewPlace> {
                 autocorrect: false,
                 maxLines: null,
                 minLines: 3,
+                toolbarOptions: ToolbarOptions(
+                  copy: true,
+                  paste: true,
+                  selectAll: true,
+                  cut: true,
+                ),
                 decoration: InputDecoration(
                     hintText: 'This place is lit!!!',
                     labelText: 'Description',
