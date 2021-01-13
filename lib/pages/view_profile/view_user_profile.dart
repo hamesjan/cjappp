@@ -1,8 +1,9 @@
 import 'package:cjapp/pages/profile/display_reviews.dart';
 import 'package:cjapp/pages/view_profile/view_user_plots.dart';
+import 'package:cjapp/services/global_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cjapp/widgets/plotserror.dart';
 
 import 'package:cjapp/services/app_colors.dart';
@@ -13,8 +14,9 @@ import 'package:cjapp/pages/feed/all_reviews.dart';
 
 class ViewProfile extends StatefulWidget {
   final String username;
+  final String homieStatus;
 
-  const ViewProfile({Key key, this.username}) : super(key: key);
+  const ViewProfile({Key key, this.username, this.homieStatus}) : super(key: key);
   @override
   _ViewProfileState createState() => _ViewProfileState();
 }
@@ -46,6 +48,8 @@ class _ViewProfileState extends State<ViewProfile> {
 
   @override
   Widget build(BuildContext context) {
+    final auth.FirebaseAuth _authFirebase = auth.FirebaseAuth.instance;
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -85,13 +89,129 @@ class _ViewProfileState extends State<ViewProfile> {
                                 ),
                               ),
                               SizedBox(
-                                height: 10,
+                                height: 5,
                               ),
                               Text(
                                 'Joined ${snapshot.data[0]['joined']}',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(fontSize: 15),
                               ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              widget.homieStatus == 'no' ?
+                                IconButton(
+                                    icon: Icon(Icons.add_link,
+                                    size: 30,
+                                    color: Colors.green,),
+                                    padding: EdgeInsets.all(0),
+                                    onPressed: (){
+                                      _authFirebase.currentUser == null ?
+                                            showDialog(context: context,
+                                                barrierDismissible: true,
+                                                builder: (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: Text('You must log in to link with ${widget.username}.'),
+                                                    actions: <Widget>[
+                                                      IconButton(
+                                                        icon: Icon(Icons.close),
+                                                        onPressed: (){
+                                                          Navigator.pop(context);
+                                                        },
+                                                      )
+                                                    ],
+                                                  );
+                                                }
+                                            )
+                                         :
+                                      showDialog(
+                                          context: context,
+                                          barrierDismissible: true,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Text('Send ${widget.username} a link request?'),
+                                              actions: <Widget>[
+                                                IconButton(
+                                                  icon: Icon(Icons.add_link, color: Colors.green, size: 30,
+                                                  ),
+                                                  onPressed: ()async{
+                                                    String myUsername = await returnUsername();
+                                                    var resUsers = await _firestore.collection('users').doc(widget.username).get();
+                                                    List currRequests = resUsers.data()['link_requests'];
+                                                    currRequests.add(myUsername);
+                                                    await _firestore.collection('users').doc(widget.username).update({
+                                                      'link_requests': currRequests,
+                                                    }).catchError((onError) => {print(onError.toString())});
+                                                    Navigator.pop(context);
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                                IconButton(
+                                                  icon: Icon(Icons.close),
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                )
+                                              ],
+                                            );
+                                          });
+                                    }
+                                ) : widget.homieStatus == 'pending' ? Container(
+                                child: Text('Request Pending', style: TextStyle(color: Colors.blue),)  )
+                                    : Container(
+                                child: Row(
+                                  children: [
+                                    Text('Homie', style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      color: Colors.blue
+                                    ),),
+                                    IconButton(
+                                      icon: Icon(Icons.link_off, color: Colors.red, size: 20,),
+                                      onPressed: (){
+                                        showDialog(
+                                            context: context,
+                                            barrierDismissible: true,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: Text('Remove ${widget.username}?'),
+                                                actions: <Widget>[
+                                                  IconButton(
+                                                    icon: Icon(Icons.link_off, color: Colors.red, size: 20,
+                                                    ),
+                                                    onPressed: ()async{
+                                                      String myUsername = await returnUsername();
+                                                      var resUsers = await _firestore.collection('users').doc(widget.username).get();
+                                                      var resUsers1 = await _firestore.collection('users').doc(myUsername).get();
+                                                      List currRequests = resUsers.data()['homies'];
+                                                      List myHomies = resUsers1.data()['homies'];
+                                                      myHomies.remove(widget.username);
+                                                      currRequests.remove(myUsername);
+                                                      await _firestore.collection('users').doc(widget.username).update({
+                                                        'homies': currRequests,
+                                                      }).catchError((onError) => {print(onError.toString())});
+                                                      await _firestore.collection('users').doc(myUsername).update({
+                                                        'homies': myHomies,
+                                                      }).catchError((onError) => {print(onError.toString())});
+                                                      Navigator.pop(context);
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                  IconButton(
+                                                    icon: Icon(Icons.close),
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                  )
+                                                ],
+                                              );
+                                            });
+                                    }
+                                    )
+                                  ],
+                                )
+                              )
+
                             ],
                           )
                         ],

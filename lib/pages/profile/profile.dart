@@ -1,4 +1,6 @@
-import 'package:cjapp/pages/profile/new_place.dart';
+import 'package:cjapp/pages/profile/your_homeis.dart';
+import 'package:cjapp/pages/profile/link_requests.dart';
+import 'package:cjapp/pages/profile/new_plot.dart';
 import 'package:cjapp/pages/profile/your_plots.dart';
 import 'package:cjapp/widgets/plotserror.dart';
 import 'package:flutter/material.dart';
@@ -10,8 +12,6 @@ import 'package:cjapp/pages/settings/select_setting.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'get_local_rank.dart';
 import 'package:cjapp/services/global_functions.dart';
-import 'package:device_info/device_info.dart';
-import 'package:intl/intl.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -82,13 +82,74 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                           SizedBox(
-                            height: 10,
+                            height: 5,
                           ),
                           Text(
                             'Joined ${snapshot.data[0]['joined']}',
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 15),
                           ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Row(children: [
+                            GestureDetector(
+                              child: Row(children: [
+                          Text(snapshot.data[0]['homies'].length.toString() , style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue
+                          ),
+                          ),Text(' ', style: TextStyle(
+                                    fontSize: 20
+                                ),),
+                                Text('Homies',style: TextStyle(
+                                    fontSize: 20,
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold
+                                )),
+                          ],),
+                              onTap: (){
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) => HomiesList(
+                                          homies: snapshot.data[0]['homies'],
+                                        )
+                                    )
+                                );
+                              },
+                            ),
+                            snapshot.data[0]['link_requests'].length == 0 ?
+                            IconButton(
+
+                              icon: Icon(Icons.link),
+                              onPressed: (){
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) => LinkRequests(
+                                      linkRequests: snapshot.data[0]['link_requests'],
+                                    )
+                                  )
+                                );
+                              }
+                            ):
+                            IconButton(
+                              color: Colors.red,
+                                icon: Icon(Icons.add_link),
+                                onPressed: (){
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) => LinkRequests(
+                                            linkRequests: snapshot.data[0]['link_requests'],
+                                          )
+                                      )
+                                  );
+                                }
+                            )
+                          ],)
                         ],
                       )
                     ],
@@ -135,12 +196,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                       Text('As you interact with plots, your local score will grow and along with will your title.'),
                                       Divider(thickness: 2,),
                                       Text('Rando', style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 22,
-                                        color: Colors.blue
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 22,
+                                          color: Colors.blue
                                       ),),
                                       Icon(Icons.arrow_downward_rounded),
-                                      Text('Homie', style: TextStyle(
+                                      Text('Gabba', style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 22,
                                           color: Colors.green
@@ -241,7 +302,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (BuildContext context) => NewPlace()));
+                            builder: (BuildContext context) => NewPlot()));
                   },
                   child: new Ink(
                       child: Container(

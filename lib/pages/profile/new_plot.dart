@@ -16,12 +16,12 @@ import 'dart:core';
 import 'package:intl/intl.dart';
 
 
-class NewPlace extends StatefulWidget {
+class NewPlot extends StatefulWidget {
   @override
-  _NewPlaceState createState() => _NewPlaceState();
+  _NewPlotState createState() => _NewPlotState();
 }
 
-class _NewPlaceState extends State<NewPlace> {
+class _NewPlotState extends State<NewPlot> {
   final _picker = ImagePicker();
   String price = 'Free';
   String category = 'Outdoors';
@@ -177,7 +177,7 @@ class _NewPlaceState extends State<NewPlace> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Submit an Application'),
+        title: Text('Submit a plot.'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_rounded),
           onPressed: (){

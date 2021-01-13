@@ -1,6 +1,7 @@
 import 'package:cjapp/pages/feed/all_reviews.dart';
 import 'package:cjapp/pages/login/login.dart';
 import 'package:cjapp/pages/view_profile/view_user_profile.dart';
+import 'package:cjapp/services/global_functions.dart';
 import 'package:share/share.dart';
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
@@ -358,12 +359,36 @@ class _ChosenEventState extends State<ChosenEvent> {
                               str = element.data()['username'];
                             }
                           });
-
-                          Navigator.push(context, MaterialPageRoute(
-                            builder: (BuildContext context) => ViewProfile(
-                                username: str),
-                          )
-                          );
+                          // Check homie status
+                          String myUsername = await returnUsername();
+                          var resUsers = await _firestore.collection('users').doc(str).get();
+                          List currRequests = resUsers.data()['link_requests'];
+                          List currHomies = resUsers.data()['homies'];
+                          if(currRequests.contains(myUsername)){
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (BuildContext context) => ViewProfile(
+                              username: str,
+                              homieStatus: 'pending',
+                            ),
+                            )
+                            );
+                          } else if (currHomies.contains(myUsername)){
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (BuildContext context) => ViewProfile(
+                                username: str,
+                                homieStatus: 'yes',
+                              ),
+                            )
+                            );
+                          } else {
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (BuildContext context) => ViewProfile(
+                                username: str,
+                                homieStatus: 'no',
+                              ),
+                            )
+                            );
+                          }
                         }
                       },
                       child: Ink(
@@ -626,8 +651,7 @@ class _ChosenEventState extends State<ChosenEvent> {
                             },
                             child: Ink(
                                 padding: EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                    color: Colors.redAccent,
+                                decoration: BoxDecoration(color: Colors.redAccent,
                                     borderRadius: BorderRadius.all(
                                         Radius.circular(25))),
                                 child: Row(

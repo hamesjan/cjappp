@@ -1,6 +1,8 @@
+import 'package:cjapp/pages/homies/homie_feed.dart';
 import 'package:cjapp/pages/view_profile/view_user_profile.dart';
 import 'package:cjapp/widgets/please_sign_in.dart';
 import 'package:cjapp/widgets/plotserror.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cjapp/pages/feed/feed.dart';
@@ -11,7 +13,7 @@ import 'package:cjapp/pages/settings/settings.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cjapp/services/lifecycle_handler.dart';
 import 'package:location/location.dart';
-import 'package:cjapp/pages/profile/new_place.dart';
+import 'package:cjapp/pages/profile/new_plot.dart';
 import 'package:cjapp/services/app_colors.dart';
 import 'package:cjapp/pages/profile/profile.dart';
 
@@ -42,7 +44,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     WidgetsBinding.instance.addObserver(
         LifecycleEventHandler(resumeCallBack: () async => setStateIfMounted(checkPermissions()))
     );
-    _tabController = TabController(vsync: this, length: 4);
+    _tabController = TabController(vsync: this, length: 5);
   }
 
    setStateIfMounted(Future<void> f) {
@@ -84,9 +86,21 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       key: _scaffoldKey,
       appBar: AppBar(
         elevation: 0,
+        // leading: IconButton(
+        //   icon: Icon(Icons.add_link),
+        //   onPressed: ()async {
+        //     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+        //     var d = await _firestore.collection('users').get();
+        //     d.docs.forEach((element) async{
+        //       await _firestore.collection('users').doc(element.data()['username']).update({
+        //         'link_requests': []
+        //       });
+        //
+        //     });
+        // }
+        // ),
         title: Text(
-          'Welcome',
-          style: TextStyle(color: Colors.black, fontSize: 22),
+          "What's plots?"
         ),
         backgroundColor: MaterialColor(0xfff2a3f3, color),
         actions: <Widget>[
@@ -130,19 +144,20 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               initSortBy: sortBy,
               setInit: setInitVariablesFeed,
             ),
+            HomieFeed(),
             SearchPage(),
             _auth.currentUser == null ? PleaseSignIn() : ProfilePage(),
             MapPage(),
           ],
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (BuildContext context) => NewPlace()));
+                  builder: (BuildContext context) => NewPlot()));
         },
         child: Icon(Icons.add, color: Colors.black,),
         backgroundColor: MaterialColor(0xfff2a3f3, color),
@@ -160,6 +175,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 color: Colors.black,
               ),
             ),
+            Tab(
+              icon: Icon(Icons.auto_awesome,
+                color: Colors.black,
+
+            ),),
             Tab(
               icon: Icon(
                 Icons.search,

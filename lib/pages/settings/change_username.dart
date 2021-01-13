@@ -51,6 +51,19 @@ class _ChangeUsernameState extends State<ChangeUsername> {
         Map<String,dynamic> holder = resUsers.data();
         await _firestore.collection('users').doc(username).set(holder);
         await _firestore.collection('users').doc(oldUsername).delete();
+
+        // Updating homies
+        var getHomies = await _firestore.collection('users').doc(username).get();
+        getHomies.data()['homies'].forEach((element) async{
+          var otherHomies = await _firestore.collection('users').doc(element).get();
+          var homieList = otherHomies.data()['homies'];
+          homieList.remove(oldUsername);
+          homieList.add(username);
+          await _firestore.collection('users').doc(element).update({
+            'homies': homieList
+          });
+        });
+
         _changeUsernameButtonController.success();
         Navigator.pop(context);
         Navigator.push(context,

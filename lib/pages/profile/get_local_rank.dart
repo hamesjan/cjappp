@@ -47,7 +47,7 @@ getLocalRank(String name, int localScore, bool oG){
           borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
         padding: EdgeInsets.all(5),
-        child: Text('Homie', style: TextStyle(
+        child: Text('Gabba', style: TextStyle(
             shadows: <Shadow>[
               Shadow(
                 offset: Offset(0, 3.2),
