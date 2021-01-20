@@ -36,11 +36,12 @@ class ChosenEvent extends StatefulWidget {
   final List ratings;
   final bool fav;
   final String website;
+  final bool private;
   final String category;
   final String by;
   final String price;
 
-  const ChosenEvent({Key key, this.fromFeed, this.name, this.zipCode, this.location, this.ratingsNumbers, this.burntRating, this.lat, this.long, this.byText, this.description, this.imgLink, this.ratings, this.fav, this.website, this.category, this.by, this.price}) : super(key: key);
+  const ChosenEvent({Key key, this.fromFeed, this.name, this.zipCode, this.location, this.private, this.ratingsNumbers, this.burntRating, this.lat, this.long, this.byText, this.description, this.imgLink, this.ratings, this.fav, this.website, this.category, this.by, this.price}) : super(key: key);
 
   @override
   _ChosenEventState createState() => _ChosenEventState();
@@ -104,6 +105,7 @@ class _ChosenEventState extends State<ChosenEvent> {
         name: widget.name,
         zipCode: widget.zipCode,
         location: widget.location,
+        private: widget.private,
         ratingsNumbers: widget.ratingsNumbers,
         ratings: widget.ratings,
         burntRating: widget.burntRating,
@@ -154,6 +156,7 @@ class _ChosenEventState extends State<ChosenEvent> {
         location: widget.location,
         ratingsNumbers: widget.ratingsNumbers,
         ratings: widget.ratings,
+        private: widget.private,
         burntRating: widget.burntRating,
         fromFeed: widget.fromFeed,
         byText: widget.byText,
@@ -229,17 +232,20 @@ class _ChosenEventState extends State<ChosenEvent> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width / 1.5,
-                              child: Text(
-                                widget.name,
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    color: Colors.pink,
-                                    fontSize: 25, fontWeight: FontWeight.bold),
-                              ),
-                            ),
+                                Container(
+                                  width: MediaQuery.of(context).size.width / 1.5,
+                                  child:
+                                    Text(
+                                      widget.name,
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          color: Colors.pink,
+                                          fontSize: 25, fontWeight: FontWeight.bold),
+                                    ),
+
+                                ),
+
                             Row(children: [
                               Text(
                                 widget.category,
@@ -249,12 +255,17 @@ class _ChosenEventState extends State<ChosenEvent> {
                                     fontWeight: FontWeight.bold),
                               ),
                               Text(
-                                '  • ',
+                                ' •',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 15),
                               ),
-                              PriceIconWidget(price: widget.price,)
-
+                              PriceIconWidget(price: widget.price,),
+                              Text(
+                                '• ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
+                              widget.private ? Icon(Icons.lock) : Icon(Icons.public)
                             ],),
                           ],),
                         Expanded(child: Container(),),

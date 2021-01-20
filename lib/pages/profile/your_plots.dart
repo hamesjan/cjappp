@@ -56,6 +56,7 @@ class _YourPlotsState extends State<YourPlots> {
                         description: snapshot.data[index]['description'],
                         category: snapshot.data[index]['category'],
                         location: snapshot.data[index]['location'],
+                        private: snapshot.data[index]['private'],
                         imgLink: snapshot.data[index]['imgLink'],
                         price: snapshot.data[index]['price'],
                       );

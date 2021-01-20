@@ -50,6 +50,7 @@ class FavoriteWidget extends StatelessWidget {
             zipCode: info[1]['zipCode'],
             lat: info[1]['lat'],
             fav: info[0],
+            private: info[1]['private'],
             fromFeed: false,
             burntRating: info[1]['burntRating'],
             byText: info[1]['by_text'],

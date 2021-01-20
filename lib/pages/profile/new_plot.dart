@@ -26,6 +26,7 @@ class _NewPlotState extends State<NewPlot> {
   String price = 'Free';
   String category = 'Outdoors';
   String location;
+  String private = 'Public';
   String errorMessage;
   String website;
   bool anon = false;
@@ -75,6 +76,10 @@ class _NewPlotState extends State<NewPlot> {
       if (!anon) {
         byText = 'Uploaded ${DateFormat('yMMMMd').format(DateTime.now())} by $username';
       }
+      var temp = false;
+      if (private == 'Private'){
+        temp = true;
+      }
       auth.User _user = await _auth.getCurrentUser();
       await _firestore.collection('plots').doc(name).set({
         'name': name,
@@ -86,6 +91,7 @@ class _NewPlotState extends State<NewPlot> {
         'burntRating': 0.0,
         'website': website,
         'category': category,
+        'private' : temp,
         'approved': false,
         'imgLink': '',
         'by_text': byText,
@@ -365,6 +371,37 @@ class _NewPlotState extends State<NewPlot> {
                           )
                         ],
                       ),
+                      Row(
+                        children: [
+                          Text('Discoverability', style: TextStyle(
+                              fontWeight: FontWeight.bold
+                          ),),
+                          SizedBox(width: 10,),
+                          DropdownButton<String>(
+                            value: private,
+                            icon: Icon(Icons.arrow_drop_down, color: Colors.black),
+                            iconSize: 24,
+                            elevation: 16,
+                            style: TextStyle(color: Colors.black),
+                            underline: Container(
+                              height: 2,
+                              color: MaterialColor(0xfff2a3f3, color),
+                            ),
+                            onChanged: (String newValue) {
+                              setState(() {
+                                private = newValue;
+                              });
+                            },
+                            items: <String>['Public', 'Private']
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          )
+                        ],
+                      ),
                     ],
                   )
                 ],
@@ -373,6 +410,7 @@ class _NewPlotState extends State<NewPlot> {
             SizedBox(
               height: 10,
             ),
+            private == 'Public' ?
             Row(children: [
               Expanded(child: Container(),),
               Text('Upload\nAnonymously',
@@ -389,7 +427,7 @@ class _NewPlotState extends State<NewPlot> {
                     });
                   }),
               Expanded(child: Container(),),
-            ],),
+            ],) : Container(),
             SizedBox(height: 5,),
             errorMessage != null
                 ? Text(

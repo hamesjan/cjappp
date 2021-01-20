@@ -36,6 +36,7 @@ class MapPageState extends State<MapPage> {
   String byText;
   String description;
   List ratings;
+  bool private;
   String website;
   String by;
   String plotLocation;
@@ -253,6 +254,7 @@ class MapPageState extends State<MapPage> {
                                  burntRating: burntRating,
                                  description: description,
                                  long: long,
+                                private: private,
                                 zipCode: zipCode,
                                 location: plotLocation,
                                 ratingsNumbers: ratingsNumbers,
@@ -376,33 +378,42 @@ class MapPageState extends State<MapPage> {
 
   Future<Widget> buildMap(BuildContext context) async{
     final auth.FirebaseAuth _authFirebase = auth.FirebaseAuth.instance;
-    if (_permissionGranted.toString() != 'PermissionStatus.granted') {
-      var firestoredata = await _firestore.collection('plots').get();
-      markerList.clear();
-      receivedPlots.clear();
-      firestoredata.docs.forEach((element) =>
-          receivedPlots.add(element.data()));
-      String username;
-      if (_authFirebase.currentUser == null) {
-        username = 'testUser1';
-      } else {
-       username = await returnUsername();
-      }
-      var resUsers = await _firestore.collection('users').doc(username).get();
-      List currFavorites = resUsers.data()['favorites'];
-      bool favorite = false;
+    var firestoredata = await _firestore.collection('plots').get();
+    markerList.clear();
+    receivedPlots.clear();
+    firestoredata.docs.forEach((element) =>
+        receivedPlots.add(element.data()));
+    String username;
+    if (_authFirebase.currentUser == null) {
+      username = 'testUser1';
+    } else {
+      username = await returnUsername();
+    }
+    var resUsers = await _firestore.collection('users').doc(username).get();
+    List currFavorites = resUsers.data()['favorites'];
+    bool favorite = false;
 
+    List currHomies = resUsers.data()['homies'];
+    List homieIds = [];
+    var listHomies = await _firestore.collection('users').get();
+    var temp = listHomies.docs.where((element) => currHomies.contains(element.data()['username']));
+    temp.forEach((element) {homieIds.add(element.data()['uid']);});
+
+    if (_permissionGranted.toString() != 'PermissionStatus.granted') {
       receivedPlots.forEach((element) {
         if (element['approved']) {
           if (currFavorites.contains(element['name'])) {
             favorite = true;
           }
+          if (element['private'] && !homieIds.contains(element['by'])) {
+          } else {
           markerList.add(Marker(
             onTap: () {
               GoLocation(element['lat'], element['long']);
               setState(() {
                 name = element['name'];
                 zipCode = element['zipCode'];
+                private = element['private'];
                 lat = element['lat'];
                 burntRating = element['burntRating'];
                 description = element['description'];
@@ -422,9 +433,11 @@ class MapPageState extends State<MapPage> {
             position: LatLng(element['lat'], element['long']),
             // infoWindow: InfoWindow(title: element['name']),
             icon: BitmapDescriptor.defaultMarkerWithHue(
-              BitmapDescriptor.hueBlue,
+              element['private'] ?
+              BitmapDescriptor.hueRed : BitmapDescriptor.hueBlue,
             ),
           ));
+        }
         }
       });
       return Container(
@@ -453,25 +466,6 @@ class MapPageState extends State<MapPage> {
     } else  {
       Location location = new Location();
       LocationData _locationData = await location.getLocation();
-      var firestoredata = await _firestore.collection('plots').get();
-      markerList.clear();
-      receivedPlots.clear();
-      firestoredata.docs.forEach((element) =>
-          receivedPlots.add(element.data()));
-
-
-      // Getting Favorites
-
-      String username;
-      if (_authFirebase.currentUser == null) {
-        username = 'testUser1';
-      } else {
-        username = await returnUsername();
-      }
-
-      var resUsers = await _firestore.collection('users').doc(username).get();
-      List currFavorites = resUsers.data()['favorites'];
-      bool favorite = false;
 
       receivedPlots.forEach((element) {
         if (getDist(
@@ -481,34 +475,39 @@ class MapPageState extends State<MapPage> {
             if (currFavorites.contains(element['name'])) {
               favorite = true;
             }
-            markerList.add(Marker(
-              onTap: () {
-                GoLocation(element['lat'], element['long']);
-                setState(() {
-                  name = element['name'];
-                  zipCode = element['zipCode'];
-                  lat = element['lat'];
-                  burntRating = element['burntRating'];
-                  imgLink = element['imgLink'];
-                  description = element['description'];
-                  byText = element['by_text'];
-                  ratingsNumbers = element['ratingsNumbers'];
-                  long = element['long'];
-                  fav = favorite;
-                  plotLocation = element['location'];
-                  category = element['category'];
-                  price = element['price'];
-                  ratings = element['ratings'];
-                  by = element['by'];
-                });
-              },
-              markerId: MarkerId(element['name']),
-              position: LatLng(element['lat'], element['long']),
-              // infoWindow: InfoWindow(title: element['name']),
-              icon: BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueBlue,
-              ),
-            ));
+            if (element['private'] && !homieIds.contains(element['by'])) {
+            } else {
+              markerList.add(Marker(
+                onTap: () {
+                  GoLocation(element['lat'], element['long']);
+                  setState(() {
+                    name = element['name'];
+                    zipCode = element['zipCode'];
+                    lat = element['lat'];
+                    burntRating = element['burntRating'];
+                    imgLink = element['imgLink'];
+                    private = element['private'];
+                    description = element['description'];
+                    byText = element['by_text'];
+                    ratingsNumbers = element['ratingsNumbers'];
+                    long = element['long'];
+                    fav = favorite;
+                    plotLocation = element['location'];
+                    category = element['category'];
+                    price = element['price'];
+                    ratings = element['ratings'];
+                    by = element['by'];
+                  });
+                },
+                markerId: MarkerId(element['name']),
+                position: LatLng(element['lat'], element['long']),
+                // infoWindow: InfoWindow(title: element['name']),
+                icon: BitmapDescriptor.defaultMarkerWithHue(
+                  element['private'] ?
+                  BitmapDescriptor.hueRed : BitmapDescriptor.hueBlue,
+                ),
+              ));
+            }
           }
         }
       });
@@ -555,9 +554,12 @@ class MapPageState extends State<MapPage> {
       },
       markerId: MarkerId('myMarker'),
       position: LatLng(lat, long),
+      infoWindow: InfoWindow(
+        title: 'You'
+      ),
       // infoWindow: InfoWindow(title: 'You are Here'),
       icon: BitmapDescriptor.defaultMarkerWithHue(
-        BitmapDescriptor.hueRed,
+        BitmapDescriptor.hueAzure,
       ),
     );
   }

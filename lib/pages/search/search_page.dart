@@ -20,19 +20,58 @@ class _SearchPageState extends State<SearchPage> {
   List plotsNames = [];
   List trending = [];
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final auth.FirebaseAuth _authFirebase = auth.FirebaseAuth.instance;
 
-  @override
+
+  Future getInformation() async {
+    String username;
+
+    if (_authFirebase.currentUser == null) {
+      username = 'testUser1';
+    } else {
+      var _auth = Auth();
+      auth.User _user = await _auth.getCurrentUser();
+      var allUsers = await _firestore.collection('users').get();
+      allUsers.docs.forEach((element) {
+        if (element.data()['uid'] == _user.uid) {
+          username = element.data()['username'];
+        }
+      });
+    }
+
+    List info = [];
+    info.add(await _firestore.collection('plots').orderBy('clicks', descending: true).get());
+
+    var resUsers = await _firestore.collection('users').doc(username).get();
+    // Checking if homies with privteplot
+    List currHomies = resUsers.data()['homies'];
+    List homieIds = [];
+    var listHomies = await _firestore.collection('users').get();
+    var temp = listHomies.docs.where((element) => currHomies.contains(element.data()['username']));
+    temp.forEach((element) {homieIds.add(element.data()['uid']);});
+
+
+    info.add(homieIds);
+    return info;
+
+  }
+
+    @override
   Widget build(BuildContext context) {
     return Container(
         height: MediaQuery.of(context).size.height,
           padding: EdgeInsets.all(16),
           child: FutureBuilder(
-              future: _firestore.collection('plots').orderBy('clicks', descending: true).get(),
-              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              future: getInformation(),
+              builder: (context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
                   receivedPlots.clear();
                   plotsNames.clear();
-                  snapshot.data.docs.forEach((element) => element.data()['approved'] ? receivedPlots.add(element.data()): null );
+                  snapshot.data[0].docs.forEach((element) =>
+                  element.data()['approved'] ?
+                  element.data()['private'] && !snapshot.data[1].contains(element.data()['by']) ? null :
+                  receivedPlots.add(element.data()): null
+                  );
                   receivedPlots.forEach((element) {
                     plotsNames.add(element['name']);
                   });
@@ -218,6 +257,7 @@ class SearchEntertainment extends SearchDelegate<String> {
                               zipCode: obj['zipCode'],
                               location: obj['location'],
                               ratingsNumbers: obj['ratingsNumbers'].toDouble(),
+                              private: obj['private'],
                               ratings: obj['ratings'],
                               burntRating: obj['burntRating'],
                               fromFeed: false,

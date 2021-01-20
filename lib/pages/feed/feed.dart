@@ -105,9 +105,20 @@ class _FeedState extends State<Feed> {
           .get());
     } else if (sortBy == 'Newest') {
       info.add(await _firestore.collection('plots').orderBy('timestamp', descending: true).get());
+    } else if (sortBy == 'Locals Only') {
+      info.add(await _firestore.collection('plots').where('private', isEqualTo: true).get());
     }
+
     var resUsers = await _firestore.collection('users').doc(username).get();
     List currFavorites = resUsers.data()['favorites'];
+
+    // Checking if homies with privteplot
+    List currHomies = resUsers.data()['homies'];
+    List homieIds = [];
+    var listHomies = await _firestore.collection('users').get();
+    var temp = listHomies.docs.where((element) => currHomies.contains(element.data()['username']));
+    temp.forEach((element) {homieIds.add(element.data()['uid']);});
+
     info.add(currFavorites);
     info.add(resUsers.data()['zipCode']);
     if(_permissionGranted.toString() == 'PermissionStatus.granted'){
@@ -118,6 +129,7 @@ class _FeedState extends State<Feed> {
       info.add(34.0522);
       info.add(-118.2437);
     }
+    info.add(homieIds);
     return info;
   }
 
@@ -143,12 +155,15 @@ class _FeedState extends State<Feed> {
                     if (getDist(snapshot.data[3], snapshot.data[4],
                         element['lat'], element['long'], getMiles(radius))) {
                       if (element['approved']) {
+                        if (element['private'] && !snapshot.data[5].contains(element['by'])) {
+                        } else {
                         plots.add(HotSpot(
                           name: element['name'],
                           location: element['location'],
                           category: element['category'],
                           by: element['by'],
                           fav: fav,
+                          private: element['private'],
                           burntRating: element['burntRating'],
                           byText: element['by_text'],
                           description: element['description'],
@@ -163,6 +178,7 @@ class _FeedState extends State<Feed> {
                           zipCode: element['zipCode'],
                         ));
                       }
+                      }
                     }
                   });
                   plots.sort((a, b) => price.contains(a.price) ? 0 : 1);
@@ -176,25 +192,31 @@ class _FeedState extends State<Feed> {
                     if (snapshot.data[1].contains(element['name'])) {
                       fav = true;
                     }
-                      if (element['approved'] && element['zipCode'] == snapshot.data[2]) {
-                        plots.add(HotSpot(
-                          name: element['name'],
-                          location: element['location'],
-                          category: element['category'],
-                          by: element['by'],
-                          fav: fav,
-                          byText: element['by_text'],
-                          description: element['description'],
-                          timestamp: element['timestamp'],
-                          imgLink: element['imgLink'],
-                          lat: element['lat'],
-                          long: element['long'],
-                          ratings: element['ratings'],
-                          price: element['price'],
-                          ratingsNumbers: element['ratingsNumbers'].toDouble(),
-                          website: element['website'],
-                          zipCode: element['zipCode'],
-                        ));
+                      if (element['approved']  && element['zipCode'] == snapshot.data[2]) {
+                        // Checking if plot is private
+                        if (element['private'] && !snapshot.data[5].contains(element['by'])) {
+                        } else {
+                          plots.add(HotSpot(
+                            name: element['name'],
+                            location: element['location'],
+                            category: element['category'],
+                            by: element['by'],
+                            fav: fav,
+                            private: element['private'],
+                            burntRating: element['burntRating'],
+                            byText: element['by_text'],
+                            description: element['description'],
+                            timestamp: element['timestamp'],
+                            imgLink: element['imgLink'],
+                            lat: element['lat'],
+                            long: element['long'],
+                            ratings: element['ratings'],
+                            price: element['price'],
+                            ratingsNumbers: element['ratingsNumbers'].toDouble(),
+                            website: element['website'],
+                            zipCode: element['zipCode'],
+                          ));
+                        }
                       }
                   });
                   plots.sort((a, b) => price.contains(a.price) ? 0 : 1);
@@ -241,7 +263,7 @@ class _FeedState extends State<Feed> {
                                       SizedBox(
                                         width: 10,
                                       ),
-                                      DropdownButton<String>(
+                                      _authFirebase.currentUser == null ? DropdownButton<String>(
                                         value: sortBy,
                                         icon: Icon(Icons.arrow_drop_down,
                                             color: Colors.black),
@@ -279,6 +301,45 @@ class _FeedState extends State<Feed> {
                                             ),),
                                           );
                                         }).toList(),
+                                      ) :DropdownButton<String>(
+                                        value: sortBy,
+                                        icon: Icon(Icons.arrow_drop_down,
+                                            color: Colors.black),
+                                        iconSize: 24,
+                                        elevation: 16,
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 15,
+                                        ),
+                                        underline: Container(
+                                          height: 2,
+                                          color: MaterialColor(0xfff2a3f3, color),
+                                        ),
+                                        onChanged: (String newValue) {
+                                          setState(() {
+                                            sortBy = newValue;
+                                          });
+                                          widget.setInit(
+                                              sortBy,
+                                              price,
+                                              category,
+                                              radius
+                                          );
+                                        },
+                                        items: <String>[
+                                          'Newest',
+                                          'Best Rated',
+                                          'Popular',
+                                          'Locals Only'
+                                        ].map<DropdownMenuItem<String>>(
+                                                (String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value, style: TextStyle(
+                                                    fontWeight: FontWeight.normal
+                                                ),),
+                                              );
+                                            }).toList(),
                                       ),
                                     ],
                                   ),
@@ -478,6 +539,9 @@ class _FeedState extends State<Feed> {
                         SizedBox(
                           height: 5,
                         ),
+                        plots.length == 0 && sortBy == "Locals Only" ? Container(
+                          child: Text("Your homies have posted no plots.\nIt's going to be a boring day.")
+                        ): Container()
                       ],
                     ));
                 return new ListView.builder(

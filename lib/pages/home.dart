@@ -1,8 +1,5 @@
-import 'package:cjapp/pages/homies/homie_feed.dart';
-import 'package:cjapp/pages/view_profile/view_user_profile.dart';
+import 'package:cjapp/pages/pad/the_pad.dart';
 import 'package:cjapp/widgets/please_sign_in.dart';
-import 'package:cjapp/widgets/plotserror.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cjapp/pages/feed/feed.dart';
@@ -10,6 +7,7 @@ import 'package:cjapp/pages/search/search_page.dart';
 import 'package:cjapp/pages/map_page/map_page.dart';
 import 'package:cjapp/pages/login/login.dart';
 import 'package:cjapp/pages/settings/settings.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cjapp/services/lifecycle_handler.dart';
 import 'package:location/location.dart';
@@ -44,7 +42,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     WidgetsBinding.instance.addObserver(
         LifecycleEventHandler(resumeCallBack: () async => setStateIfMounted(checkPermissions()))
     );
-    _tabController = TabController(vsync: this, length: 5);
+    _tabController = TabController(vsync: this, length: 4);
   }
 
    setStateIfMounted(Future<void> f) {
@@ -90,10 +88,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         //   icon: Icon(Icons.add_link),
         //   onPressed: ()async {
         //     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-        //     var d = await _firestore.collection('users').get();
+        //     var d = await _firestore.collection('plots').get();
         //     d.docs.forEach((element) async{
-        //       await _firestore.collection('users').doc(element.data()['username']).update({
-        //         'link_requests': []
+        //       await _firestore.collection('plots').doc(element.data()['name']).update({
+        //         'private': false
         //       });
         //
         //     });
@@ -144,7 +142,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               initSortBy: sortBy,
               setInit: setInitVariablesFeed,
             ),
-            HomieFeed(),
+            // ThePad(),
             SearchPage(),
             _auth.currentUser == null ? PleaseSignIn() : ProfilePage(),
             MapPage(),
@@ -159,7 +157,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               MaterialPageRoute(
                   builder: (BuildContext context) => NewPlot()));
         },
-        child: Icon(Icons.add, color: Colors.black,),
+        child: Icon(Icons.add_location_alt_rounded, color: Colors.black,),
         backgroundColor: MaterialColor(0xfff2a3f3, color),
       ),
 
@@ -175,11 +173,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 color: Colors.black,
               ),
             ),
-            Tab(
-              icon: Icon(Icons.auto_awesome,
-                color: Colors.black,
-
-            ),),
+            // Tab(
+            //   icon: Icon(Icons.auto_awesome,
+            //     color: Colors.black,
+            //
+            // ),),
             Tab(
               icon: Icon(
                 Icons.search,

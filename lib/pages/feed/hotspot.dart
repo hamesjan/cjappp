@@ -24,6 +24,7 @@ class HotSpot extends StatelessWidget {
   final String description;
   final double long;
   final String imgLink;
+  final bool private;
   final List ratings;
   final String website;
   final String category;
@@ -31,7 +32,7 @@ class HotSpot extends StatelessWidget {
   final bool fav;
   final String price;
 
-  const HotSpot({Key key, this.name, this.zipCode, this.burntRating, this.byText, this.description, this.timestamp, this.imgLink, this.location, this.by, this.ratingsNumbers, this.lat, this.long, this.ratings, this.website, this.category, this.price, this.fav}) : super(key: key);
+  const HotSpot({Key key, this.name, this.zipCode, this.burntRating, this.byText, this.private, this.description, this.timestamp, this.imgLink, this.location, this.by, this.ratingsNumbers, this.lat, this.long, this.ratings, this.website, this.category, this.price, this.fav}) : super(key: key);
 
 
   Future<void> addFavorite(context) async {
@@ -135,6 +136,7 @@ class HotSpot extends StatelessWidget {
                     ratingsNumbers: ratingsNumbers.toDouble(),
                     ratings: ratings,
                     imgLink: imgLink,
+                    private: private,
                     burntRating: burntRating,
                     website: website,
                     long: long,
@@ -303,6 +305,12 @@ class HotSpot extends StatelessWidget {
                         ),
                         Row(
                           children: <Widget>[
+                            private ? Icon(Icons.lock) : Icon(Icons.public),
+                            Text(
+                              ' • ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15),
+                            ),
                             Text(
                               category,
                               style: TextStyle(

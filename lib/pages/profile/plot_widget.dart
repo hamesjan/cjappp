@@ -12,6 +12,7 @@ class PlotWidget extends StatelessWidget {
   final String name;
   final String category;
   final String imgLink;
+  final bool private;
   final String location;
   final String price;
 
@@ -22,6 +23,7 @@ class PlotWidget extends StatelessWidget {
     this.name,
     this.imgLink,
     this.category,
+    this.private,
     this.location,
     this.price,
   }) : super(key: key);
@@ -41,6 +43,7 @@ class PlotWidget extends StatelessWidget {
               description: description,
               imgLink: imgLink,
               category: category,
+              private: private,
               location: location,
               price: price,
             )

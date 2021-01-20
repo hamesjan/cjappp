@@ -315,7 +315,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   SizedBox(
                                     width: 10,
                                   ),
-                                  Icon(Icons.maps_ugc_sharp, color: Colors.pink,),
+                                  Icon(Icons.add_location_alt_rounded, color: Colors.pink,),
                                   SizedBox(
                                     width: 15,
                                   ),

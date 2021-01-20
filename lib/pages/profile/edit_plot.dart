@@ -16,6 +16,7 @@ class EditPlot extends StatefulWidget {
   final String name;
   final String category;
   final String imgLink;
+  final bool private;
   final String location;
   final String price;
 
@@ -25,6 +26,7 @@ class EditPlot extends StatefulWidget {
     this.approval,
     this.name,
     this.imgLink,
+    this.private,
     this.category,
     this.location,
     this.price,
@@ -43,6 +45,7 @@ class _EditPlotState extends State<EditPlot> {
   String newLocation;
   String newDescription = '';
   String errorMessage;
+  String newDiscoverability = 'Public';
   String newPrice;
   String newCategory;
 
@@ -50,6 +53,7 @@ class _EditPlotState extends State<EditPlot> {
   void initState() {
     super.initState();
     setState(() {
+      newDiscoverability = widget.private ? 'Private' : 'Public';
       newName = widget.name;
       newLocation = widget.location;
       newDescription = widget.description;
@@ -85,11 +89,17 @@ class _EditPlotState extends State<EditPlot> {
                         },
                       );
                     } else {
+                      var temp = false;
+                      if (newDiscoverability == 'Private'){
+                        temp = true;
+                      }
+
                       await _firestore.collection('plots').doc(widget.name).update({
                         'name': newName,
                         'description': newDescription,
                         'category': newCategory,
                         'price': newPrice,
+                        'private' : temp,
                         'location': newLocation,
                       });
                       var resUsers = await _firestore.collection('plots').doc(widget.name).get();
@@ -347,6 +357,37 @@ class _EditPlotState extends State<EditPlot> {
                                   });
                                 },
                                 items: <String>['Free', 'Cheapest', 'Moderate', 'Expensive']
+                                    .map<DropdownMenuItem<String>>((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                              )
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text('Discoverability', style: TextStyle(
+                                  fontWeight: FontWeight.bold
+                              ),),
+                              SizedBox(width: 10,),
+                              DropdownButton<String>(
+                                value: newDiscoverability,
+                                icon: Icon(Icons.arrow_drop_down, color: Colors.black),
+                                iconSize: 24,
+                                elevation: 16,
+                                style: TextStyle(color: Colors.black),
+                                underline: Container(
+                                  height: 2,
+                                  color: MaterialColor(0xfff2a3f3, color),
+                                ),
+                                onChanged: (String newValue) {
+                                  setState(() {
+                                    newDiscoverability = newValue;
+                                  });
+                                },
+                                items: <String>['Public', 'Private']
                                     .map<DropdownMenuItem<String>>((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
