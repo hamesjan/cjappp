@@ -42,7 +42,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     WidgetsBinding.instance.addObserver(
         LifecycleEventHandler(resumeCallBack: () async => setStateIfMounted(checkPermissions()))
     );
-    _tabController = TabController(vsync: this, length: 4);
+    _tabController = TabController(vsync: this, length: 5);
   }
 
    setStateIfMounted(Future<void> f) {
@@ -142,7 +142,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               initSortBy: sortBy,
               setInit: setInitVariablesFeed,
             ),
-            // ThePad(),
+            ThePad(),
             SearchPage(),
             _auth.currentUser == null ? PleaseSignIn() : ProfilePage(),
             MapPage(),
@@ -173,11 +173,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 color: Colors.black,
               ),
             ),
-            // Tab(
-            //   icon: Icon(Icons.auto_awesome,
-            //     color: Colors.black,
-            //
-            // ),),
+            Tab(
+              icon: Icon(Icons.auto_awesome,
+                color: Colors.black,
+
+            ),),
             Tab(
               icon: Icon(
                 Icons.search,
@@ -190,12 +190,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 color: Colors.black,
               ),
             ),
-            // Tab(
-            //   icon: Icon(
-            //     Icons.error,
-            //     color: Colors.red,
-            //   ),
-            // ),
+            Tab(
+              icon: Icon(
+                Icons.error,
+                color: Colors.red,
+              ),
+            ),
             Tab(
               icon: Icon(
                 Icons.map,
