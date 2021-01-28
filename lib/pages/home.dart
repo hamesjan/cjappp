@@ -22,11 +22,13 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   TabController _tabController;
   bool _serviceEnabled;
   PermissionStatus _permissionGranted;
   Location location = new Location();
+
 //  final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
 
   String sortBy = 'Newest';
@@ -34,18 +36,22 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   String category = 'No Preference';
   double radius = 40233.6;
 
-
+  Future getInformation() async {
+    List info = [];
+    info.add( await _firestore.collection('plots').get());
+    info.add(await _firestore.collection('users').get());
+    info.add(await _firestore.collection('appInfo').get());
+  }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(
-        LifecycleEventHandler(resumeCallBack: () async => setStateIfMounted(checkPermissions()))
-    );
+    WidgetsBinding.instance.addObserver(LifecycleEventHandler(
+        resumeCallBack: () async => setStateIfMounted(checkPermissions())));
     _tabController = TabController(vsync: this, length: 4);
   }
 
-   setStateIfMounted(Future<void> f) {
+  setStateIfMounted(Future<void> f) {
     if (mounted) {
       setState(() {
         f;
@@ -70,13 +76,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     }
   }
 
-  setInitVariablesFeed(s, p, c, r) => setState((){
-    sortBy = s;
-    price = p;
-    category = c;
-    radius = r;
-  });
-
+  setInitVariablesFeed(s, p, c, r) => setState(() {
+        sortBy = s;
+        price = p;
+        category = c;
+        radius = r;
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -97,69 +102,71 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         //     });
         // }
         // ),
-        title: Text(
-          "What's plots?"
-        ),
+        title: Text("What's plots?"),
         backgroundColor: MaterialColor(0xfff2a3f3, color),
         actions: <Widget>[
-          _auth.currentUser == null ?
-          IconButton(
-            icon: Icon(
-              Icons.login,
-              color: Colors.black,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) => Login()));
-            },
-          ): IconButton(
-            icon: Icon(
-              Icons.settings,
-              color: Colors.black,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) => SettingsPage()));
-            },
-          )
+          _auth.currentUser == null
+              ? IconButton(
+                  icon: Icon(
+                    Icons.login,
+                    color: Colors.black,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) => Login()));
+                  },
+                )
+              : IconButton(
+                  icon: Icon(
+                    Icons.settings,
+                    color: Colors.black,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) => SettingsPage()));
+                  },
+                )
         ],
       ),
       body: SafeArea(
-        child: TabBarView(
-          physics: NeverScrollableScrollPhysics(),
-          controller: _tabController,
-          children: <Widget>[
-            Feed(
-              initCategory: category,
-              initPrice: price,
-              initRadius: radius,
-              initSortBy: sortBy,
-              setInit: setInitVariablesFeed,
-            ),
-            SearchPage(),
-            _auth.currentUser == null ? PleaseSignIn() : ProfilePage(),
-            MapPage(),
-          ],
-        ),
-      ),
+          child: FutureBuilder(
+              future: getInformation(),
+              builder: (context, AsyncSnapshot snapshot) {
+                return TabBarView(
+                  physics: NeverScrollableScrollPhysics(),
+                  controller: _tabController,
+                  children: <Widget>[
+                    Feed(
+                      initCategory: category,
+                      initPrice: price,
+                      initRadius: radius,
+                      initSortBy: sortBy,
+                      setInit: setInitVariablesFeed,
+                    ),
+                    SearchPage(),
+                    _auth.currentUser == null ? PleaseSignIn() : ProfilePage(),
+                    MapPage(),
+                  ],
+                );
+              })),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => NewPlot()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (BuildContext context) => NewPlot()));
         },
-        child: Icon(Icons.add_location_alt_rounded, color: Colors.black,),
+        child: Icon(
+          Icons.add_location_alt_rounded,
+          color: Colors.black,
+        ),
         backgroundColor: MaterialColor(0xfff2a3f3, color),
       ),
-
       bottomNavigationBar: SafeArea(
         child: TabBar(
           controller: _tabController,
