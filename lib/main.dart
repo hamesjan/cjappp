@@ -5,8 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cjapp/services/app_colors.dart';
 
-// Test run
-
+// Master branch
 
 const String testDevice = 'Mobile_id';
 
