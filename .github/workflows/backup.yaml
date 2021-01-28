@@ -8,7 +8,7 @@ env:
   PROJECT_ID: plotscj
   BUCKET: gs://plotscj.appspot.com
 
-jobs:git
+jobs:
   backup:
     runs-on: ubuntu-latest
     steps:
