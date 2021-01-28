@@ -7,8 +7,8 @@ import 'package:cjapp/services/app_colors.dart';
 
 // Master branch
 
-const String testDevice = 'Mobile_id';
 
+const String testDevice = 'Mobile_id';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
